@@ -102,12 +102,4 @@
     "cli": {
       "analytics": false
     }
-<<<<<<< HEAD
-  },
-  "cli": {
-    "analytics": false
-  }
 }
-=======
-}
->>>>>>> 892cf7ae75d21507b8a8d28ce90e732bae02a75e
