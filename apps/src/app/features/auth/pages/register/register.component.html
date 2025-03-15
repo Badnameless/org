@@ -23,39 +23,52 @@
             </g>
           </svg>
           <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to PrimeLand!</div>
-          <span class="text-muted-color font-medium">Sign in to continue</span>
+          <span class="text-muted-color font-medium">Sign up to continue</span>
         </div>
+        <form [formGroup]="registerFormGroup" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
 
-        <div>
-          <form [formGroup]="loginFormGroup" (ngSubmit)="onSubmit()">
-            <div>
-              <label for="email"
-                class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-              <input pInputText id="email" name="email" type="email" formControlName="email" placeholder="Email address"
-                class="w-full md:w-[30rem] mb-2" />
-                <span *ngIf="isValidField('email')">
-                  <p-message severity="error" variant="simple" size="small">{{ getFieldError('email') }}</p-message>
-                </span>
-            </div>
+          <div>
+            <label for="name" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2"> Full Name</label>
+            <input pInputText id="name" name="name" minlength="3" maxlength="50" required type="text"
+              placeholder="Full name" class="w-full md:w-[30rem] mb-2" formControlName="name" />
+              <span *ngIf="isValidField('name')">
+                <p-message severity="error" variant="simple" size="small">{{ getFieldError('name') }}</p-message>
+              </span>
+          </div>
 
-            <div>
-              <label for="password"
-                class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2 mt-4">Password</label>
-              <p-password id="password" name="password" placeholder="Password" [toggleMask]="true" styleClass="mb-2" [fluid]="true"
-                [feedback]="false" formControlName="password"></p-password>
-                <span *ngIf="isValidField('password')">
-                  <p-message severity="error" variant="simple" size="small">{{ getFieldError('password') }}</p-message>
-                </span>
-            </div>
+          <div>
+            <label for="email"
+              class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">E-mail</label>
+            <input pInputText id="email" name="email" maxlength="255" required type="email"
+              placeholder="JohnDoe@example.com" class="w-full md:w-[30rem] mb-2" formControlName="email" />
+              <span *ngIf="isValidField('email')">
+                <p-message  severity="error" variant="simple" size="small">{{ getFieldError('email') }}</p-message>
+              </span>
+          </div>
 
-            <div class="flex justify-between mt-2 mb-8 gap-8">
-              <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary" routerLink="/auth/register">Sign up</span>
-              <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary" routerLink="/">
-                Forgot password?</span>
-            </div>
-            <p-button label="Sign In" styleClass="w-full" type="submit"></p-button>
-          </form>
-        </div>
+          <div>
+            <label for="password"
+              class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
+            <p-password id="password" minlength="8" required placeholder="Password" styleClass="mb-2" [toggleMask]="true" [fluid]="true"
+              [feedback]="true" formControlName="password">
+            </p-password>
+            <span *ngIf="isValidField('password')">
+              <p-message  severity="error" variant="simple" size="small">{{ getFieldError('password') }}</p-message>
+            </span>
+          </div>
+
+          <div>
+            <label for="confirmPassword"
+              class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Confirm Password</label>
+            <p-password #confPsw id="confirmPassword" name="confirmPassword" placeholder="Confirm Password"
+              [toggleMask]="true" styleClass="mb-2" [fluid]="true" [feedback]="false"
+              formControlName="confirmPassword"></p-password>
+              <span *ngIf="isValidField('confirmPassword')">
+                <p-message  severity="error" variant="simple" size="small">{{ getFieldError('confirmPassword') }}</p-message>
+              </span>
+          </div>
+          <p-button label="Sign Up" styleClass="w-full" type="submit"></p-button>
+        </form>
       </div>
     </div>
   </div>
