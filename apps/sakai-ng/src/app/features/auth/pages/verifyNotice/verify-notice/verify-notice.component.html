@@ -1,0 +1,20 @@
+<app-floating-configurator />
+<div class="flex items-center justify-center h-screen">
+  <p-panel styleClass="px-5">
+    <span style="font-size: 1.5rem; color: #196f3d;">Se ha enviado un correo de verificación a su E-mail</span>
+    <ng-template #footer>
+      <div class="flex flex-col gap-2">
+        <p>
+          En caso de no recibir el correo, presione el botón "Reenviar" para recibir uno nuevo.
+        </p>
+        <span *ngIf="isLoading"><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></span>
+        <p-button *ngIf="!isLoading && !resendCooldown" (onClick)="onResend()">Reenviar</p-button>
+          <div *ngIf="resendCooldown">
+            <p-message *ngIf="resendResponse?.message" severity="info">{{ resendResponse?.message }}</p-message>
+            <p-message severity="warn" styleClass="mt-2" *ngIf="resendCooldown"> Espere 30 segundos para volver a reenviar otro
+              correo.</p-message>
+          </div>
+      </div>
+    </ng-template>
+  </p-panel>
+</div>
