@@ -7,7 +7,9 @@ import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 export class ValidatorService {
 
   public FullnamePattern: string = '[a-zA-Zñáéíóú]+(?: [a-zA-Zñáéíóú ]+){1,}';
-  public emailPattern: string = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";
+  public floatPattern: string = '[0-9]*(\.[0-9]+)?';
+  public emailPattern: string = '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}';
+  public cedrncPattern: string = '^(?:[0-9]{9})$|^(?:[0-9]{11})$'
 
   public isValidField(form: FormGroup, field: string): boolean | null {
     return form.controls[field].errors && form.controls[field].touched;
@@ -38,8 +40,11 @@ export class ValidatorService {
         case 'required':
           return 'Este campo es requerido';
 
-        case 'isTaken':
+        case 'emailIsTaken':
           return 'Este E-mail ya existe';
+
+        case 'rnccedIsTaken':
+          return 'El RNC o CEDULA ya existe'
 
         case 'minlength':
           return `Minimo de ${errors['minlength'].requiredLength} caracteres`;
@@ -48,12 +53,22 @@ export class ValidatorService {
           return 'Las contraseñas no coinciden';
 
         case 'pattern':
-          if (errors['pattern'].requiredPattern === `^${this.FullnamePattern}$`) {
-            return 'Debe de ingresar al menos un nombre y apellido valido';
-          }
 
-          if (errors['pattern'].requiredPattern === `^${this.emailPattern}$`) {
-            return 'Formato de E-mail invalido';
+          switch (errors['pattern'].requiredPattern) {
+            case `^${this.FullnamePattern}$`:
+              return 'Nombre y apellido invalido';
+
+            case `^${this.emailPattern}$`:
+              return 'Formato de E-mail invalido';
+
+            case `^${this.floatPattern}$`:
+              return 'Formato numerico invalido';
+
+            case `${this.cedrncPattern}`:
+              return 'RNC o CEDULA invalida';
+
+            default:
+              break;
           }
           break;
 

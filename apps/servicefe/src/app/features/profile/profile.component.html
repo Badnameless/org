@@ -1,0 +1,65 @@
+<!-- Modal de cambio de email -->
+<p-dialog header="Actualizar E-mail" [style]="{ width: '25rem', height: 'fit-content' }" [modal]="true"
+  [(visible)]="emailDialogVisible">
+  <form [formGroup]="emailFormGroup" (ngSubmit)="onChangeEmail()">
+    <p-float-label class="mt-2 w-full" variant="on">
+      <input pInputText name="new_email" class="w-full" formControlName="new_email">
+      <label for="new_email">Nuevo E-mail</label>
+    </p-float-label>
+    <div class="mt-2">
+      <p-button type="submit">Enviar</p-button>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Modal de cambio de foto de perfil -->
+<p-dialog header="Actualizar foto de perfil" [style]="{ width: '25rem', height: 'fit-content' }" [modal]="true"
+  [(visible)]="photoDialogVisible">
+  <p-fileupload name="demo[]" [multiple]="false" accept="image/*" maxFileSize="1000000" mode="advanced" (uploadHandler)="onChangeAvatar($event)" [customUpload]="true">
+    <ng-template #empty>
+        <div>Arrastra y suelta archivos aqui para subirlos.</div>
+    </ng-template>
+</p-fileupload>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<div class="flex w-full gap-8">
+  <div class="card w-full md:w-1/2 lg:w-1/2 flex flex-col items-center gap-5">
+
+    <div class="flex flex-col items-center gap-5">
+      <div class="w-40 h-40 border rounded-[50%] p-5">
+        <p-image [src]="userImgPath" [preview]="true"></p-image>
+      </div>
+      <div>
+        <p-button size="small" (onClick)="this.photoDialogVisible = true">Actualizar foto de perfil</p-button>
+      </div>
+    </div>
+
+    <div class="border rounded w-full lg:w-3/4 flex flex-col">
+      <form class="flex gap-3 items-center p-4" [formGroup]="nameFormGroup" (ngSubmit)="onChangeName()">
+        <p-float-label class="w-full" variant="on">
+          <input pInputText name="user_name" class="w-full" formControlName="user_name">
+          <label for="user_name">Nombre y apellido</label>
+        </p-float-label>
+        <div>
+          <p-button severity="info" type="submit"><i class="pi pi-pencil"></i></p-button>
+        </div>
+      </form>
+
+      <div class="border-t-[1px]">
+        <form class="flex items-center gap-3 p-4">
+          <p-float-label class="w-full" variant="on">
+            <input pInputText name="user_email" class="w-full" [formControl]="emailControl">
+            <label for="user_email">E-mail</label>
+          </p-float-label>
+          <p-button severity="info" (onClick)="emailDialogVisible = true"><i class="pi pi-pencil"></i></p-button>
+        </form>
+      </div>
+
+      <div class="border-t-[1px] p-4 flex justify-center w-full">
+        <p-button severity="danger" size="small" (onClick)="onChangePassword()">Cambiar contraseña</p-button>
+      </div>
+    </div>
+  </div>
+</div>
