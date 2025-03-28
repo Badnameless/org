@@ -1,0 +1,45 @@
+<p-fluid>
+  <form [formGroup]="companyFormGroup" (ngSubmit)="onSubmit()">
+    <div class="card flex flex-col gap-4 md:w-12/12 lg:w-6/12">
+      <div class="font-semibold text-xl">Registrar Compañia</div>
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <label for="tenant_name">Nombre</label>
+          <span *ngIf="isValidField('tenant_name')">
+            <p-message severity="error" variant="simple" size="small">({{ getFieldError('tenant_name') }})</p-message>
+          </span>
+        </div>
+        <input pInputText id="tenant_name" name="tenant_name" type="text" formControlName="tenant_name"
+          placeholder="Nombre de la compañia" />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <label for="tenant_cedrnc">RNC / CEDULA</label>
+          <span *ngIf="isValidField('tenant_cedrnc')">
+            <p-message severity="error" variant="simple" size="small">({{ getFieldError('tenant_cedrnc') }})</p-message>
+          </span>
+        </div>
+        <input pInputText id="tenant_cedrnc" name="tenant_cedrnc" type="text" formControlName="tenant_cedrnc" />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <label for="plan_name">Plan</label>
+          <span *ngIf="isValidField('plan_name')">
+            <p-message severity="error" variant="simple" size="small">({{ getFieldError('plan_name') }})</p-message>
+          </span>
+        </div>
+        <p-select [showClear]="true" [options]="plansNames" formControlName="plan_name" optionLabel="label"
+          placeholder="Seleccione un plan">
+        </p-select>
+      </div>
+
+      <p-button type="submit">Registrar</p-button>
+    </div>
+  </form>
+
+  <!-- <div class="card flex w-full">
+    <app-crud></app-crud>
+  </div> -->
+</p-fluid>
