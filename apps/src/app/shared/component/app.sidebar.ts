@@ -1,5 +1,7 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { AppMenu } from './app.menu';
+import { AuthService } from '../../features/auth/services/auth.service';
+import { User } from '../../features/auth/interfaces/user';
 
 @Component({
     selector: 'app-sidebar',
@@ -10,5 +12,6 @@ import { AppMenu } from './app.menu';
     </div>`
 })
 export class AppSidebar {
-    constructor(public el: ElementRef) {}
+    constructor(public el: ElementRef, private authService:AuthService) {}
+
 }

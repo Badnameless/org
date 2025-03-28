@@ -1,0 +1,44 @@
+  <p-fluid>
+    <form [formGroup]="userFormGroup" (ngSubmit)="onSubmit()">
+      <div class="card flex flex-col gap-4 w-full md:w-full lg:w-1/2">
+        <div class="font-semibold text-xl">
+          <span>Registrar Usuario</span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <label for="user_name">Nombre</label>
+            <span *ngIf="isValidField('user_name')">
+              <p-message severity="error" variant="simple" size="small">({{ getFieldError('user_name') }})</p-message>
+            </span>
+          </div>
+          <input pInputText id="user_name" type="text" formControlName="user_name" placeholder="Nombre y apellido"/>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <label for="user_email">E-mail</label>
+            <span *ngIf="isValidField('user_email')">
+              <p-message severity="error" variant="simple" size="small">({{ getFieldError('user_email') }})</p-message>
+            </span>
+          </div>
+          <input pInputText id="user_email" type="text" formControlName="user_email" placeholder="johndoe@example.com"/>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <label for="tenant_names">Compañias asociadas</label>
+            <span *ngIf="isValidField('tenant_names')">
+              <p-message severity="error" variant="simple" size="small">({{ getFieldError('tenant_names')
+                }})</p-message>
+            </span>
+          </div>
+          <p-multiselect [options]="companies" optionLabel="tenant_name" placeholder="Seleccione las compañias"
+            [maxSelectedLabels]="3" formControlName="tenant_names" />
+        </div>
+
+        <p-button type="submit">Registrar Usuario</p-button>
+      </div>
+    </form>
+  </p-fluid>
+
