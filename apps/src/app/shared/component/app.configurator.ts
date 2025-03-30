@@ -61,7 +61,7 @@ declare type SurfacesType = {
             </div>
             <div>
                 <span class="text-sm text-muted-color font-semibold">Surface</span>
-                <div class="pt-2 flex gap-2 flex-wrap justify-start">
+                <div class="pt-2 flex gap-2 flex-wrap justiafy-start">
                     @for (surface of surfaces; track surface.name) {
                         <button
                             type="button"
