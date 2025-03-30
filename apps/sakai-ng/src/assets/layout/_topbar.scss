@@ -83,8 +83,43 @@
     .layout-topbar-actions {
         margin-left: auto;
         display: flex;
-        gap: 1rem;
+        gap: 2rem;
     }
+
+    .user-action{
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-color-secondary);
+      width: fit-content;
+      height: 2.5rem;
+      color: var(--text-color);
+      transition: background-color var(--element-transition-duration);
+      cursor: pointer;
+
+      &:hover {
+          background-color: var(--surface-hover);
+          border-radius: 10px;
+      }
+
+      &:focus-visible {
+          @include focused();
+      }
+
+      i {
+          font-size: 1.25rem;
+      }
+
+      span {
+          font-size: 1rem;
+          display: none;
+      }
+
+      &.layout-topbar-action-highlight {
+          background-color: var(--primary-color);
+          color: var(--primary-contrast-color);
+      }
+  }
 
     .layout-topbar-menu-content {
         display: flex;
