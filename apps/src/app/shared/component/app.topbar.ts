@@ -7,7 +7,7 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { AppConfigurator } from './app.configurator';
 import { LayoutService } from '../service/layout.service';
 import { AuthService } from '../../features/auth/services/auth.service';
-import { User } from '../../features/auth/interfaces/user';
+import { Tenant, User } from '../../features/auth/interfaces/user';
 import { UserConfigurator } from './userConfigurator';
 import { Token } from '../../features/auth/interfaces/token';
 
@@ -19,9 +19,11 @@ import { Token } from '../../features/auth/interfaces/token';
   providers: [AuthService]
 })
 export class AppTopbar implements OnInit{
-  public token!: Token;
   items!: MenuItem[];
+
   public user?: User;
+  public token!: Token;
+  public current_tenant!: Tenant;
 
   constructor(public layoutService: LayoutService,
     private authService: AuthService
@@ -30,6 +32,7 @@ export class AppTopbar implements OnInit{
   ngOnInit() {
     this.token = JSON.parse(localStorage.getItem('token')!)
     this.user = JSON.parse(localStorage.getItem('user')!)
+    this.current_tenant = JSON.parse(localStorage.getItem('current_tenant')!);
 
     this.items = [{
       label: this.user?.user_name,
