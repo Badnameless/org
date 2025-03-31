@@ -13,12 +13,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class SelectTenantComponent implements OnInit{
 
-  public user!: User;
+  public user: User = JSON.parse(localStorage.getItem('user')!);
+  public current_tenant!: Tenant;
 
-  public selectTenant = new FormControl(JSON.parse(localStorage.getItem('current_tenant')!));
+  public selectTenant = new FormControl();
 
   ngOnInit(): void {
-    this.user = JSON.parse(localStorage.getItem('user')!);
+    const storedTenant = JSON.parse(localStorage.getItem('current_tenant')!);
+    if (storedTenant) {
+      const matchingTenant = this.user.tenants.find(t => t.tenant_id === storedTenant.tenant_id);
+      this.selectTenant.setValue(matchingTenant || null);
+    }
   }
 
   onSelectTenant(){
