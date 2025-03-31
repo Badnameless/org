@@ -1,17 +1,12 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AppMenu } from './app.menu';
-import { AuthService } from '../../features/auth/services/auth.service';
-import { User } from '../../features/auth/interfaces/user';
+import { SelectTenantComponent } from './select-tenant/select-tenant.component';
 
 @Component({
     selector: 'app-sidebar',
     standalone: true,
-    imports: [AppMenu],
-    template: ` <div class="layout-sidebar">
-        <app-menu></app-menu>
-    </div>`
-})
-export class AppSidebar {
-    constructor(public el: ElementRef, private authService:AuthService) {}
+    imports: [AppMenu, SelectTenantComponent],
+    templateUrl: './app.sidebar.html'
 
-}
+})
+export class AppSidebar {}
