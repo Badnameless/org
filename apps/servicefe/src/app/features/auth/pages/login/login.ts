@@ -15,6 +15,8 @@ import { catchError, lastValueFrom, of } from 'rxjs';
 import { Token } from '../../interfaces/token';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { User } from '../../interfaces/user';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
@@ -34,19 +36,21 @@ import { ToastModule } from 'primeng/toast';
   templateUrl: './login.html',
   providers: [MessageService]
 })
-export class Login{
+export class Login {
 
   public loginFormGroup!: FormGroup;
   public email: string = '';
   public passsword: string = '';
   public token!: Token;
+  public user!: User;
+  public isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private validatorService: ValidatorService,
     private authService: AuthService,
     private router: Router,
-    private message:MessageService
+    private message: MessageService
   ) {
     this.loginFormGroup = this.fb.group({
       email: ['', [Validators.required]],
@@ -66,23 +70,32 @@ export class Login{
     this.loginFormGroup.markAllAsTouched();
     if (this.loginFormGroup.valid) {
 
-      this.email = this.loginFormGroup.get('email')?.value;
-      this.passsword = this.loginFormGroup.get('password')?.value
-      let errorStatus: number = 0;
+      try {
+        this.isLoading = true;
+        this.email = this.loginFormGroup.get('email')?.value;
+        this.passsword = this.loginFormGroup.get('password')?.value;
 
-      const token: Token = await lastValueFrom(this.authService.login(this.email, this.passsword)
-        .pipe(
-          catchError(error => {
-            errorStatus = error.status;
-            this.message.add({ severity: 'error', summary: 'Error', detail: 'Usuario o contraseña invalidos.' });
-            return of()
-          })
-        ))
+        const token: Token = await lastValueFrom(this.authService.login(this.email, this.passsword));
+        this.user = await lastValueFrom(this.authService.storeAuthUser(token));
 
-      await lastValueFrom(this.authService.storeAuthUser(token));
+        if (!localStorage.getItem('default_tenant')) {
+          localStorage.setItem('default_tenant', JSON.stringify(this.user.tenants[0]))
+          localStorage.setItem('current_tenant', JSON.stringify(this.user.tenants[0]))
+        }
 
-      if(token && errorStatus === 0) this.router.navigate(['/']);
+        this.router.navigate(['/']);
 
+      } catch (error) {
+        if (error instanceof HttpErrorResponse) {
+          if (error.status === 401) {
+            this.isLoading = false;
+            this.message.add({ sticky: true, severity: 'error', summary: 'Error al iniciar sesión', detail: 'E-mail o contraseña invalidos' })
+          }
+        }else{
+          this.isLoading = false;
+          this.message.add({ sticky: true, severity: 'error', summary: 'Error inesperado', detail: 'Verifique con el administrador' })
+        }
+      }
     }
   }
 }
