@@ -49,12 +49,11 @@
             </div>
 
             <div class="flex justify-between mt-2 mb-8 gap-8">
-              <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary" routerLink="/auth/register">Sign up</span>
-              <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary" routerLink="/">
+              <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary" routerLink="/auth/forgotpassword">
                 Forgot password?</span>
             </div>
             <p-toast></p-toast>
-            <p-button label="Sign In" styleClass="w-full" type="submit"></p-button>
+            <p-button label="Sign In" styleClass="w-full" type="submit" [loading]="isLoading"></p-button>
           </form>
         </div>
       </div>

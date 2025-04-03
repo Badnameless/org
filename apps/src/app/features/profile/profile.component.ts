@@ -7,7 +7,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
-import { User } from '../auth/interfaces/user';
+import { Tenant, User } from '../auth/interfaces/user';
 import { MessageService } from 'primeng/api';
 import { ProfileService } from './services/profile.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -17,6 +17,8 @@ import { DialogModule } from 'primeng/dialog';
 import { AuthService } from '../auth/services/auth.service';
 import { FileUploadModule } from 'primeng/fileupload';
 import { HttpService } from '../../services/http.service';
+import { SelectModule } from 'primeng/select';
+import { EmailValidatorService } from '../admin/pages/users/validators/email-validator.service';
 
 @Component({
   selector: 'app-profile',
@@ -29,7 +31,8 @@ import { HttpService } from '../../services/http.service';
     ToastModule,
     DialogModule,
     CommonModule,
-    FileUploadModule
+    FileUploadModule,
+    SelectModule
   ],
   templateUrl: './profile.component.html',
   styles: ``,
@@ -41,10 +44,14 @@ export class ProfileComponent implements OnInit {
 
   public nameFormGroup!: FormGroup;
   public emailFormGroup!: FormGroup;
-  public emailControl = new FormControl({value: '', disabled: true});
+  public tenantFormGroup!: FormGroup;
+  public emailControl = new FormControl({ value: '', disabled: true });
 
   public user!: User;
-  public token!: Token
+  public token!: Token;
+  public default_tenant!: Tenant;
+
+  public emailLoading: boolean = false;
 
   public emailDialogVisible: boolean = false;
   public photoDialogVisible: boolean = false;
@@ -56,16 +63,34 @@ export class ProfileComponent implements OnInit {
     private validatorService: ValidatorService,
     private profileService: ProfileService,
     private authService: AuthService,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private emailValidator: EmailValidatorService
   ) {
 
     this.nameFormGroup = fb.group({
       user_name: ['', [Validators.required, Validators.pattern(validatorService.FullnamePattern)]]
     })
 
-    this.emailFormGroup = fb.group({
-      new_email: ['', [Validators.required, Validators.pattern(validatorService.emailPattern)]]
-    })
+    this.emailFormGroup = fb.group(
+      {
+        new_email: [
+          '',
+          [Validators.required, Validators.pattern(validatorService.emailPattern)], // Synchronous validators
+          [this.emailValidator] // Asynchronous validator (separate array)
+        ],
+        confirm_email: [
+          '',
+          [Validators.required, Validators.pattern(validatorService.emailPattern)]
+        ]
+      },
+      {
+        validators: validatorService.compareTwoFields('new_email', 'confirm_email') // FormGroup-level validator
+      }
+    );
+
+    this.tenantFormGroup = fb.group({
+      tenant: JSON.parse(localStorage.getItem('default_tenant')!)
+    });
   }
 
   async ngOnInit() {
@@ -75,18 +100,24 @@ export class ProfileComponent implements OnInit {
     if (localStorage.getItem('isUpdated')) {
       this.user = await lastValueFrom(this.authService.storeAuthUser(this.token))
       localStorage.removeItem('isUpdated')
-    }else{
+    } else {
       this.user = JSON.parse(localStorage.getItem('user')!);
     }
+
+
 
     // seteando la data del usuario en los textbox
     this.nameFormGroup.controls['user_name'].setValue(this.user.user_name);
     this.emailControl.setValue(this.user.user_email)
 
+    this.default_tenant = JSON.parse(localStorage.getItem('default_tenant')!)
+    const foundTenant = this.user.tenants.find(tenant => tenant.tenant_id === this.default_tenant.tenant_id);
+    this.tenantFormGroup.controls['tenant'].setValue(foundTenant);
+
     // Si el usuario no tiene una imagen se le pone un placeholder
     if (this.user.user_photoUrl) {
       this.userImgPath = `${this.httpService.API_URL}/user/get_photo/${this.user.user_photoUrl}`;
-    }else{
+    } else {
       this.userImgPath = 'images/user.png';
     }
 
@@ -101,7 +132,7 @@ export class ProfileComponent implements OnInit {
     }
   };
 
-  async loadUserData(){
+  async loadUserData() {
     const _token: Token = JSON.parse(localStorage.getItem('token')!);
     this.user = await lastValueFrom(this.authService.storeAuthUser(_token));
     localStorage.setItem('user', JSON.stringify(this.user));
@@ -158,19 +189,28 @@ export class ProfileComponent implements OnInit {
   // Cambio de foto de email
   async onChangeEmail() {
     if (this.emailFormGroup.valid) {
+      this.emailLoading = true;
 
       await lastValueFrom(this.profileService.updateEmail(this.emailFormGroup.value, this.token))
 
       this.message.add({ sticky: true, severity: 'info', summary: 'Aviso: Actualización de E-mail', detail: 'Se ha enviado un correo a la nueva dirección, verifiquelo para proseguir.' });
+      this.emailLoading = false;
       this.emailDialogVisible = false;
       localStorage.setItem('isUpdated', 'true')
     }
   }
 
-  // Cambio de foto de contrasena
+  // Cambio de contrasena
   async onChangePassword() {
     await lastValueFrom(this.profileService.updatePassword(this.user.user_email, this.token))
 
     this.message.add({ sticky: true, severity: 'info', summary: 'Aviso: Actualización de Contraseña', detail: 'Se ha enviado un correo a la nueva dirección, verifiquelo para proseguir.' });
+  }
+
+  onChangeDefaultTenant() {
+    const selectedTenant = this.tenantFormGroup.value;
+    const foundTenant: Tenant | undefined = this.user.tenants.find(tenant => tenant.tenant_cedrnc === selectedTenant.tenant.tenant_cedrnc);
+    localStorage.setItem('default_tenant', JSON.stringify(foundTenant))
+    this.message.add({ severity: 'success', summary: 'Actualización de compañia predeterminada', detail: 'Se ha actualizado la compañia predeterminada correctamente.' });
   }
 }

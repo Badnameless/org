@@ -4,6 +4,7 @@ import { Login } from './pages/login/login';
 import { Error } from './pages/error/error';
 import { LoginGuard } from './guards/login.guard';
 import { ChangePasswordComponent } from './pages/changePassword/change-password/change-password.component';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 
 export default [
     { path: 'access', component: Access },
@@ -13,6 +14,8 @@ export default [
       component: Login,
       canMatch: [LoginGuard]
     },
-    { path: 'change_password/:email', component: ChangePasswordComponent }
+    { path: 'change_password/:signature/:expires/:email', component: ChangePasswordComponent,
+    },
+    { path: 'forgotpassword', component: ForgotPasswordComponent }
 
 ] as Routes;
