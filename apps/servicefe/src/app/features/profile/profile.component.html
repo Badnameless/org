@@ -6,8 +6,12 @@
       <input pInputText name="new_email" class="w-full" formControlName="new_email">
       <label for="new_email">Nuevo E-mail</label>
     </p-float-label>
+    <p-float-label class="mt-2 w-full" variant="on">
+      <input pInputText name="confirm_email" class="w-full" formControlName="confirm_email">
+      <label for="confirm_email">Confirmar E-mail</label>
+    </p-float-label>
     <div class="mt-2">
-      <p-button type="submit">Enviar</p-button>
+      <p-button type="submit" [loading]="emailLoading">Enviar</p-button>
     </div>
   </form>
 </p-dialog>
@@ -25,7 +29,7 @@
 <p-toast></p-toast>
 
 <div class="flex w-full gap-8">
-  <div class="card w-full md:w-1/2 lg:w-1/2 flex flex-col items-center gap-5">
+  <div class="card w-full md:w-full md:mx-48 lg:w-1/2 lg:mx-0 flex flex-col items-center gap-5">
 
     <div class="flex flex-col items-center gap-5">
       <div class="w-40 h-40 border rounded-[50%] p-5">
@@ -54,6 +58,17 @@
             <label for="user_email">E-mail</label>
           </p-float-label>
           <p-button severity="info" (onClick)="emailDialogVisible = true"><i class="pi pi-pencil"></i></p-button>
+        </form>
+      </div>
+
+      <div class="border-t-[1px]">
+        <form [formGroup]="tenantFormGroup" (ngSubmit)="onChangeDefaultTenant()" class="flex items-center gap-3 p-4">
+          <p-float-label class="w-full" variant="on">
+            <p-select [showClear]="true" [options]="user.tenants" formControlName="tenant" optionLabel="tenant_name" class="w-full" sele>
+          </p-select>
+          <label for="tenant_name">Compañia Predeterminada</label>
+        </p-float-label>
+          <p-button severity="info" type="submit"><i class="pi pi-pencil"></i></p-button>
         </form>
       </div>
 

@@ -37,7 +37,7 @@ export class AuthService implements OnInit{
 
     return this.http.post<User>(`${this.httpService.AUTH_URL}/me`, {}, { headers }).pipe(
       tap(user => localStorage.setItem('user', JSON.stringify(user))),
-      tap(user => this.user = user)
+      tap(user => this.user = user),
     );
 
   }
