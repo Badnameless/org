@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, OnInit } from '@angular/core';
+import { HttpClient,  HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { User } from '../interfaces/user';
-import { catchError, Observable, of, tap } from 'rxjs';
+import {  Observable, of, tap } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { Token } from '../interfaces/token';
 import { Router } from '@angular/router';
@@ -9,10 +9,10 @@ import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService implements OnInit{
+export class AuthService {
 
-  public user!:User;
-  public token!:Token;
+  public user!: User;
+  public token!: Token;
 
   constructor(
     private http: HttpClient,
@@ -20,7 +20,12 @@ export class AuthService implements OnInit{
     private router: Router
   ) { }
 
-  ngOnInit(): void {
+  get _user() {
+    return structuredClone(this.user);
+  }
+
+  get _token() {
+    return structuredClone(this.token);
   }
 
   login(email: string, password: string): Observable<Token> {
@@ -31,7 +36,7 @@ export class AuthService implements OnInit{
       );
   }
 
-   storeAuthUser(token: Token): Observable<User>{
+  storeAuthUser(token: Token): Observable<User> {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
@@ -42,14 +47,15 @@ export class AuthService implements OnInit{
 
   }
 
-  logout(token: string): Observable<any> {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  refreshToken(token: Token): Observable<Token> {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    return this.http.post(`${this.httpService.AUTH_URL}/logout`, {}, { headers })
-      .pipe(
-        tap(() => localStorage.removeItem('token')),
-        tap(() => localStorage.removeItem('user')),
-        tap(() => this.router.navigate(['auth/login']))
-      );
+    return this.http.post<Token>(`${this.httpService.AUTH_URL}/refresh`, {}, { headers });
+  }
+
+  logout(token: Token): Observable<any> {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
+
+    return this.http.post(`${this.httpService.AUTH_URL}/logout`, {}, { headers });
   }
 }

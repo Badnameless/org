@@ -75,8 +75,8 @@ export class ProfileComponent implements OnInit {
       {
         new_email: [
           '',
-          [Validators.required, Validators.pattern(validatorService.emailPattern)], // Synchronous validators
-          [this.emailValidator] // Asynchronous validator (separate array)
+          [Validators.required, Validators.pattern(validatorService.emailPattern)],
+          [this.emailValidator]
         ],
         confirm_email: [
           '',
@@ -84,7 +84,7 @@ export class ProfileComponent implements OnInit {
         ]
       },
       {
-        validators: validatorService.compareTwoFields('new_email', 'confirm_email') // FormGroup-level validator
+        validators: validatorService.compareTwoFields('new_email', 'confirm_email')
       }
     );
 
@@ -93,7 +93,11 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+
+
   async ngOnInit() {
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+
     this.token = JSON.parse(localStorage.getItem('token')!);
 
     // Verificar si hay una update para cargar desde la DB o el localstorage
@@ -103,7 +107,6 @@ export class ProfileComponent implements OnInit {
     } else {
       this.user = JSON.parse(localStorage.getItem('user')!);
     }
-
 
 
     // seteando la data del usuario en los textbox
@@ -120,10 +123,6 @@ export class ProfileComponent implements OnInit {
     } else {
       this.userImgPath = 'images/user.png';
     }
-
-
-    document.addEventListener('visibilitychange', this.handleVisibilityChange);
-
   }
 
   handleVisibilityChange = () => {
@@ -155,6 +154,8 @@ export class ProfileComponent implements OnInit {
   // Cambio de foto de perfil
   async onChangeAvatar(event: any) {
     const uploadedFile: File = event.files[0];
+
+    console.log(this.token)
 
     await lastValueFrom(this.profileService.updatePhoto(uploadedFile, this.token));
 
