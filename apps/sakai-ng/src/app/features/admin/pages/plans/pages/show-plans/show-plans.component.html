@@ -1,0 +1,8 @@
+<app-data-grid [columns]="columns" [data]="plans" [isCrud]="true"
+  [deleteFunction]="planService.deletePlans.bind(planService)" dataKey="plan_id">
+
+  <ng-template #addForm let-close="close">
+    <app-add-plan (onSuccess)="close()"></app-add-plan>
+  </ng-template>
+
+</app-data-grid>
