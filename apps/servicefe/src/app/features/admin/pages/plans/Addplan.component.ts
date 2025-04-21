@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { MessageModule } from 'primeng/message';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FluidModule } from 'primeng/fluid';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -9,18 +9,21 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { TextareaModule } from 'primeng/textarea';
 import { ValidatorService } from '../../../../services/validator.service';
 import { PlanService } from './services/plan.service';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
-  selector: 'app-plan',
+  selector: 'app-add-plan',
   imports: [MessageModule, CommonModule, ReactiveFormsModule, InputTextModule, FluidModule, ButtonModule, SelectModule, TextareaModule],
-  templateUrl: './plan.component.html',
+  templateUrl: './Addplan.component.html',
   styles: ``
 })
-export class PlanComponent {
+export class AddPlanComponent {
 
-  public planFormGroup!:FormGroup;
+  @Output() onSuccess = new EventEmitter<void>();
 
-  constructor(private fb:FormBuilder, private validatorService:ValidatorService, private planService:PlanService){
+  public planFormGroup!: FormGroup;
+
+  constructor(private fb: FormBuilder, private validatorService: ValidatorService, private planService: PlanService) {
     this.planFormGroup = this.fb.group({
       plan_name: ['', [Validators.required]],
       planDetail_from: ['', [Validators.required, Validators.pattern(validatorService.floatPattern)]],
@@ -38,15 +41,15 @@ export class PlanComponent {
     return this.validatorService.getFieldError(this.planFormGroup, field);
   }
 
-  onSubmit(){
+  async onSubmit() {
     this.planFormGroup.markAllAsTouched();
 
     if (this.planFormGroup.valid) {
-      this.planService.storePlan(this.planFormGroup.value).subscribe(res => {
-        console.log(res)
-      });
+      await lastValueFrom(this.planService.storePlan(this.planFormGroup.value));
 
       this.planFormGroup.reset();
+      this.onSuccess.emit();
+      window.location.reload();
     }
   }
 

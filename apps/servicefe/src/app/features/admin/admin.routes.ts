@@ -1,10 +1,13 @@
 import { Routes } from "@angular/router";
-import { CompanyComponent } from "./pages/companies/company.component";
-import { PlanComponent } from "./pages/plans/plan.component";
-import { UserComponent } from "./pages/users/user.component";
+import { ShowCompaniesComponent } from "./pages/companies/pages/show-companies/show-companies.component";
+import { ShowPlansComponent } from "./pages/plans/pages/show-plans/show-plans.component";
+import { ShowUsersComponent } from "./pages/users/pages/show-users/show-users.component";
+import { EncfsComponent } from "./pages/encfs/encfs.component";
 
 export default [
-  {path: 'companies', component: CompanyComponent},
-  {path: 'plans', component: PlanComponent},
-  {path: 'users', component: UserComponent}
+  {path: 'companies', component: ShowCompaniesComponent},
+  {path: 'plans', component: ShowPlansComponent},
+  {path: 'users', component: ShowUsersComponent},
+  {path: 'encfs', component: EncfsComponent}
+
 ] as Routes
