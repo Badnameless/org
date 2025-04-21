@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MessageModule } from 'primeng/message';
 import { FluidModule } from 'primeng/fluid';
@@ -13,14 +13,15 @@ import { Plan } from '../plans/interfaces/plan';
 import { lastValueFrom } from 'rxjs';
 import { CompanyService } from './services/company.service';
 import { RnccedValidatorService } from './validators/rncced-validator.service';
-import { Crud } from '../../../crud/crud';
 
 @Component({
-  selector: 'app-company',
-  imports: [MessageModule, CommonModule, InputTextModule, FluidModule, ButtonModule, SelectModule, ReactiveFormsModule, TextareaModule, Crud],
-  templateUrl: './company.component.html',
+  selector: 'app-add-company',
+  imports: [MessageModule, CommonModule, InputTextModule, FluidModule, ButtonModule, SelectModule, ReactiveFormsModule, TextareaModule],
+  templateUrl: './Addcompany.component.html',
 })
-export class CompanyComponent implements OnInit {
+export class AddCompanyComponent implements OnInit {
+
+  @Output() onSuccess = new EventEmitter<void>();
 
   public plans: Plan[] = [];
   public plansNames: any[] = [];
@@ -59,17 +60,18 @@ export class CompanyComponent implements OnInit {
     return this.validatorService.getFieldError(this.companyFormGroup, field);
   }
 
-  onSubmit() {
+  async onSubmit() {
     this.companyFormGroup.markAllAsTouched();
     if (this.companyFormGroup.valid) {
 
       const planValue = this.companyFormGroup.controls['plan_name'].value
       this.companyFormGroup.controls['plan_name'].setValue(planValue.label)
 
-      this.companyService.storeCompany(this.companyFormGroup.value)
-        .subscribe(res => {
-          console.log(res)
-        });
+      await lastValueFrom(this.companyService.storeCompany(this.companyFormGroup.value))
+
+      this.companyFormGroup.reset();
+      this.onSuccess.emit();
+      window.location.reload();
     }
   }
 

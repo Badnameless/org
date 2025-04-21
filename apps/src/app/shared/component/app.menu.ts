@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from './app.menuitem';
 import { AuthService } from '../../features/auth/services/auth.service';
-import { lastValueFrom } from 'rxjs';
 import { Token } from '../../features/auth/interfaces/token';
 
 @Component({
@@ -39,6 +38,10 @@ export class AppMenu {
         label: 'Home',
         items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
       },
+      {
+        label: 'E-NCF',
+        items: [{ label: 'Visualizar E-NCFs', icon: 'pi pi-chart-bar', routerLink: ['encf/show_encfs'] }]
+      }
     ];
 
     this.admin_model = [
@@ -46,19 +49,24 @@ export class AppMenu {
         label: 'Admin',
         items: [
           {
-            label: 'Registrar Compañias',
+            label: 'Compañias',
             icon: 'pi pi-building',
             routerLink: ['admin/companies']
           },
           {
-            label: 'Registrar Usuarios',
+            label: 'Usuarios',
             icon: 'pi pi-user',
             routerLink: ['admin/users']
           },
           {
-            label: 'Crear Planes',
+            label: 'Planes',
             icon: 'pi pi-address-book',
             routerLink: ['admin/plans']
+          },
+          {
+            label: 'E-NCFs',
+            icon: 'pi pi-receipt',
+            routerLink: ['admin/encfs']
           }
         ]
       }
