@@ -1,0 +1,8 @@
+<app-data-grid [isCrud]="true" [columns]="columns" [data]="companies" dataKey="tenant_id"
+  [deleteFunction]="companyService.deleteCompanies.bind(companyService)">
+
+  <ng-template #addForm let-close="close">
+    <app-add-company (onSuccess)="close()"></app-add-company>
+  </ng-template>
+
+</app-data-grid>

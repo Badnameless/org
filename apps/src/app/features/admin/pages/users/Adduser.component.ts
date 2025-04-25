@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { MessageModule } from 'primeng/message';
@@ -16,15 +16,15 @@ import { lastValueFrom, tap } from 'rxjs';
 import { EmailValidatorService } from './validators/email-validator.service';
 
 @Component({
-  selector: 'app-user',
+  selector: 'app-add-user',
   imports: [MultiSelectModule, MessageModule, CommonModule, InputTextModule, FluidModule, ButtonModule, SelectModule, ReactiveFormsModule, TextareaModule],
-  templateUrl: './user.component.html',
+  templateUrl: './Adduser.component.html',
 })
-export class UserComponent implements OnInit {
+export class AddUserComponent implements OnInit {
+
+  @Output() onSuccess = new EventEmitter<void>();
 
   public companies!: Company[];
-
-  public userLog: any;
 
   public userFormGroup!: FormGroup;
 
@@ -70,13 +70,11 @@ export class UserComponent implements OnInit {
 
       this.userFormGroup.controls['tenant_names'].setValue(tenant_names)
 
-       this.userService.storeUser(this.userFormGroup.value)
-        .pipe(
-          tap(res => {
-            this.userLog = res
-            this.userFormGroup.reset();
-          })
-        ).subscribe()
+      await lastValueFrom(this.userService.storeUser(this.userFormGroup.value))
+
+      this.userFormGroup.reset()
+      this.onSuccess.emit();
+      window.location.reload();
     }
   }
 
