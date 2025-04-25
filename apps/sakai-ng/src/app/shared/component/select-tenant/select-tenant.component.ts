@@ -19,7 +19,14 @@ export class SelectTenantComponent implements OnInit{
   public selectTenant = new FormControl();
 
   ngOnInit(): void {
-    const storedTenant = JSON.parse(localStorage.getItem('current_tenant')!);
+    let storedTenant: Tenant;
+
+    if(localStorage.getItem('default_tenant') && !localStorage.getItem('current_tenant')){
+      storedTenant = JSON.parse(localStorage.getItem('default_tenant')!);
+    }else{
+      storedTenant = JSON.parse(localStorage.getItem('current_tenant')!);
+    }
+
     if (storedTenant) {
       const matchingTenant = this.user.tenants.find(t => t.tenant_id === storedTenant.tenant_id);
       this.selectTenant.setValue(matchingTenant || null);

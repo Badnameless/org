@@ -32,7 +32,12 @@ export class AppTopbar implements OnInit{
   ngOnInit() {
     this.token = JSON.parse(localStorage.getItem('token')!)
     this.user = JSON.parse(localStorage.getItem('user')!)
-    this.current_tenant = JSON.parse(localStorage.getItem('current_tenant')!);
+
+    if(localStorage.getItem('default_tenant') && !localStorage.getItem('current_tenant')){
+      this.current_tenant = JSON.parse(localStorage.getItem('default_tenant')!);
+    }else{
+      this.current_tenant = JSON.parse(localStorage.getItem('current_tenant')!);
+    }
 
     this.items = [{
       label: this.user?.user_name,
