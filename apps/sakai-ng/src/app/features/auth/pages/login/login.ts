@@ -80,16 +80,26 @@ export class Login {
         const token: Token = await lastValueFrom(this.authService.login(this.email, this.passsword));
         this.user = await lastValueFrom(this.authService.storeAuthUser(token));
 
-        if (!localStorage.getItem('default_tenant')) {
-          localStorage.setItem('default_tenant', JSON.stringify(this.user.tenants[0]))
-          localStorage.setItem('current_tenant', JSON.stringify(this.user.tenants[0]))
-        }else{
-          defaultTenant = JSON.parse(localStorage.getItem('default_tenant')!);
-        }
+        const storedDefault = localStorage.getItem('default_tenant');
+        const hasTenants = this.user?.tenants?.length > 0;
 
-        if(this.user.user_id != defaultTenant.pivot.user_id){
-          localStorage.setItem('default_tenant', JSON.stringify(this.user.tenants[0]))
-          localStorage.setItem('current_tenant', JSON.stringify(this.user.tenants[0]))
+        if (!storedDefault && hasTenants) {
+          const firstTenant = this.user.tenants[0];
+          localStorage.setItem('default_tenant', JSON.stringify(firstTenant));
+          localStorage.setItem('current_tenant', JSON.stringify(firstTenant));
+        } else if (storedDefault) {
+          const defaultTenant = JSON.parse(storedDefault);
+
+          if (hasTenants && this.user.user_id !== defaultTenant?.pivot?.user_id) {
+            const firstTenant = this.user.tenants[0];
+            localStorage.setItem('default_tenant', JSON.stringify(firstTenant));
+            localStorage.setItem('current_tenant', JSON.stringify(firstTenant));
+          } else {
+            const currentTenant = localStorage.getItem('current_tenant');
+            if (!currentTenant) {
+              localStorage.setItem('current_tenant', storedDefault);
+            }
+          }
         }
 
         this.router.navigate(['/']);

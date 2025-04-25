@@ -1,9 +1,10 @@
+
 export interface User {
   user_id:           number;
   user_name:         string;
   user_email:        string;
   email_verified_at: null;
-  user_photoUrl?:     null;
+  user_photoUrl:     null;
   roles:             Roles;
   tenants:           Tenant[];
 }
@@ -31,6 +32,7 @@ export interface Pivot {
 export interface Transncf {
   transncf_id:           number;
   tenant_id:             number;
+  tipoNcf_id:            number;
   transncf_encf:         string;
   transncf_fechaemision: Date;
   transncf_rnccomprador: string;
@@ -42,4 +44,11 @@ export interface Transncf {
   transncf_status:       number;
   created_at:            Date;
   updated_at:            Date;
+  tipo_ncf:              TipoNcf;
+}
+
+export interface TipoNcf {
+  tipoNcf_id:   number;
+  tipoNcf_code: number;
+  tipoNcf_name: string;
 }
