@@ -1,8 +1,8 @@
 <div class="grid grid-cols-9 gap-8">
-  <app-stats-widget class="contents"/>
+  <app-stats-widget [data]="statData" class="contents"/>
 </div>
 <div class="mt-8">
   <div class="col-6 xl:col-span-12">
-    <app-revenue-stream-widget />
+    <app-revenue-stream-widget [title]="title" [chartData]="chartData" [chartOptions]="chartOptions"/>
   </div>
 </div>
