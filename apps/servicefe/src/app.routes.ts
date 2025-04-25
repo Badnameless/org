@@ -27,6 +27,10 @@ export const appRoutes: Routes = [
               canActivate: [AdminGuard]
             },
             {
+              path: 'encf',
+              loadChildren: () => import('./app/features/encf/encf.routes'),
+            },
+            {
               path: 'profile',
               component: ProfileComponent
             }
