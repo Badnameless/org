@@ -11,11 +11,11 @@ import { RippleModule } from 'primeng/ripple';
 import { AppFloatingConfigurator } from '../../../../shared/component/app.floatingconfigurator';
 import { ValidatorService } from '../../../../services/validator.service';
 import { AuthService } from '../../services/auth.service';
-import { catchError, lastValueFrom, of } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { Token } from '../../interfaces/token';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { User } from '../../interfaces/user';
+import { Tenant, User } from '../../interfaces/user';
 import { HttpErrorResponse } from '@angular/common/http';
 
 
@@ -74,11 +74,20 @@ export class Login {
         this.isLoading = true;
         this.email = this.loginFormGroup.get('email')?.value;
         this.passsword = this.loginFormGroup.get('password')?.value;
+        let defaultTenant!: Tenant;
+
 
         const token: Token = await lastValueFrom(this.authService.login(this.email, this.passsword));
         this.user = await lastValueFrom(this.authService.storeAuthUser(token));
 
         if (!localStorage.getItem('default_tenant')) {
+          localStorage.setItem('default_tenant', JSON.stringify(this.user.tenants[0]))
+          localStorage.setItem('current_tenant', JSON.stringify(this.user.tenants[0]))
+        }else{
+          defaultTenant = JSON.parse(localStorage.getItem('default_tenant')!);
+        }
+
+        if(this.user.user_id != defaultTenant.pivot.user_id){
           localStorage.setItem('default_tenant', JSON.stringify(this.user.tenants[0]))
           localStorage.setItem('current_tenant', JSON.stringify(this.user.tenants[0]))
         }

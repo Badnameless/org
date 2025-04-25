@@ -34,10 +34,6 @@ export class ProfileService {
     const formData = new FormData();
     formData.append('user_photo', img);
 
-    for (const pair of formData.entries()) {
-      console.log(pair[0]);
-    }
-
     return this.http.post(`${this.httpService.API_URL}/user/update_photo`, formData, { headers });
   }
 }

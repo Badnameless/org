@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { Token } from '../../features/auth/interfaces/token';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
     selector: 'app-user-configurator',
@@ -26,7 +27,12 @@ export class UserConfigurator {
     this.router.navigate(['profile']);
   }
 
-  logout(){
-    this.authService.logout(this.token.access_token).subscribe();
+  async logout(){
+    await lastValueFrom(this.authService.logout(this.token));
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('current_tenant')
+    this.router.navigate(['auth/login']);
+
   }
 }
