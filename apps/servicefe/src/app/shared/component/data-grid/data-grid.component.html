@@ -3,18 +3,10 @@
 <p-confirmDialog [style]="{width: '450px'}" header="Confirmation" icon="pi pi-exclamation-triangle">
 </p-confirmDialog>
 
-<p-dialog header="Agregar Registro" [(visible)]="showAddDialog" [modal]="true" [closable]="true"
-  [style]="{ width: '30vw' }" [dismissableMask]="true" *ngIf="addFormTemplate" (onHide)="closeDialog()">
-
-  <ng-container *ngIf="addFormTemplate">
-    <ng-container *ngTemplateOutlet="addFormTemplate; context: { close: closeDialog.bind(this) }"></ng-container>
-  </ng-container>
-</p-dialog>
-
 <div class="card">
   <p-table *ngIf="data" #dt1 [value]="data" [(selection)]="selectedRows" [dataKey]="dataKey" [rows]="10"
     [loading]="loading" [rowHover]="true" [showGridlines]="true" [paginator]="true" [columns]="columns"
-    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [globalFilterFields]="columnNames" responsiveLayout="scroll"
+    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [globalFilterFields]="columnNames" responsiveLayout="scroll" [sortField]="fieldToSort"
     class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]" selectionMode="multiple">
     <ng-template #caption>
       <div class="flex justify-between items-center flex-column sm:flex-row">
@@ -25,7 +17,7 @@
             iconPos="right" label="Exportar" />
         </div>
         <div class="flex gap-3">
-          <p-button *ngIf="isCrud" severity="success" (onClick)="showAddDialog = true">Agregar</p-button>
+          <p-button *ngIf="isCrud" severity="success" (onClick)="showAddForm()">Agregar</p-button>
           <p-button *ngIf="isCrud" severity="danger" (onClick)="confirmDelete()">Eliminar</p-button>
           <p-iconfield iconPosition="left" class="ml-auto">
             <p-inputicon>
@@ -56,7 +48,7 @@
         <td *ngFor="let col of columns" [ngClass]="{'hidden': col.type === 'hidden'}">
 
           <span *ngIf="col.type === 'numeric'">RD{{ rowData[col.field] | currency: 'USD' : 'symbol' }}</span>
-          <span *ngIf="col.type === 'date'">{{ rowData[col.field] | date: 'MM/dd/yyyy' }}</span>
+          <span *ngIf="col.type === 'date'">{{ rowData[col.field] | date: 'dd/MM/yyyy' }}</span>
 
           <span *ngIf="col.type === 'text'
                       && col.field != 'transncf_encf'
@@ -68,13 +60,15 @@
           <span class="flex justify-center" *ngIf="col.type === 'text' && col.field === 'transncf_status'">
             <p-tag [severity]="getSeverity(rowData.transncf_status)">{{ getStatus(rowData.transncf_status) }}</p-tag>
           </span>
-
-
         </td>
 
         <td *ngIf="isCrud" class="flex justify-center">
-          <p-button text="true" size="small" rounded="true" severity="danger" icon="pi pi-trash"
+          <div class="flex gap-3">
+            <p-button size="small" rounded="true" severity="danger" icon="pi pi-trash"
             (onClick)="confirmDelete(rowData[dataKey])"></p-button>
+            <p-button size="small" rounded="true" severity="info" icon="pi pi-pencil"
+            (onClick)="showAddForm(rowData)"></p-button>
+          </div>
         </td>
       </tr>
     </ng-template>

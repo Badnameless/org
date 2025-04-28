@@ -1,5 +1,5 @@
-<app-data-grid [columns]="columns" [data]="plans" [isCrud]="true"
-  [deleteFunction]="planService.deletePlans.bind(planService)" dataKey="plan_id">
+<app-data-grid [showAddForm]="show.bind(this)" [columns]="columns" [data]="plans" [isCrud]="true"
+  [deleteFunction]="planService.deletePlans.bind(planService)" dataKey="plan_id" fieldToSort="plan_id">
 
   <ng-template #addForm let-close="close">
     <app-add-plan (onSuccess)="close()"></app-add-plan>

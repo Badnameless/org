@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataGridComponent } from '../../../../shared/component/data-grid/data-grid.component';
 import { Column } from '../../../../shared/component/data-grid/interfaces/column';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, map } from 'rxjs';
 import { EncfService } from '../../services/encf-service.service';
 import { Ncf } from '../../interfaces/encf';
 
@@ -19,8 +19,13 @@ export class ShowEncfsComponent implements OnInit {
 
   async ngOnInit() {
 
-    this.Encfs = await lastValueFrom(this.encfService.getEncfs());
-    console.log(this.Encfs)
+    this.Encfs = await lastValueFrom(this.encfService.getEncfs()
+    .pipe(
+      map(encfs => encfs.map(encfs => ({
+        ...encfs,
+        transncf_fechaemision: new Date(encfs.transncf_fechaemision)
+      })))
+    ))
 
     this.columns = [
       {

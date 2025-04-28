@@ -5,6 +5,7 @@ import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Token } from '../../../../auth/interfaces/token';
 import { User } from '../../../../auth/interfaces/user';
+import { EmailTakenResponse } from '../interfaces/email-taken-response';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,14 @@ export class UserService {
 
   storeUser(form: FormGroup): Observable<FormGroup> {
     return this.http.post<FormGroup>(`${this.httpService.API_URL}/create/user`, form);
+  }
+
+  updateUser(form: FormGroup): Observable<EmailTakenResponse> {
+    const token: Token = JSON.parse(localStorage.getItem('token')!);
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
+
+    return this.http.put<EmailTakenResponse>(`${this.httpService.API_URL}/update/user`, form, { headers });
   }
 
   changePassword(form: FormGroup): Observable<HttpResponse<FormGroup>> {

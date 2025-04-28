@@ -1,4 +1,5 @@
-<app-data-grid [columns]="columns" [data]="users" [isCrud]="true" dataKey="user_id" [deleteFunction]="userService.deleteUsers.bind(userService)">
+<app-data-grid [showAddForm]="show.bind(this)" [columns]="columns" [data]="users" [isCrud]="true" dataKey="user_id"
+  [deleteFunction]="userService.deleteUsers.bind(userService)">
 
   <ng-template #addForm let-close="close">
     <app-add-user (onSuccess)="close()"></app-add-user>

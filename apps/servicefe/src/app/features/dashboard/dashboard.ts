@@ -102,8 +102,6 @@ export class Dashboard implements OnInit {
     let encfsRechazados: number = 0;
     let encfsTotales: number = 0;
 
-    console.log(this.encfs)
-
     this.encfs.forEach(encf => {
       const date = new Date(encf.transncf_fechaemision)
       if (date.getFullYear() === new Date().getFullYear()) {
