@@ -1,4 +1,4 @@
-<app-data-grid [isCrud]="true" [columns]="columns" [data]="companies" dataKey="tenant_id"
+<app-data-grid [showAddForm]="show.bind(this)" [isCrud]="true" [columns]="columns" [data]="companies" dataKey="tenant_id" fieldToSort="tenant_id"
   [deleteFunction]="companyService.deleteCompanies.bind(companyService)">
 
   <ng-template #addForm let-close="close">

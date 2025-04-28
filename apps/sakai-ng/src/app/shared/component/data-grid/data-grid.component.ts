@@ -25,6 +25,7 @@ import { MessageModule } from 'primeng/message';
 import { lastValueFrom, Observable } from 'rxjs';
 import { PdfExportService } from '../../service/pdf-export.service';
 import { DialogModule } from 'primeng/dialog';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -65,13 +66,14 @@ interface expandedRows {
             font-weight: bold;
         }
     `,
-  providers: [ConfirmationService, MessageService, CustomerService, ProductService]
+  providers: [ConfirmationService, MessageService, CustomerService, ProductService, DialogService]
 })
 export class DataGridComponent implements OnInit, OnChanges {
 
   constructor(public confirm: ConfirmationService,
     private msg: MessageService,
-    private pdfExport: PdfExportService) {
+    private pdfExport: PdfExportService,
+    private dialogService: DialogService ) {
   }
 
   exportItems!: MenuItem[]
@@ -96,15 +98,23 @@ export class DataGridComponent implements OnInit, OnChanges {
 
   @ContentChild('addForm') addFormTemplate!: TemplateRef<any>;
 
+  @Input()
+  addFormRef: DynamicDialogRef | undefined;
+
+  @Input()
+  fieldToSort!: string;
 
   @Input()
   deleteFunction!: (id: number[]) => Observable<any>
+
+  @Input()
+  showAddForm!: (data?: any) => void
 
   columnNames: string[] = [];
 
   selectedRows!: any[];
 
-  loading: boolean = true;
+  loading: boolean = false;
   showAddDialog: boolean = false;
 
 
@@ -271,7 +281,7 @@ export class DataGridComponent implements OnInit, OnChanges {
       })
     }
 
-    await lastValueFrom(this.deleteFunction(ids))
+    console.log(await lastValueFrom(this.deleteFunction(ids)))
     window.location.reload();
   }
 

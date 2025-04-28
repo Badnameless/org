@@ -1,4 +1,4 @@
-  <p-fluid>
+  <p-fluid *ngIf="!loading">
     <form [formGroup]="userFormGroup" (ngSubmit)="onSubmit()">
       <div class="card flex flex-col gap-4">
 
@@ -24,18 +24,24 @@
 
         <div class="flex flex-col gap-2">
           <div class="flex items-center gap-2">
-            <label for="tenant_names">Compañias asociadas</label>
-            <span *ngIf="isValidField('tenant_names')">
-              <p-message severity="error" variant="simple" size="small">({{ getFieldError('tenant_names')
+            <label for="tenants">Compañias asociadas</label>
+            <span *ngIf="isValidField('tenants')">
+              <p-message severity="error" variant="simple" size="small">({{ getFieldError('tenants')
                 }})</p-message>
             </span>
           </div>
-          <p-multiselect [options]="companies" optionLabel="tenant_name" placeholder="Seleccione las compañias"
-            [maxSelectedLabels]="3" formControlName="tenant_names" />
+          <p-multiselect class="z-50" [options]="companies" optionLabel="tenant_name" optionValue="tenant_id" placeholder="Seleccione las compañias"
+            [maxSelectedLabels]="3" formControlName="tenants" appendTo="body" />
         </div>
 
-        <p-button type="submit">Registrar Usuario</p-button>
+        <p-button type="submit">{{ buttonText }}</p-button>
       </div>
     </form>
   </p-fluid>
+
+  <ng-template #loader *ngIf="loading">
+    <div class="flex">
+      <img src="loaders/tail-spin.png">
+    </div>
+  </ng-template>
 
