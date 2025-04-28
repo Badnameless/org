@@ -21,6 +21,14 @@ export class PlanService {
     return this.http.post<FormGroup>(`${this.httpService.API_URL}/create/plan`, form);
   }
 
+  updatePlan(form: FormGroup): Observable<FormGroup> {
+    const token: Token = JSON.parse(localStorage.getItem('token')!);
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
+
+    return this.http.put<FormGroup>(`${this.httpService.API_URL}/update/plan`, form, { headers });
+  }
+
   deletePlans(plan_ids: number[]) {
     const token: Token = JSON.parse(localStorage.getItem('token')!);
 

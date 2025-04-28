@@ -5,6 +5,7 @@ import { FormGroup } from '@angular/forms';
 import { lastValueFrom, Observable } from 'rxjs';
 import { Company } from '../interfaces/company';
 import { Token } from '../../../../auth/interfaces/token';
+import { RnccedTakenResponse } from '../interfaces/rncced-taken-response';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,14 @@ export class CompanyService {
 
   storeCompany(form: FormGroup): Observable<FormGroup> {
     return this.http.post<FormGroup>(`${this.httpService.API_URL}/create/company`, form)
+  }
+
+  updateCompany(form: FormGroup): Observable<RnccedTakenResponse> {
+    const token: Token = JSON.parse(localStorage.getItem('token')!);
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
+
+    return this.http.put<RnccedTakenResponse>(`${this.httpService.API_URL}/update/company`, form,{headers});
   }
 
   deleteCompanies(tenant_ids: number[]) {
