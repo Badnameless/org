@@ -1,4 +1,4 @@
-<p-fluid>
+<p-fluid *ngIf="!loading">
   <form [formGroup]="companyFormGroup" (ngSubmit)="onSubmit()">
     <div class="card flex flex-col gap-4">
       <div class="flex flex-col gap-2">
@@ -19,22 +19,27 @@
             <p-message severity="error" variant="simple" size="small">({{ getFieldError('tenant_cedrnc') }})</p-message>
           </span>
         </div>
-        <input pInputText id="tenant_cedrnc" name="tenant_cedrnc" type="text" formControlName="tenant_cedrnc" />
+        <input pInputText id="tenant_cedrnc" name="tenant_cedrnc" type="text" formControlName="tenant_cedrnc" placeholder="XXXXXXXXXXX"/>
       </div>
 
       <div class="flex flex-col gap-2">
         <div class="flex items-center gap-2">
-          <label for="plan_name">Plan</label>
-          <span *ngIf="isValidField('plan_name')">
-            <p-message severity="error" variant="simple" size="small">({{ getFieldError('plan_name') }})</p-message>
+          <label for="plan">Plan</label>
+          <span *ngIf="isValidField('plan')">
+            <p-message severity="error" variant="simple" size="small">({{ getFieldError('plan') }})</p-message>
           </span>
         </div>
-        <p-select [showClear]="true" [options]="plansNames" formControlName="plan_name" optionLabel="label"
+        <p-select [showClear]="true" [options]="plans" formControlName="plan" optionLabel="plan_name" optionValue="plan_id"
           placeholder="Seleccione un plan">
         </p-select>
       </div>
 
-      <p-button type="submit">Registrar</p-button>
+      <p-button type="submit">{{ buttonText }}</p-button>
     </div>
   </form>
 </p-fluid>
+<ng-template #loader *ngIf="loading">
+  <div class="flex">
+    <img src="loaders/tail-spin.png">
+  </div>
+</ng-template>

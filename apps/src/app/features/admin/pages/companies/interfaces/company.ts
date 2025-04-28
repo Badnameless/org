@@ -5,4 +5,5 @@ export interface Company {
   created_at:    Date;
   updated_at:    Date;
   plan_id:       number;
+  plan_name:     string;
 }

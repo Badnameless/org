@@ -4,33 +4,53 @@ import { Column } from '../../../../../../shared/component/data-grid/interfaces/
 import { lastValueFrom } from 'rxjs';
 import { PlanService } from '../../services/plan.service';
 import { Plan } from '../../interfaces/plan';
-import { AddPlanComponent } from '../../Addplan.component';
+import { UpdateAddPlanComponent } from '../../UpdateAddplan.component';
+import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
+
 
 @Component({
   selector: 'app-show-plans',
-  imports: [DataGridComponent, AddPlanComponent],
+  imports: [DataGridComponent, UpdateAddPlanComponent],
   templateUrl: './show-plans.component.html',
-  styles: ``
+  styles: ``,
+  providers: [DialogService]
 })
 export class ShowPlansComponent {
-  constructor(protected planService: PlanService) { }
+  constructor(protected planService: PlanService, public dialogService:DialogService) {}
 
   columns: Column[] = [];
   plans!: Plan[];
+  addFormref!: DynamicDialogRef;
+
 
   async ngOnInit() {
     await this.loadPlans();
   }
 
+  show(plan?: Plan){
+    if (plan) {
+      const { plan_name, planDetail_from, planDetail_to, planDetail_tolerance, planDetail_priceXdoc, plan_id } = plan
+      const filteredPlan = { plan_name, planDetail_from, planDetail_to, planDetail_tolerance, planDetail_priceXdoc, plan_id }
+
+      this.addFormref = this.dialogService.open(UpdateAddPlanComponent,
+        {
+          header: 'Modificar un plan',
+          closable: true,
+          width: '20vw',
+          inputValues: filteredPlan
+        })
+    } else {
+      this.addFormref = this.dialogService.open(UpdateAddPlanComponent,
+        {
+          header: 'Agregar un plan',
+          closable: true,
+          width: '20vw',
+        })
+    }
+  }
+
   async loadPlans() {
     this.plans = await lastValueFrom(this.planService.getPlans());
-    this.plans = this.plans.map(plan => (
-      {
-        ...plan,
-        ...plan.plan,
-      }))
-
-    console.log(this.plans)
 
     this.columns = [
       {
@@ -42,6 +62,26 @@ export class ShowPlansComponent {
         name: 'Plan',
         field: 'plan_name',
         type: 'text'
+      },
+      {
+        name: 'Desde',
+        field: 'planDetail_from',
+        type: 'numeric'
+      },
+      {
+        name: 'Hasta',
+        field: 'planDetail_to',
+        type: 'numeric'
+      },
+      {
+        name: 'P/ Documento',
+        field: 'planDetail_priceXdoc',
+        type: 'numeric'
+      },
+      {
+        name: 'Tolerancia',
+        field: 'planDetail_tolerance',
+        type: 'numeric'
       },
     ];
   }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { MessageModule } from 'primeng/message';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FluidModule } from 'primeng/fluid';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -14,14 +14,45 @@ import { lastValueFrom } from 'rxjs';
 @Component({
   selector: 'app-add-plan',
   imports: [MessageModule, CommonModule, ReactiveFormsModule, InputTextModule, FluidModule, ButtonModule, SelectModule, TextareaModule],
-  templateUrl: './Addplan.component.html',
+  templateUrl: './UpdateAddplan.component.html',
   styles: ``
 })
-export class AddPlanComponent {
+export class UpdateAddPlanComponent implements OnInit{
 
   @Output() onSuccess = new EventEmitter<void>();
 
   public planFormGroup!: FormGroup;
+
+  @Input()
+  public plan_name!: string;
+
+  @Input()
+  public planDetail_from!: string;
+
+  @Input()
+  public planDetail_to!: string;
+
+  @Input()
+  public planDetail_tolerance!: string;
+
+  @Input()
+  public planDetail_priceXdoc!: string;
+
+  @Input()
+  public plan_id!: string;
+
+  public buttonText: string = '';
+
+  ngOnInit(): void {
+    this.planFormGroup.controls['plan_name'].setValue(this.plan_name);
+    this.planFormGroup.controls['planDetail_from'].setValue(this.planDetail_from);
+    this.planFormGroup.controls['planDetail_to'].setValue(this.planDetail_to);
+    this.planFormGroup.controls['planDetail_tolerance'].setValue(this.planDetail_tolerance);
+    this.planFormGroup.controls['planDetail_priceXdoc'].setValue(this.planDetail_priceXdoc);
+    this.planFormGroup.controls['plan_id'].setValue(this.plan_id);
+
+    this.buttonText = this.plan_id ? 'Modificar' : 'Agregar';
+  }
 
   constructor(private fb: FormBuilder, private validatorService: ValidatorService, private planService: PlanService) {
     this.planFormGroup = this.fb.group({
@@ -30,6 +61,7 @@ export class AddPlanComponent {
       planDetail_to: ['', [Validators.required, Validators.pattern(validatorService.floatPattern)]],
       planDetail_tolerance: ['', [Validators.required, Validators.pattern(validatorService.floatPattern)]],
       planDetail_priceXdoc: ['', [Validators.required, Validators.pattern(validatorService.floatPattern)]],
+      plan_id: [''],
     });
   }
 
@@ -45,10 +77,14 @@ export class AddPlanComponent {
     this.planFormGroup.markAllAsTouched();
 
     if (this.planFormGroup.valid) {
-      await lastValueFrom(this.planService.storePlan(this.planFormGroup.value));
+
+      if(this.plan_id){
+        console.log(await lastValueFrom(this.planService.updatePlan(this.planFormGroup.value)));
+      }else{
+        await lastValueFrom(this.planService.storePlan(this.planFormGroup.value));
+      }
 
       this.planFormGroup.reset();
-      this.onSuccess.emit();
       window.location.reload();
     }
   }
