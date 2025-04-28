@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { MessageModule } from 'primeng/message';
@@ -12,15 +12,16 @@ import { ValidatorService } from '../../../../services/validator.service';
 import { UserService } from './services/user.service';
 import { CompanyService } from '../companies/services/company.service';
 import { Company } from '../companies/interfaces/company';
-import { lastValueFrom, tap } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { EmailValidatorService } from './validators/email-validator.service';
+import { EmailTakenResponse } from './interfaces/email-taken-response';
 
 @Component({
   selector: 'app-add-user',
   imports: [MultiSelectModule, MessageModule, CommonModule, InputTextModule, FluidModule, ButtonModule, SelectModule, ReactiveFormsModule, TextareaModule],
-  templateUrl: './Adduser.component.html',
+  templateUrl: './UpdateAdduser.component.html',
 })
-export class AddUserComponent implements OnInit {
+export class UpdateAddUserComponent implements OnInit {
 
   @Output() onSuccess = new EventEmitter<void>();
 
@@ -28,25 +29,54 @@ export class AddUserComponent implements OnInit {
 
   public userFormGroup!: FormGroup;
 
+  @Input()
+  public user_name!: string;
+
+  @Input()
+  public user_email!: string;
+
+  @Input()
+  public user_id!: string;
+
+  @Input()
+  public tenants: number[] = [];
+
+  public loading: boolean = true;
+
+  public buttonText: string = '';
+
   constructor(private fb: FormBuilder,
     private validatorService: ValidatorService,
     private userService: UserService,
     private companyService: CompanyService,
-    private emailValidator:EmailValidatorService
+    private emailValidator: EmailValidatorService
   ) {
     this.userFormGroup = this.fb.group({
       user_name: ['', [Validators.required, Validators.pattern(validatorService.FullnamePattern)]],
-      user_email: ['', [Validators.required, Validators.pattern(validatorService.emailPattern)], [this.emailValidator]],
-      tenant_names: ['', [Validators.required]]
+      user_email: ['', [Validators.required, Validators.pattern(validatorService.emailPattern)]],
+      tenants: [[], [Validators.required]],
+      user_id: ['']
     })
   }
 
   async ngOnInit() {
+    this.userFormGroup.controls['user_name'].setValue(this.user_name)
+    this.userFormGroup.controls['user_email'].setValue(this.user_email)
+    this.userFormGroup.controls['user_id'].setValue(this.user_id)
+
+    if (!this.user_name) {
+      this.userFormGroup.controls['user_email'].setAsyncValidators(this.emailValidator.validate.bind(this.emailValidator));
+    }
+
     try {
       this.companies = await lastValueFrom(this.companyService.getCompanies());
+      this.loading = false;
+      this.userFormGroup.controls['tenants'].setValue(this.tenants);
     } catch {
       console.log('Error al cargar data de las compañias');
     }
+
+    this.buttonText = this.user_id ? 'Modificar' : 'Registrar'
   }
 
   isValidField(field: string): boolean | null {
@@ -61,20 +91,23 @@ export class AddUserComponent implements OnInit {
     this.userFormGroup.markAllAsTouched();
     if (this.userFormGroup.valid) {
 
-      const tenant_name: Company[] = this.userFormGroup.controls['tenant_names'].value
-      const tenant_names: string[] = [];
+      if (this.user_name) {
+        let response: EmailTakenResponse;
+        response = await lastValueFrom(this.userService.updateUser(this.userFormGroup.value))
 
-      tenant_name.forEach(tenant_name => {
-        tenant_names.push(tenant_name.tenant_name);
-      })
+        if (response.emailIsTaken) {
+          this.userFormGroup.controls['tenants'].setErrors(await lastValueFrom(this.emailValidator.validate(this.userFormGroup.controls['tenants'])))
+        } else {
+          this.onSuccess.emit();
+        }
 
-      this.userFormGroup.controls['tenant_names'].setValue(tenant_names)
+      }else{
+        await lastValueFrom(this.userService.storeUser(this.userFormGroup.value))
+      }
 
-      await lastValueFrom(this.userService.storeUser(this.userFormGroup.value))
-
-      this.userFormGroup.reset()
       this.onSuccess.emit();
       window.location.reload();
+      // console.log(this.userFormGroup.value)
     }
   }
 
