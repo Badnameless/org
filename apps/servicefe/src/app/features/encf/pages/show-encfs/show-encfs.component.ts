@@ -19,13 +19,7 @@ export class ShowEncfsComponent implements OnInit {
 
   async ngOnInit() {
 
-    this.Encfs = await lastValueFrom(this.encfService.getEncfs()
-    .pipe(
-      map(encfs => encfs.map(encfs => ({
-        ...encfs,
-        transncf_fechaemision: new Date(encfs.transncf_fechaemision)
-      })))
-    ))
+    this.Encfs = await this.encfService.getEncfs()
 
     this.columns = [
       {

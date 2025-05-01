@@ -50,7 +50,7 @@ export class ShowPlansComponent {
   }
 
   async loadPlans() {
-    this.plans = await lastValueFrom(this.planService.getPlans());
+    this.plans = await this.planService.getPlans();
 
     this.columns = [
       {

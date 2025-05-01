@@ -11,7 +11,7 @@ import { RippleModule } from 'primeng/ripple';
 import { AppFloatingConfigurator } from '../../../../shared/component/app.floatingconfigurator';
 import { ValidatorService } from '../../../../services/validator.service';
 import { AuthService } from '../../services/auth.service';
-import { lastValueFrom, of } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { Token } from '../../interfaces/token';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -102,7 +102,7 @@ export class Login {
           }
         }
 
-        this.router.navigate(['/']);
+        this.router.navigate(['loading']);
 
       } catch (error) {
         if (error instanceof HttpErrorResponse) {
