@@ -39,7 +39,7 @@ export class UpdateAddPlanComponent implements OnInit{
   public planDetail_priceXdoc!: string;
 
   @Input()
-  public plan_id!: string;
+  public plan_id!: number;
 
   public buttonText: string = '';
 
@@ -79,7 +79,7 @@ export class UpdateAddPlanComponent implements OnInit{
     if (this.planFormGroup.valid) {
 
       if(this.plan_id){
-        console.log(await lastValueFrom(this.planService.updatePlan(this.planFormGroup.value)));
+        console.log(await lastValueFrom(this.planService.updatePlan(this.planFormGroup.value, this.plan_id)));
       }else{
         await lastValueFrom(this.planService.storePlan(this.planFormGroup.value));
       }

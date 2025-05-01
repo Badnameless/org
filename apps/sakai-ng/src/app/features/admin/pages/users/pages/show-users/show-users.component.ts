@@ -48,7 +48,7 @@ export class ShowUsersComponent {
   }
 
   async loadUsers() {
-    this.users = await lastValueFrom(this.userService.getUsers());
+    this.users = await this.userService.getUsers();
 
     this.columns = [
       {

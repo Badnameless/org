@@ -15,6 +15,7 @@ import { CompanyService } from './services/company.service';
 import { RnccedValidatorService } from './validators/rncced-validator.service';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { RnccedTakenResponse } from './interfaces/rncced-taken-response';
+import { Company } from './interfaces/company';
 
 @Component({
   selector: 'app-add-company',
@@ -39,7 +40,7 @@ export class UpdateAddCompanyComponent implements OnInit {
   public plan_name!: string;
 
   @Input()
-  public tenant_id!: string;
+  public tenant_id!: number;
 
   @Input()
   public plan_id!: number;
@@ -74,7 +75,7 @@ export class UpdateAddCompanyComponent implements OnInit {
     }
 
     try {
-      this.plans = await lastValueFrom(this.planService.getPlans());
+      this.plans = await this.planService.getPlans();
       this.loading = false;
 
       const selectedPlan = this.plans.find(p => p.plan_id === this.plan_id);
@@ -101,10 +102,10 @@ export class UpdateAddCompanyComponent implements OnInit {
     if (this.companyFormGroup.valid) {
       if (this.tenant_name) {
 
-        let response: RnccedTakenResponse;
-        response = await lastValueFrom(this.companyService.updateCompany(this.companyFormGroup.value))
+        let response: RnccedTakenResponse | Company;
+        response = await lastValueFrom(this.companyService.updateCompany(this.companyFormGroup.value, this.tenant_id))
 
-        if (response.rnccedIsTaken) {
+        if ('rnccedIsTaken' in response) {
           this.companyFormGroup.controls['tenant_cedrnc'].setErrors(await lastValueFrom(this.rnccedValidator.validate(this.companyFormGroup.controls['tenant_cedrnc'])))
         } else {
           this.onSuccess.emit();

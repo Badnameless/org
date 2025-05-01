@@ -49,7 +49,7 @@ export class ShowCompaniesComponent {
   }
 
   async loadCompanies() {
-    this.companies = await lastValueFrom(this.companyService.getCompanies());
+    this.companies = await this.companyService.getCompanies();
 
     this.columns = [
       {

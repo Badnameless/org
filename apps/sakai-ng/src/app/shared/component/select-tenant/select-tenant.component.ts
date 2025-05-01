@@ -4,6 +4,9 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { Tenant, User } from '../../../features/auth/interfaces/user';
 import { FormControl } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { EncfService } from '../../../features/encf/services/encf-service.service';
+import { lastValueFrom } from 'rxjs';
+import { CacheService } from '../../../services/cache.service';
 
 @Component({
   selector: 'app-select-tenant',
@@ -13,10 +16,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class SelectTenantComponent implements OnInit{
 
+  public cacheKey: string = 'api/encfs';
   public user: User = JSON.parse(localStorage.getItem('user')!);
   public current_tenant!: Tenant;
 
   public selectTenant = new FormControl();
+
+  constructor(private encfService: EncfService,
+              private cache: CacheService
+  ){}
 
   ngOnInit(): void {
     let storedTenant: Tenant;
@@ -33,11 +41,12 @@ export class SelectTenantComponent implements OnInit{
     }
   }
 
-  onSelectTenant(){
+  async onSelectTenant(){
     const selectedTenant = this.selectTenant.value;
-    localStorage.setItem('current_tenant', JSON.stringify(selectedTenant))
-    console.log(JSON.parse(localStorage.getItem('current_tenant')!))
+    localStorage.setItem('current_tenant', JSON.stringify(selectedTenant));
 
+    await this.cache.deleteCache(this.cacheKey);
+    await this.encfService.getEncfs();
     window.location.reload();
   }
 }
