@@ -14,6 +14,7 @@ import { Ncf } from '../../interfaces/encf';
 export class ShowEncfsComponent implements OnInit {
   columns: Column[] = [];
   Encfs!: Ncf[];
+  filterFields: string[] = ['transncf_encf', 'transncf_status', 'tenant_name', 'tenant_cedrnc', 'transncf_rnccomprador']
 
   constructor(protected encfService: EncfService) { }
 
