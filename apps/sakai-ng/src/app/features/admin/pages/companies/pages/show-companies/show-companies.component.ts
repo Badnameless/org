@@ -19,8 +19,13 @@ export class ShowCompaniesComponent {
   constructor(protected companyService: CompanyService, private dialogService: DialogService) { }
   columns: Column[] = [];
   companies!: Company[];
+  filterFields: string[] = ['tenant_name', 'tenant_cedrnc'];
 
   addFormref!: DynamicDialogRef;
+
+  async ngOnInit() {
+    await this.loadCompanies();
+  }
 
   show(company?: Company){
     if(company){
@@ -42,10 +47,6 @@ export class ShowCompaniesComponent {
           width: '20vw',
         })
     }
-  }
-
-  async ngOnInit() {
-    await this.loadCompanies();
   }
 
   async loadCompanies() {

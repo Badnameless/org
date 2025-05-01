@@ -19,6 +19,7 @@ export class ShowUsersComponent {
   columns: Column[] = [];
   users!: User[];
   addFormref!: DynamicDialogRef;
+  filterFields: string[] = ['user_name', 'user_email'];
 
   async ngOnInit() {
     await this.loadUsers();

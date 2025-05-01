@@ -6,7 +6,7 @@
 <div class="card">
   <p-table *ngIf="data" #dt1 [value]="data" [(selection)]="selectedRows" [dataKey]="dataKey" [rows]="10"
     [loading]="loading" [rowHover]="true" [showGridlines]="true" [paginator]="true" [columns]="columns"
-    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [globalFilterFields]="columnNames" responsiveLayout="scroll" [sortField]="fieldToSort" [sortOrder]="-1"
+    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [globalFilterFields]="filterFields" responsiveLayout="scroll" [sortField]="fieldToSort" [sortOrder]="-1"
     class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]" selectionMode="multiple">
     <ng-template #caption>
       <div class="flex justify-between items-center flex-column sm:flex-row">

@@ -110,6 +110,9 @@ export class DataGridComponent implements OnInit {
   @Input()
   showAddForm!: (data?: any) => void
 
+  @Input()
+  filterFields: string[] = [];
+
   columnNames: string[] = [];
 
   selectedRows!: any[];
