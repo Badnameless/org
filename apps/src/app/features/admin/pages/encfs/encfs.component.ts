@@ -20,7 +20,7 @@ export class EncfsComponent implements OnInit {
 
   async ngOnInit() {
 
-    this.encfs = await lastValueFrom(this.encfService.getAllEncfs());
+    this.encfs = await this.encfService.getAllEncfs();
 
     this.columns = [
       {
