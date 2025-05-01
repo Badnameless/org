@@ -21,7 +21,7 @@ export class ShowPlansComponent {
   columns: Column[] = [];
   plans!: Plan[];
   addFormref!: DynamicDialogRef;
-
+  filterFields: string[] = ['plan_name'];
 
   async ngOnInit() {
     await this.loadPlans();
