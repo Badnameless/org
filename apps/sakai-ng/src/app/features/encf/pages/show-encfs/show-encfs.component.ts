@@ -14,18 +14,13 @@ import { Ncf } from '../../interfaces/encf';
 export class ShowEncfsComponent implements OnInit {
   columns: Column[] = [];
   Encfs!: Ncf[];
+  filterFields: string[] = ['transncf_encf', 'transncf_status', 'tenant_name', 'tenant_cedrnc', 'transncf_rnccomprador']
 
   constructor(protected encfService: EncfService) { }
 
   async ngOnInit() {
 
-    this.Encfs = await lastValueFrom(this.encfService.getEncfs()
-    .pipe(
-      map(encfs => encfs.map(encfs => ({
-        ...encfs,
-        transncf_fechaemision: new Date(encfs.transncf_fechaemision)
-      })))
-    ))
+    this.Encfs = await this.encfService.getEncfs()
 
     this.columns = [
       {

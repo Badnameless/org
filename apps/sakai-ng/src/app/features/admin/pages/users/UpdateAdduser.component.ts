@@ -15,6 +15,7 @@ import { Company } from '../companies/interfaces/company';
 import { lastValueFrom } from 'rxjs';
 import { EmailValidatorService } from './validators/email-validator.service';
 import { EmailTakenResponse } from './interfaces/email-taken-response';
+import { User } from '../../../auth/interfaces/user';
 
 @Component({
   selector: 'app-add-user',
@@ -36,7 +37,7 @@ export class UpdateAddUserComponent implements OnInit {
   public user_email!: string;
 
   @Input()
-  public user_id!: string;
+  public user_id!: number;
 
   @Input()
   public tenants: number[] = [];
@@ -69,7 +70,7 @@ export class UpdateAddUserComponent implements OnInit {
     }
 
     try {
-      this.companies = await lastValueFrom(this.companyService.getCompanies());
+      this.companies = await this.companyService.getCompanies();
       this.loading = false;
       this.userFormGroup.controls['tenants'].setValue(this.tenants);
     } catch {
@@ -92,22 +93,21 @@ export class UpdateAddUserComponent implements OnInit {
     if (this.userFormGroup.valid) {
 
       if (this.user_name) {
-        let response: EmailTakenResponse;
-        response = await lastValueFrom(this.userService.updateUser(this.userFormGroup.value))
+        let response: EmailTakenResponse | User;
+        response = await lastValueFrom(this.userService.updateUser(this.userFormGroup.value, this.user_id))
 
-        if (response.emailIsTaken) {
+        if ('emailIsTaken' in  response) {
           this.userFormGroup.controls['tenants'].setErrors(await lastValueFrom(this.emailValidator.validate(this.userFormGroup.controls['tenants'])))
         } else {
           this.onSuccess.emit();
+          window.location.reload();
         }
 
       }else{
         await lastValueFrom(this.userService.storeUser(this.userFormGroup.value))
+        window.location.reload();
       }
 
-      this.onSuccess.emit();
-      window.location.reload();
-      // console.log(this.userFormGroup.value)
     }
   }
 
