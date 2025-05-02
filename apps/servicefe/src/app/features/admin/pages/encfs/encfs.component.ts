@@ -17,10 +17,11 @@ export class EncfsComponent implements OnInit {
 
   columns!: Column[];
   encfs!: Ncf[];
+  filterFields: string[] = ['transncf_encf', 'transncf_status', 'tenant_name', 'tenant_cedrnc', 'transncf_rnccomprador']
 
   async ngOnInit() {
 
-    this.encfs = await lastValueFrom(this.encfService.getAllEncfs());
+    this.encfs = await this.encfService.getAllEncfs();
 
     this.columns = [
       {

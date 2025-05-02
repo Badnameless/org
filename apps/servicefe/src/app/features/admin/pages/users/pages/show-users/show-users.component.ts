@@ -19,6 +19,7 @@ export class ShowUsersComponent {
   columns: Column[] = [];
   users!: User[];
   addFormref!: DynamicDialogRef;
+  filterFields: string[] = ['user_name', 'user_email'];
 
   async ngOnInit() {
     await this.loadUsers();
@@ -48,7 +49,7 @@ export class ShowUsersComponent {
   }
 
   async loadUsers() {
-    this.users = await lastValueFrom(this.userService.getUsers());
+    this.users = await this.userService.getUsers();
 
     this.columns = [
       {

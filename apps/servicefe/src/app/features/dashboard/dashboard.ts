@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 import { StatsWidget } from '../../shared/component/statswidget/statswidget.component';
 import { RevenueStreamWidget } from '../../shared/component/revenuestreamwidget/revenuestreamwidget.component';
 import { DataStats } from '../../shared/component/statswidget/interfaces/data-stats';
 import { EncfService } from '../encf/services/encf-service.service';
 import { Ncf } from '../encf/interfaces/encf';
-import { firstValueFrom } from 'rxjs';
 import { Tenant } from '../auth/interfaces/user';
 @Component({
   selector: 'app-dashboard',
@@ -26,7 +23,7 @@ export class Dashboard implements OnInit {
   async ngOnInit() {
     this.title = `E-NCFs Emitidos - ${new Date().getFullYear()}`
 
-    this.encfs = await firstValueFrom(this.encfService.getEncfs())
+    this.encfs = await this.encfService.getEncfs()
 
     this.initChartData();
     this.initStatData();

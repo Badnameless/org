@@ -21,7 +21,7 @@ export class ShowPlansComponent {
   columns: Column[] = [];
   plans!: Plan[];
   addFormref!: DynamicDialogRef;
-
+  filterFields: string[] = ['plan_name'];
 
   async ngOnInit() {
     await this.loadPlans();
@@ -50,7 +50,7 @@ export class ShowPlansComponent {
   }
 
   async loadPlans() {
-    this.plans = await lastValueFrom(this.planService.getPlans());
+    this.plans = await this.planService.getPlans();
 
     this.columns = [
       {
