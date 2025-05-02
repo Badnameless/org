@@ -6,6 +6,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { Token } from '../../features/auth/interfaces/token';
 import { lastValueFrom } from 'rxjs';
+import { CacheService } from '../../services/cache.service';
 
 @Component({
     selector: 'app-user-configurator',
@@ -21,7 +22,10 @@ export class UserConfigurator {
   @Input()
   public token!: Token;
 
-  constructor(private router:Router, private authService:AuthService){}
+  constructor(private router:Router,
+              private authService:AuthService,
+              private cache: CacheService
+            ){}
 
   showProfile(){
     this.router.navigate(['profile']);
@@ -32,6 +36,7 @@ export class UserConfigurator {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('current_tenant')
+    await this.cache.cachedItems.clear();
     this.router.navigate(['auth/login']);
 
   }

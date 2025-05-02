@@ -68,7 +68,7 @@ interface expandedRows {
     `,
   providers: [ConfirmationService, MessageService, CustomerService, ProductService, DialogService]
 })
-export class DataGridComponent implements OnInit, OnChanges {
+export class DataGridComponent implements OnInit {
 
   constructor(public confirm: ConfirmationService,
     private msg: MessageService,
@@ -110,6 +110,9 @@ export class DataGridComponent implements OnInit, OnChanges {
   @Input()
   showAddForm!: (data?: any) => void
 
+  @Input()
+  filterFields: string[] = [];
+
   columnNames: string[] = [];
 
   selectedRows!: any[];
@@ -142,13 +145,6 @@ export class DataGridComponent implements OnInit, OnChanges {
           label: 'XML',
         }
       )
-    }
-  }
-
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['columns']) {
-      this.columnNames = this.columns.map(column => column.field);
     }
   }
 

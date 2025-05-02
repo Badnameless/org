@@ -6,6 +6,7 @@ import Aura from '@primeng/themes/aura';
 import { providePrimeNG } from 'primeng/config';
 import { appRoutes } from './app.routes';
 import { authInterceptor } from './app/features/auth/interceptors/auth-interceptor.interceptor';
+import { provideAngularSvgIcon } from 'angular-svg-icon';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -15,6 +16,7 @@ export const appConfig: ApplicationConfig = {
         ),
         provideHttpClient(withFetch()),
         provideAnimationsAsync(),
-        providePrimeNG({ theme: { preset: Aura, options: { darkModeSelector: '.app-dark' } } })
+        providePrimeNG({ theme: { preset: Aura, options: { darkModeSelector: '.app-dark' } } }),
+        provideAngularSvgIcon()
     ]
 };

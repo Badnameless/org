@@ -108,7 +108,6 @@ export class ProfileComponent implements OnInit {
       this.user = JSON.parse(localStorage.getItem('user')!);
     }
 
-
     // seteando la data del usuario en los textbox
     this.nameFormGroup.controls['user_name'].setValue(this.user.user_name);
     this.emailControl.setValue(this.user.user_email)
