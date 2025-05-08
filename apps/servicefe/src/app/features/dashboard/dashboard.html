@@ -1,8 +1,9 @@
-<div class="grid grid-cols-9 gap-8">
-  <app-stats-widget [data]="statData" class="contents"/>
-</div>
+<app-stats-widget [data]="statData" />
 <div class="mt-8">
+  <div class="col-6 xl:col-span-12 mb-8">
+    <app-doughnut-chart (_onChangeDate)="onChangeTimeDoughnut($event)" [dates]="donughDates" [pieData]="pieData" [pieOptions]="pieOptions"></app-doughnut-chart>
+  </div>
   <div class="col-6 xl:col-span-12">
-    <app-revenue-stream-widget [title]="title" [chartData]="chartData" [chartOptions]="chartOptions"/>
+    <app-revenue-stream-widget (onChangeTime)="onChangeTime($event)" [filterDataOptions]="filterDataOptions" [selectedTime]="selectedTime" [title]="title" [chartData]="chartData" [chartOptions]="chartOptions" />
   </div>
 </div>

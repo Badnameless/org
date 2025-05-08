@@ -1,0 +1,9 @@
+<div class="card">
+  <div class="flex justify-between items-center">
+    <div class="font-semibold text-xl mb-4">{{ title }}</div>
+    <div class="w-64">
+      <p-select class="w-full" [options]="filterDataOptions" optionLabel="label" [formControl]="timeFilter" (onChange)="changeTimeFilter()"></p-select>
+    </div>
+  </div>
+    <p-chart type="bar" [data]="chartData" [options]="chartOptions" class="h-80" />
+</div>

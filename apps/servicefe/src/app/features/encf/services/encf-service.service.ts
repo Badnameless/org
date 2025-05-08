@@ -38,8 +38,6 @@ export class EncfService {
       })))
     ));
 
-    console.log(data)
-
     this.cache.setCache(cacheKey, data);
 
     return data;
