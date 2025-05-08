@@ -18,7 +18,6 @@ import { ToastModule } from 'primeng/toast';
 import { Tenant, User } from '../../interfaces/user';
 import { HttpErrorResponse } from '@angular/common/http';
 
-
 @Component({
   selector: 'app-login',
   standalone: true,
