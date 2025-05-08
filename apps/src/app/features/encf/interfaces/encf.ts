@@ -8,7 +8,7 @@ export interface Ncf {
   transncf_codigoqr:     string;
   transncf_urlxml:       string;
   transncf_valor:        string;
-  transncf_itbis:        string;
+  transncf_itbis:        number;
   transncf_montototal:   string;
   transncf_status:       number;
   created_at:            Date;
