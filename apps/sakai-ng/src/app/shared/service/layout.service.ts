@@ -4,15 +4,14 @@ import { layoutConfig } from '../interfaces/layout-config';
 import { LayoutState } from '../interfaces/layout-state';
 import { MenuChangeEvent } from '../interfaces/menu-change-event';
 
-
 @Injectable({
     providedIn: 'root'
 })
 export class LayoutService {
     _config: layoutConfig = {
         preset: 'Aura',
-        primary: 'emerald',
-        surface: null,
+        primary: 'blue',
+        surface: 'slate',
         darkTheme: false,
         menuMode: 'static'
     };
