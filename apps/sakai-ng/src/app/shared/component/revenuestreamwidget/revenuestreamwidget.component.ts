@@ -1,20 +1,21 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { debounceTime, Subscription } from 'rxjs';
 import { LayoutService } from '../../service/layout.service';
+import { SelectModule } from 'primeng/select';
+import { DateOption } from './interfaces/DateOptions';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 
 @Component({
     standalone: true,
     selector: 'app-revenue-stream-widget',
-    imports: [ChartModule],
-    template: `
-    <div class="card !mb-8">
-        <div class="font-semibold text-xl mb-4">{{ title }}</div>
-        <p-chart type="bar" [data]="chartData" [options]="chartOptions" class="h-80" />
-    </div>
-    `
+    imports: [ChartModule, SelectModule, ReactiveFormsModule],
+    templateUrl: 'revenuestreamwidget.component.html'
 })
-export class RevenueStreamWidget{
+export class RevenueStreamWidget implements OnInit{
+
+    @Output() onChangeTime = new EventEmitter();
+
     @Input()
     title!: any;
 
@@ -24,11 +25,27 @@ export class RevenueStreamWidget{
     @Input()
     chartOptions!: any;
 
+    @Input()
+    filterDataOptions!: DateOption[];
+
+    @Input()
+    selectedTime!: DateOption
+
     subscription!: Subscription;
+
+    timeFilter = new FormControl();
 
     constructor(public layoutService: LayoutService) {
         this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
         });
+    }
+
+    ngOnInit(): void {
+      this.timeFilter.setValue(this.selectedTime);
+    }
+
+    changeTimeFilter(){
+      this.onChangeTime.emit(this.timeFilter.value);
     }
 
     ngOnDestroy() {
