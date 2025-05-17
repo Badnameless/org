@@ -3,3 +3,8 @@
 @use './assets/layout/layout.scss';
 @use 'primeicons/primeicons.css';
 @use './assets/demo/demo.scss';
+
+.p-popover{
+  --p-popover-gutter: 0px;
+  margin-top: 0.6% !important;
+}
