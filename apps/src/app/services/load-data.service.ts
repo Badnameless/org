@@ -4,8 +4,7 @@ import { EncfService } from '../features/encf/services/encf-service.service';
 import { PlanService } from '../features/admin/pages/plans/services/plan.service';
 import { UserService } from '../features/admin/pages/users/services/user.service';
 import { forkJoin, from } from 'rxjs';
-import { User } from '../features/auth/interfaces/user';
-import { Router } from '@angular/router';
+import { NotificationService } from '../shared/service/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +16,7 @@ export class LoadDataService{
     private encfService: EncfService,
     private planService: PlanService,
     private userService: UserService,
+    private notificationService: NotificationService
   ) {}
 
   async loadUserData(){
@@ -31,7 +31,8 @@ export class LoadDataService{
       from(await this.planService.getPlans()),
       from(await this.userService.getUsers()),
       from(await this.encfService.getEncfs()),
-      from(await this.encfService.getAllEncfs())
+      from(await this.encfService.getAllEncfs()),
+      from(this.notificationService.getNotifications())
     ]).subscribe();
   }
 }

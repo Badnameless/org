@@ -23,6 +23,7 @@
         "@primeng/themes": "^19.0.5",
         "angular-svg-icon": "^19.1.1",
         "chart.js": "4.4.2",
+        "dayjs": "^1.11.13",
         "dexie": "^4.0.11",
         "jspdf-autotable": "^3.8.4",
         "primeclt": "^0.1.5",
