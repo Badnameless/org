@@ -35,6 +35,7 @@ export class ShowUsersComponent {
           header: 'Modificar un usuario',
           closable: true,
           width: '20vw',
+          modal: true,
           inputValues: filteredUser
         })
     } else {
@@ -42,6 +43,7 @@ export class ShowUsersComponent {
         {
           header: 'Agregar un usuario',
           closable: true,
+          modal: true,
           width: '20vw',
         })
     }
