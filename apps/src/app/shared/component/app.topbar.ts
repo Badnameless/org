@@ -16,6 +16,7 @@ import { ScrollerModule, Scroller } from 'primeng/scroller';
 import { Notificacion } from '../interfaces/Notificacion';
 import { NotificationService } from '../service/notification.service';
 import { DateAgoPipe } from '../pipes/date-ago.pipe';
+import { WebSocketService } from '../service/web-socket.service';
 @Component({
   selector: 'app-topbar',
   standalone: true,
@@ -47,6 +48,7 @@ export class AppTopbar implements OnInit {
 
   constructor(public layoutService: LayoutService,
     private notificationService: NotificationService,
+    private wsService: WebSocketService
   ) { }
 
   async ngOnInit() {
@@ -58,6 +60,12 @@ export class AppTopbar implements OnInit {
 
     this.token = JSON.parse(localStorage.getItem('token')!)
     this.user = JSON.parse(localStorage.getItem('user')!)
+
+    this.wsService.listenToUserNotifications(this.user!.user_id, (notificacion) => {
+      this.notifications.unshift(notificacion);
+      this.nonReadNotifications.unshift(notificacion);
+
+    })
 
     this.current_tenant = JSON.parse(localStorage.getItem('default_tenant')!);
 
@@ -73,7 +81,7 @@ export class AppTopbar implements OnInit {
   }
 
   async readNotifications() {
-    if(this.nonReadNotifications.length < 1) return;
+    if (this.nonReadNotifications.length < 1) return;
 
     let readedNotifications: number[] = [];
 
@@ -85,6 +93,10 @@ export class AppTopbar implements OnInit {
     }
 
     await this.notificationService.readNotifications(readedNotifications)
+  }
+
+  notificationLazyLoad() {
+    console.log('lazy loading')
   }
 
   toggleDarkMode() {
