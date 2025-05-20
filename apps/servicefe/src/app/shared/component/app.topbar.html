@@ -37,8 +37,9 @@
           </ng-template>
         </button>
         <p-popover #inbox (onHide)="onInboxHide()" (onShow)="readNotifications()">
-          <p-virtualscroller [items]="notifications" [itemSize]="80" scrollHeight="400px" #inboxscroller
-            [style]="{ width: '384px' }">
+          <p-virtualscroller [items]="notifications" [itemSize]="80" scrollHeight="400px" [lazy]="true" [step]="10"
+            (onLazyLoad)="notificationLazyLoad()" #inboxscroller [style]="{ width: '384px' }">
+
             <ng-template let-notification let-options="options" #item>
               <div class="flex items-center gap-4 p-3 hover:bg-emphasis rounded cursor-pointer" style="height: 80px;">
                 <div>
@@ -58,6 +59,7 @@
                 <span>No tiene notificaciones pendientes</span>
               </div>
             </ng-template>
+
           </p-virtualscroller>
 
         </p-popover>
