@@ -6,8 +6,9 @@
 <div class="card">
   <p-table *ngIf="data" #dt1 [value]="data" [(selection)]="selectedRows" [dataKey]="dataKey" [rows]="10"
     [loading]="loading" [rowHover]="true" [paginator]="true" [columns]="columns"
-    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [globalFilterFields]="filterFields" responsiveLayout="scroll" [sortField]="fieldToSort" [sortOrder]="-1"
-    class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]" selectionMode="multiple">
+    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [globalFilterFields]="filterFields" responsiveLayout="scroll"
+    [sortField]="fieldToSort" [sortOrder]="-1" class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]"
+    selectionMode="multiple">
     <ng-template #caption>
       <div class="flex justify-between items-center flex-column sm:flex-row">
         <div class="flex gap-3">
@@ -47,7 +48,7 @@
 
         <td *ngFor="let col of columns" [ngClass]="{'hidden': col.type === 'hidden'}">
 
-          <span *ngIf="col.type === 'numeric'">RD{{ rowData[col.field] | currency: 'USD' : 'symbol' }}</span>
+          <span *ngIf="col.type === 'numeric'">{{ rowData[col.field] | currency:'DOP':'symbol':'1.2-2' }}</span>
           <span *ngIf="col.type === 'date'">{{ rowData[col.field] | date: 'dd/MM/yyyy' }}</span>
 
           <span *ngIf="col.type === 'text'
@@ -68,9 +69,9 @@
             <p-popover #actions>
               <div class="flex flex-col gap-2">
                 <p-button size="small" severity="contrast" icon="pi pi-trash" text="true" label="Eliminar"
-                (onClick)="confirmDelete(rowData[dataKey])"></p-button>
+                  (onClick)="confirmDelete(rowData[dataKey])"></p-button>
                 <p-button size="small" severity="contrast" icon="pi pi-pencil" text="true" label="Modificar"
-                (onClick)="showAddForm(rowData)"></p-button>
+                  (onClick)="showAddForm(rowData)"></p-button>
               </div>
             </p-popover>
           </div>
