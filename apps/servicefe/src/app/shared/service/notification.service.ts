@@ -24,10 +24,16 @@ export class NotificationService {
   ) {
 
     wsService.listenToUserNotifications(this.user.user_id, async (notificacion) => {
-      let cached: Promise<Notificacion[]> = await this.cache.getCache(this.cacheKey, this.ttl);
-      (await cached).push(notificacion);
+      let cached: Notificacion[] = await this.cache.getCache(this.cacheKey, this.ttl);
+      cached.push(notificacion);
       cache.setCache(this.cacheKey, cached);
     })
+  }
+
+  async addWebSocketNotification(notificacion: Notificacion) {
+    let cached: Promise<Notificacion[]> = await this.cache.getCacheWithoutTtl(this.cacheKey);
+    (await cached).push(notificacion);
+    this.cache.setCache(this.cacheKey, cached);
   }
 
   async getNotifications(): Promise<Notificacion[]> {

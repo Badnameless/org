@@ -7,13 +7,16 @@ import { Ncf } from '../encf/interfaces/encf';
 import { Tenant } from '../auth/interfaces/user';
 import { DateOption } from '../../shared/component/revenuestreamwidget/interfaces/DateOptions';
 import { DoughnutChartComponent } from '../../shared/component/doughnut-chart/doughnut-chart.component';
+import { AuthService } from '../auth/services/auth.service';
 @Component({
   selector: 'app-dashboard',
   imports: [StatsWidget, RevenueStreamWidget, DoughnutChartComponent],
   templateUrl: './dashboard.html',
 })
 export class Dashboard implements OnInit {
-  constructor(private encfService: EncfService) { }
+  constructor(
+    private encfService: EncfService,
+  ) { }
 
   public title!: any;
   public statData!: DataStats[];
@@ -72,9 +75,6 @@ export class Dashboard implements OnInit {
   ];
 
   async ngOnInit() {
-    console.log(this.donughDates[0])
-    console.log(this.donughDates[1])
-
     this.title = `E-NCFs En General`
     this.encfs = await this.encfService.getEncfs()
 
@@ -273,7 +273,6 @@ export class Dashboard implements OnInit {
 
     return this.tipos;
   }
-
 
   getStadisticsByTypeYearly() {
     this.tipos.forEach(tipo => {
