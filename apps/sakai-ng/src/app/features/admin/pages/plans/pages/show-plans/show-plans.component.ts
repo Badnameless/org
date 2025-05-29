@@ -36,6 +36,7 @@ export class ShowPlansComponent {
         {
           header: 'Modificar un plan',
           closable: true,
+          modal: true,
           width: '20vw',
           inputValues: filteredPlan
         })
@@ -44,6 +45,7 @@ export class ShowPlansComponent {
         {
           header: 'Agregar un plan',
           closable: true,
+          modal: true,
           width: '20vw',
         })
     }

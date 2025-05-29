@@ -23,16 +23,55 @@
         </button>
         <app-configurator />
       </div>
+      <div class="relative">
+        <button class="layout-topbar-action" #btn (click)="inbox.toggle($event, btn);" #btnNotification>
+          <ng-container *ngIf="nonReadNotifications.length > 0; else noBadge">
+            <p-overlay-badge severity="danger" [value]="nonReadNotifications.length" badgeSize="small"
+              [badgeDisabled]="false">
+              <i class="pi pi-envelope"></i>
+            </p-overlay-badge>
+          </ng-container>
+
+          <ng-template #noBadge>
+            <i class="pi pi-envelope"></i>
+          </ng-template>
+        </button>
+        <p-popover #inbox (onHide)="onInboxHide()" (onShow)="readNotifications()">
+          <p-virtualscroller [items]="notifications" [itemSize]="80" scrollHeight="400px" #inboxscroller
+            [style]="{ width: '384px' }">
+            <ng-template let-notification let-options="options" #item>
+              <div class="flex items-center gap-4 p-3 hover:bg-emphasis rounded cursor-pointer" style="height: 80px;">
+                <div>
+                  <i *ngIf="notification.tipoNotificaciones_id === 1"
+                    class="rounded p-4 text-xl pi pi-times bg-red-400 text-red-700"></i>
+                  <i *ngIf="notification.tipoNotificaciones_id === 2"
+                    class="rounded p-4 text-xl pi pi-exclamation-triangle bg-orange-400 text-orange-700"></i>
+                  <i *ngIf="notification.tipoNotificaciones_id === 3"
+                    class="rounded p-4 text-xl pi pi-info-circle bg-blue-400 text-blue-700"></i>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span>{{ notification.notificaciones_mensaje }}</span>
+                  <span class="text-sm text-gray-500">{{ notification.created_at | dateAgo}}</span>
+                </div>
+              </div>
+              <div *ngIf="notifications.length === 0" class="flex justify-center">
+                <span>No tiene notificaciones pendientes</span>
+              </div>
+            </ng-template>
+          </p-virtualscroller>
+
+        </p-popover>
+      </div>
     </div>
     <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next" enterFromClass="hidden"
       enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout"
       [hideOnOutsideClick]="true">
       <i class="pi pi-ellipsis-v"></i>
     </button>
+    <app-user-configurator [token]="this.token"></app-user-configurator>
 
-    <button class="user-action p-5" pStyleClass="@next" enterFromClass="hidden"
-      enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout"
-      [hideOnOutsideClick]="true">
+    <button class="user-action p-5" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein"
+      leaveToClass="hidden" leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">
       <div class="flex items-center gap-3">
         <i class="pi pi-user"></i>
         <h5 class="pb-1">{{ user?.user_name }}</h5>
