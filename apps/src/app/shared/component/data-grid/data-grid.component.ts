@@ -26,6 +26,7 @@ import { lastValueFrom, Observable } from 'rxjs';
 import { PdfExportService } from '../../service/pdf-export.service';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { PopoverModule } from 'primeng/popover';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -54,7 +55,8 @@ interface expandedRows {
     MessageModule,
     ConfirmDialogModule,
     MenuModule,
-    DialogModule
+    DialogModule,
+    PopoverModule
   ],
   templateUrl: 'data-grid.component.html',
   styles: `
@@ -73,7 +75,7 @@ export class DataGridComponent implements OnInit {
   constructor(public confirm: ConfirmationService,
     private msg: MessageService,
     private pdfExport: PdfExportService,
-    private dialogService: DialogService ) {
+    private dialogService: DialogService) {
   }
 
   exportItems!: MenuItem[]
@@ -282,7 +284,7 @@ export class DataGridComponent implements OnInit {
   }
 
   confirmDelete(id?: number) {
-    if(!this.selectedRows && !id){
+    if (!this.selectedRows && !id) {
       this.msg.add({ sticky: true, severity: 'error', summary: 'Error al borrar', detail: 'No se seleccionaron campos para borrar' })
       return;
     }
