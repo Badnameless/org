@@ -36,6 +36,7 @@ export class ShowCompaniesComponent {
         {
           header: 'Modificar una compañia',
           closable: true,
+          modal: true,
           width: '20vw',
           inputValues: reducedCompany
         })
@@ -44,6 +45,7 @@ export class ShowCompaniesComponent {
         {
           header: 'Agregar una compañia',
           closable: true,
+          modal: true,
           width: '20vw',
         })
     }

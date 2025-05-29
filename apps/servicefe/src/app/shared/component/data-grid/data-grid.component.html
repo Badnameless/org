@@ -5,7 +5,7 @@
 
 <div class="card">
   <p-table *ngIf="data" #dt1 [value]="data" [(selection)]="selectedRows" [dataKey]="dataKey" [rows]="10"
-    [loading]="loading" [rowHover]="true" [showGridlines]="true" [paginator]="true" [columns]="columns"
+    [loading]="loading" [rowHover]="true" [paginator]="true" [columns]="columns"
     [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [globalFilterFields]="filterFields" responsiveLayout="scroll" [sortField]="fieldToSort" [sortOrder]="-1"
     class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]" selectionMode="multiple">
     <ng-template #caption>
@@ -64,10 +64,15 @@
 
         <td *ngIf="isCrud" class="flex justify-center">
           <div class="flex gap-3">
-            <p-button size="small" rounded="true" severity="danger" icon="pi pi-trash"
-            (onClick)="confirmDelete(rowData[dataKey])"></p-button>
-            <p-button size="small" rounded="true" severity="info" icon="pi pi-pencil"
-            (onClick)="showAddForm(rowData)"></p-button>
+            <p-button icon="pi pi-ellipsis-h" text="true" (onClick)="actions.toggle($event)"></p-button>
+            <p-popover #actions>
+              <div class="flex flex-col gap-2">
+                <p-button size="small" severity="contrast" icon="pi pi-trash" text="true" label="Eliminar"
+                (onClick)="confirmDelete(rowData[dataKey])"></p-button>
+                <p-button size="small" severity="contrast" icon="pi pi-pencil" text="true" label="Modificar"
+                (onClick)="showAddForm(rowData)"></p-button>
+              </div>
+            </p-popover>
           </div>
         </td>
       </tr>
