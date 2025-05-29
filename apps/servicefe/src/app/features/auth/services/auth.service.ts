@@ -1,56 +1,55 @@
-import { HttpClient,  HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { computed, Injectable, OnInit, signal } from '@angular/core';
 import { User } from '../interfaces/user';
-import {  Observable, of, tap } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { Token } from '../interfaces/token';
-import { Router } from '@angular/router';
-
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  public user!: User;
-  public token!: Token;
+  private user!: User;
+  private token = signal<Token | null>(null);
+  readonly exposedToken = this.token.asReadonly();
+
 
   constructor(
     private http: HttpClient,
     private httpService: HttpService,
-    private router: Router
-  ) { }
-
-  get _user() {
-    return structuredClone(this.user);
-  }
-
-  get _token() {
-    return structuredClone(this.token);
+  ) {
+    const tokenFromStorage = localStorage.getItem('token');
+    if (tokenFromStorage) {
+      this.token.set(JSON.parse(tokenFromStorage));
+    }
   }
 
   login(email: string, password: string): Observable<Token> {
     return this.http.post<Token>(`${this.httpService.AUTH_URL}/login`, { email, password })
       .pipe(
         tap(token => localStorage.setItem('token', JSON.stringify(token))),
-        tap(token => this.token = token),
+        tap(token => this.token.set(token)),
+        tap(token => token.timestamp = new Date(token.timestamp))
       );
   }
 
   storeAuthUser(token: Token): Observable<User> {
-
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
     return this.http.post<User>(`${this.httpService.AUTH_URL}/me`, {}, { headers }).pipe(
       tap(user => localStorage.setItem('user', JSON.stringify(user))),
       tap(user => this.user = user),
     );
-
   }
 
   refreshToken(token: Token): Observable<Token> {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    return this.http.post<Token>(`${this.httpService.AUTH_URL}/refresh`, {}, { headers });
+    return this.http.post<Token>(`${this.httpService.AUTH_URL}/refresh`, {}, { headers }).pipe(
+      tap(token => localStorage.setItem('token', JSON.stringify(token))),
+      tap(token => this.token.set(token)),
+      tap(token => token.timestamp = new Date(token.timestamp))
+    );
   }
 
   logout(token: Token): Observable<any> {

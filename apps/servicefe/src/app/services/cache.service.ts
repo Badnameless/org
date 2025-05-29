@@ -21,7 +21,7 @@ export class CacheService extends Dexie {
     });
   }
 
-  async setCache(id: string, data: any): Promise<void>{
+  async setCache(id: string, data: any): Promise<void> {
     await this.cachedItems.put({ id, data, timestamp: Date.now() });
   }
 
@@ -33,7 +33,12 @@ export class CacheService extends Dexie {
     return null;
   }
 
-  async deleteCache(key: string){
+  async getCacheWithoutTtl(id: string): Promise<any | null> {
+    const item = await this.cachedItems.get(id);
+    return item!.data;
+  }
+
+  async deleteCache(key: string) {
     this.cachedItems.delete(key);
   }
 
