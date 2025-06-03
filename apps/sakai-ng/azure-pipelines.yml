@@ -4,8 +4,6 @@ trigger:
 
 variables:
   VM_IMAGE: 'ubuntu-latest'
-  # --- Image Tagging Strategy ---
-  IMAGE_TAG: '$(Build.BuildId)'
 
 pool:
   vmImage: $(VM_IMAGE)
@@ -24,5 +22,5 @@ stages:
           repository: 'deivycode/services'
           command: 'buildAndPush'
           Dockerfile: '$(Build.Repository.LocalPath)/Dockerfile'
-          tags: 'portalfe-sg.$(IMAGE_TAG)'
+          tags: 'portalfe-sg'
           buildContext: '$(Build.Repository.LocalPath)/'
