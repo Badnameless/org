@@ -1,16 +1,29 @@
-
 export interface User {
   user_id:           number;
   user_name:         string;
   user_email:        string;
   email_verified_at: null;
-  user_photoUrl:     null;
-  roles:             Roles;
+  user_photoUrl:     string;
+  created_at:        Date;
+  updated_at:        Date;
+  deleted_at:        null;
+  roles:             Role[];
   tenants:           Tenant[];
 }
 
-export interface Roles {
-  name: string[];
+export interface Role {
+  id:         number;
+  name:       string;
+  guard_name: string;
+  created_at: Date;
+  updated_at: Date;
+  pivot:      RolePivot;
+}
+
+export interface RolePivot {
+  model_type: string;
+  model_id:   number;
+  role_id:    number;
 }
 
 export interface Tenant {
@@ -20,35 +33,11 @@ export interface Tenant {
   created_at:    Date;
   updated_at:    Date;
   plan_id:       number;
-  pivot:         Pivot;
-  transncfs:     Transncf[];
+  deleted_at:    null;
+  pivot:         TenantPivot;
 }
 
-export interface Pivot {
+export interface TenantPivot {
   user_id:   number;
   tenant_id: number;
-}
-
-export interface Transncf {
-  transncf_id:           number;
-  tenant_id:             number;
-  tipoNcf_id:            number;
-  transncf_encf:         string;
-  transncf_fechaemision: Date;
-  transncf_rnccomprador: string;
-  transncf_codigoqr:     string;
-  transncf_urlxml:       string;
-  transncf_valor:        string;
-  transncf_itbis:        string;
-  transncf_montototal:   string;
-  transncf_status:       number;
-  created_at:            Date;
-  updated_at:            Date;
-  tipo_ncf:              TipoNcf;
-}
-
-export interface TipoNcf {
-  tipoNcf_id:   number;
-  tipoNcf_code: number;
-  tipoNcf_name: string;
 }

@@ -19,7 +19,7 @@ export class ShowPlansComponent {
   constructor(protected planService: PlanService, public dialogService:DialogService) {}
 
   columns: Column[] = [];
-  plans!: Plan[];
+  plans: Plan[] = [];
   addFormref!: DynamicDialogRef;
   filterFields: string[] = ['plan_name'];
 
