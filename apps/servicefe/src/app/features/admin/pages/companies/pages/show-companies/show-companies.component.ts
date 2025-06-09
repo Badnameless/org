@@ -18,7 +18,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 export class ShowCompaniesComponent {
   constructor(protected companyService: CompanyService, private dialogService: DialogService) { }
   columns: Column[] = [];
-  companies!: Company[];
+  companies: Company[] = [];
   filterFields: string[] = ['tenant_name', 'tenant_cedrnc'];
 
   addFormref!: DynamicDialogRef;

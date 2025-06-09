@@ -16,7 +16,7 @@ export class EncfsComponent implements OnInit {
   constructor(private encfService: EncfService){}
 
   columns!: Column[];
-  encfs!: Ncf[];
+  encfs: Ncf[] = [];
   filterFields: string[] = ['transncf_encf', 'transncf_status', 'tenant_name', 'tenant_cedrnc', 'transncf_rnccomprador']
 
   async ngOnInit() {
