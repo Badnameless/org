@@ -5,7 +5,7 @@
     </button>
     <a class="layout-topbar-logo" routerLink="/">
       <img src="images/logo.svg" class="w-24 h-24">
-      <span>SILDRA GROUP - {{ current_tenant.tenant_name | uppercase }}</span>
+      <span>SILDRA GROUP - {{ current_tenant()?.tenant_name | uppercase }}</span>
     </a>
   </div>
 
@@ -23,6 +23,7 @@
         </button>
         <app-configurator />
       </div>
+
       <div class="relative">
         <button class="layout-topbar-action" #btn (click)="inbox.toggle($event, btn);" #btnNotification>
           <ng-container *ngIf="nonReadNotifications().length > 0; else noBadge">
@@ -110,22 +111,22 @@
           </div>
         </p-popover>
       </div>
+
     </div>
     <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next" enterFromClass="hidden"
       enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout"
       [hideOnOutsideClick]="true">
       <i class="pi pi-ellipsis-v"></i>
     </button>
-    <app-user-configurator [token]="this.token"></app-user-configurator>
+    <app-user-configurator></app-user-configurator>
 
-    <button class="user-action p-5" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein"
+    <button class="layout-topbar-action" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein"
       leaveToClass="hidden" leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">
-      <div class="flex items-center gap-3">
-        <i class="pi pi-user"></i>
-        <h5 class="pb-1">{{ user?.user_name }}</h5>
+      <div>
+        <p-avatar size="normal" shape="circle" [image]="userImgPath()"></p-avatar>
       </div>
 
     </button>
-    <app-user-configurator [token]="this.token"></app-user-configurator>
+    <app-user-configurator></app-user-configurator>
   </div>
 </div>

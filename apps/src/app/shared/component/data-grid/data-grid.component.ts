@@ -1,4 +1,4 @@
-import { Component, ContentChild, ElementRef, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ContentChild, effect, ElementRef, input, Input, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MenuModule } from 'primeng/menu';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -27,6 +27,8 @@ import { PdfExportService } from '../../service/pdf-export.service';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PopoverModule } from 'primeng/popover';
+import { LoaderComponent } from '../loader/loader.component';
+import { NotFoundMessageComponent } from '../not-found-message/not-found-message.component';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -56,7 +58,9 @@ interface expandedRows {
     ConfirmDialogModule,
     MenuModule,
     DialogModule,
-    PopoverModule
+    PopoverModule,
+    LoaderComponent,
+    NotFoundMessageComponent
   ],
   templateUrl: 'data-grid.component.html',
   styles: `
@@ -74,17 +78,26 @@ export class DataGridComponent implements OnInit {
 
   constructor(public confirm: ConfirmationService,
     private msg: MessageService,
-    private pdfExport: PdfExportService,
-    private dialogService: DialogService) {
+    private pdfExport: PdfExportService) {
+
+    effect(() => {
+      if (this.data()!.length < 1) {
+        setTimeout(() => {
+          this.timeout.set(true)
+        }, 1000);
+      }
+    })
   }
 
   exportItems!: MenuItem[]
+  columnNames: string[] = [];
+  selectedRows!: any[];
+  timeout = signal<boolean>(false);
+  showAddDialog: boolean = false;
+  data = input<any[] | null>();
 
   @Input()
   columns: Column[] = [];
-
-  @Input()
-  data: any[] = [];
 
   @Input()
   XMLExportable: boolean = false;
@@ -97,8 +110,6 @@ export class DataGridComponent implements OnInit {
 
   @Input()
   dataKey: string = '';
-
-  @ContentChild('addForm') addFormTemplate!: TemplateRef<any>;
 
   @Input()
   addFormRef: DynamicDialogRef | undefined;
@@ -115,21 +126,20 @@ export class DataGridComponent implements OnInit {
   @Input()
   filterFields: string[] = [];
 
-  columnNames: string[] = [];
-
-  selectedRows!: any[];
-
-  loading: boolean = false;
-  showAddDialog: boolean = false;
-
+  @Input()
+  isBasicTable: boolean = false;
 
   @ViewChild('dt1') dt1!: Table;
   @ViewChild('filter') filter!: ElementRef;
-
-
+  @ContentChild('addForm') addFormTemplate!: TemplateRef<any>;
 
   ngOnInit() {
-    this.loading = false
+    setTimeout(() => {
+      if (this.data()!.length < 1) {
+        this.timeout.set(true);
+      }
+    }, 15000);
+
     this.exportItems = [
       {
         label: 'CSV',
@@ -157,10 +167,12 @@ export class DataGridComponent implements OnInit {
 
     const headers = visibleColumns.map(col => col.name);
 
-    const dataRows = this.dt1.filteredValue || this.data;
+    const filteredValue = signal<any[] | null>(this.dt1.filteredValue!);
+
+    const dataRows = filteredValue || this.data();
     const csvContent = [
       headers.join(','),
-      ...dataRows.map(row =>
+      ...dataRows()!.map(row =>
         visibleColumns.map(col => {
           let value = row[col.field];
 
@@ -182,9 +194,9 @@ export class DataGridComponent implements OnInit {
   exportPDF() {
     if (!this.data) return;
 
-    const data = this.dt1.filteredValue || this.data;
+    const data = this.dt1.filteredValue || this.data();
     this.pdfExport.exportToPDF(
-      data,
+      data!,
       this.columns,
       'E-NCF Report',
       'encf_export'

@@ -26,13 +26,13 @@ export class AppMenu {
   public user!: User;
   public token!: Token;
 
-  private user_rol?: string[];
+  private user_rol?: string;
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
     this.user = JSON.parse(localStorage.getItem('user')!)
 
-    this.user_rol = this.user.roles?.name;
+    this.user_rol = this.user.roles[0].name;
     this.model = [
       {
         label: 'Home',
@@ -41,6 +41,10 @@ export class AppMenu {
       {
         label: 'E-NCF',
         items: [{ label: 'Visualizar E-NCFs', icon: 'pi pi-chart-bar', routerLink: ['encf/show_encfs'] }]
+      },
+      {
+        label: 'Billing',
+        items: [{ label: 'Pagos', icon: 'pi pi-credit-card', routerLink: ['/billing'] }]
       }
     ];
 

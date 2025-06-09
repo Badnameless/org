@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { Token } from '../../features/auth/interfaces/token';
 import { Notificacion } from '../interfaces/Notificacion';
@@ -17,16 +17,22 @@ export class NotificationService {
   private cacheKey = 'api/notifications';
   private ttl: number = 1000 * 60 * 5;
 
+  private _notifications = signal<Notificacion[]>([]);
+
+  public notifications = this._notifications.asReadonly();
+
   constructor(private http: HttpClient,
     private httpService: HttpService,
     private cache: CacheService,
     private wsService: WebSocketService
   ) {
+    this.loadNotifications();
 
     wsService.listenToUserNotifications(this.user.user_id, async (notificacion) => {
       let cached: Notificacion[] = await this.cache.getCache(this.cacheKey, this.ttl);
       cached.push(notificacion);
       cache.setCache(this.cacheKey, cached);
+      this._notifications.update(current => [...current, notificacion]);
     })
   }
 
@@ -65,5 +71,10 @@ export class NotificationService {
     this.cache.setCache(this.cacheKey, data);
 
     return data
+  }
+
+  private async loadNotifications() {
+    const data = await this.getNotifications();
+    this._notifications.set(data);
   }
 }
