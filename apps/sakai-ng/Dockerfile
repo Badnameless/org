@@ -1,13 +1,27 @@
-FROM node:alpine
+FROM node:22-alpine AS builder
 
-WORKDIR /usr/src/app
+WORKDIR /app
+COPY package.json package-lock.json* ./
 
-COPY . /usr/src/app
+RUN npm ci
 
-RUN npm install -g @angular/cli
+COPY . .
 
-RUN npm install
+RUN npm run build -- --configuration production
 
-EXPOSE 4200
+FROM nginx:1.25-alpine
 
-CMD ["ng", "serve", "--host", "0.0.0.0"]
+RUN rm -rf /usr/share/nginx/html/*
+
+COPY --from=builder /app/dist/sakai-ng /usr/share/nginx/html
+
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html && \
+    find /usr/share/nginx/html -type f -print0 | xargs -0 chmod 644
+
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

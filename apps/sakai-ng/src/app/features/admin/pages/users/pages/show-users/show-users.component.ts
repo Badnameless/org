@@ -17,7 +17,7 @@ import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 export class ShowUsersComponent {
   constructor(protected userService: UserService, private dialogService: DialogService) { }
   columns: Column[] = [];
-  users!: User[];
+  users: User[] = [];
   addFormref!: DynamicDialogRef;
   filterFields: string[] = ['user_name', 'user_email'];
 

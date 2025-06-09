@@ -1,0 +1,125 @@
+<p-dialog header="Añadir nueva tarjeta" [modal]="true" [(visible)]="isCardDialogVisible" [style]="{ width: 'full' }">
+  <div class="flex flex-col">
+    <div class="flex flex-col gap-1 mb-4">
+      <label for="username" class="w-full">Titular</label>
+      <input pInputText id="username" class="flex-auto" autocomplete="off" placeholder="John Doe" />
+    </div>
+    <div class="flex flex-col gap-1 mb-4">
+      <label for="username" class="w-full">Número de la tarjeta</label>
+      <input pInputText id="username" class="flex-auto" autocomplete="off" placeholder="•••• •••• •••• ••••" />
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="flex flex-col gap-1 mb-4">
+        <label for="username" class="w-full">Fecha de expiración</label>
+        <p-datepicker id="username" class="flex-auto" dateFormat="MM/YY" appendTo="body" placeholder="MM/YY" />
+      </div>
+      <div class="flex flex-col gap-1 mb-4">
+        <label for="username" class="w-full">CVC/CVV</label>
+        <input pInputText type id="username" class="flex-auto" placeholder="•••" />
+      </div>
+    </div>
+    <div class="flex justify-end gap-2">
+      <p-button label="Cancelar" severity="secondary" (click)="isCardDialogVisible = false" />
+      <p-button label="Añadir" (click)="isCardDialogVisible = false" />
+    </div>
+  </div>
+
+</p-dialog>
+
+<div class="card">
+  <div id="billing">
+    <h2 class="text-2xl font-semibold mb-6">Pagos y Subscripciones</h2>
+    <div class="space-y-8">
+      <section>
+        <h3 class="text-lg font-medium mb-3">Mi Subscripción</h3>
+        <div class="bg-gray-100 p-6 rounded-lg shadow-sm">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-center">
+            <div>
+              <p class="text-sm">Plan Actual</p>
+              <p class="text-xl font-semibold text-blue-600">Plan base</p>
+            </div>
+            <div>
+              <p class="text-sm">Estado</p>
+              <p class="text-green-500 font-semibold"><i class="fas fa-check-circle mr-1"></i> Activo</p>
+            </div>
+            <div>
+              <p class="text-sm">Siguiente fecha de pago</p>
+              <p class="font-medium text-gray-500">June 15, 2025</p>
+            </div>
+            <div class="sm:col-span-2 md:col-span-1 md:text-right mt-4 md:mt-0">
+              <p-button severity="info" variant="outlined">
+                Cambiar plan
+              </p-button>
+            </div>
+          </div>
+          <div class="mt-4 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+              <h4>Documentos emitidos este mes</h4>
+              <h4>{{progressbar.value}}/1000</h4>
+            </div>
+            <p-progressbar #progressbar value="50"></p-progressbar>
+            <p class="text-sm text-gray-500 mt-2">Actualmente usted tiene el plan base, pagado a RD$99 Mensual. <a href="#"
+                class="text-blue-600 hover:underline">Ver detalles del plan</a>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-lg font-medium">Metodos de pago</h3>
+          <p-button size="small" icon="pi pi-plus" label="Añadir nueva tarjeta" (onClick)="isCardDialogVisible = true"
+            severity="success" />
+        </div>
+        <div class="card border p-6 rounded-lg shadow-sm space-y-4">
+          <div class="p-4 border border-gray-200 rounded-md flex flex-wrap justify-between items-center">
+            <div class="flex items-center mb-2 sm:mb-0">
+              <i class="fab fa-cc-visa text-3xl text-blue-600 mr-4"></i>
+              <div>
+                <div class="flex gap-2">
+                  <p class="font-medium">Visa ** ** ** 1234</p>
+                  <p-tag class="h-fit" severity="success" value="Primary" rounded="true" />
+                </div>
+                <p class="text-sm text-gray-500">Expira el 12/2026</p>
+              </div>
+            </div>
+            <div class="flex space-x-2">
+              <p-button icon="pi pi-ellipsis-h" text="true" (onClick)="actions.toggle($event)"></p-button>
+              <p-popover #actions>
+                <div class="flex flex-col gap-2">
+                  <p-button size="small" severity="contrast" icon="pi pi-trash" text="true" label="Eliminar" />
+                  <p-button size="small" severity="contrast" icon="pi pi-pencil" text="true" label="Modificar" />
+                </div>
+              </p-popover>
+            </div>
+          </div>
+          <div class="p-4 border border-gray-200 rounded-md flex flex-wrap justify-between items-center">
+            <div class="flex items-center mb-2 sm:mb-0">
+              <i class="fab fa-cc-mastercard text-3xl text-orange-500 mr-4"></i>
+              <div>
+                <p class="font-medium">Mastercard ** ** ** 5678</p>
+                <p class="text-sm text-gray-500">Expira el 08/2025</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <p-button size="small" variant="outlined" severity="info" label="Marcar como principal"></p-button>
+              <p-button icon="pi pi-ellipsis-h" text="true" (onClick)="actions.toggle($event)"></p-button>
+              <p-popover #actions>
+                <div class="flex flex-col gap-2">
+                  <p-button size="small" severity="contrast" icon="pi pi-trash" text="true" label="Eliminar" />
+                  <p-button size="small" severity="contrast" icon="pi pi-pencil" text="true" label="Modificar" />
+                </div>
+              </p-popover>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h3 class="text-lg font-medium mb-3">Historial de pagos</h3>
+        <div class="card border rounded-lg shadow-sm overflow-x-auto">
+          <app-payment-record></app-payment-record>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

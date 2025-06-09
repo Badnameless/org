@@ -23,7 +23,7 @@ export class LoadingPageComponent implements OnInit{
   async ngOnInit() {
     const user: User = JSON.parse(localStorage.getItem('user')!);
 
-    if(user.roles.name[0] === 'admin'){
+    if(user.roles[0].name === 'admin'){
       await this.loadService.loadAdminData();
     }else{
       await this.loadService.loadUserData();

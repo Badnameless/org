@@ -15,6 +15,16 @@ export class AppComponent {
   public token!: Token | null;
 
   constructor(private authService: AuthService) {
+    addEventListener("storage", async (event) => {
+      if(!event.newValue){
+        window.location.reload();
+      }
+
+      if (this.token) {
+        await lastValueFrom(authService.storeAuthUser(this.token!));
+      }
+    })
+
     effect(() => {
       this.token = this.authService.exposedToken()
       const tokenFromStorage = localStorage.getItem('token');

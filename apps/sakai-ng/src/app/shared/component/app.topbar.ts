@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, signal, ViewChild, computed, effect } from '@angular/core';
+import { Component, OnInit, signal, ViewChild, computed, effect } from '@angular/core';
 import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { RouterModule } from '@angular/router';
@@ -17,6 +17,9 @@ import { NotificationService } from '../service/notification.service';
 import { DateAgoPipe } from '../pipes/date-ago.pipe';
 import { WebSocketService } from '../service/web-socket.service';
 import { ButtonModule } from 'primeng/button';
+import { AvatarModule } from 'primeng/avatar';
+import { AuthService } from '../../features/auth/services/auth.service';
+import { HttpService } from '../../services/http.service';
 @Component({
   selector: 'app-topbar',
   standalone: true,
@@ -30,21 +33,32 @@ import { ButtonModule } from 'primeng/button';
     OverlayBadgeModule,
     ScrollerModule,
     DateAgoPipe,
-    ButtonModule],
+    ButtonModule,
+    AvatarModule
+  ],
   templateUrl: './app.topbar.html',
   styles: ``,
 })
 export class AppTopbar implements OnInit {
-  items!: MenuItem[];
 
-  public user?: User;
-  public token!: Token;
-  public current_tenant!: Tenant;
+  items!: MenuItem[];
 
   public allNotifications = signal<Notificacion[]>([]);
   public nonReadNotifications = computed<Notificacion[]>(() =>
     this.allNotifications().filter(notification => !notification.notificaciones_leido)
   );
+
+  public user = computed<User | null>(() => this.authService.exposedUser())
+  public token = computed<Token | null>(() => this.authService.exposedToken())
+  public current_tenant = computed<Tenant | undefined>(() => {
+    const currentTenant: Tenant = JSON.parse(localStorage.getItem('current_tenant')!)
+    if (currentTenant) {
+      return currentTenant;
+    } else {
+      return this.authService.user()?.tenants[0];
+    }
+  });
+  public userImgPath = computed<string>(() => this.authService.userImgPath())
 
   public notifications = signal<Notificacion[]>([]);
   public isAllNotificationMode = signal<boolean>(false);
@@ -57,8 +71,9 @@ export class AppTopbar implements OnInit {
   constructor(public layoutService: LayoutService,
     private notificationService: NotificationService,
     private wsService: WebSocketService,
+    private authService: AuthService,
+    private httpService: HttpService
   ) {
-
     effect(() => {
 
       this.nonReadNotifications = computed(() =>
@@ -91,18 +106,13 @@ export class AppTopbar implements OnInit {
       this.allNotifications().filter(notification => !notification.notificaciones_leido).sort((a, b) => a.tipoNotificaciones_id - b.tipoNotificaciones_id)
     );
 
-    this.token = JSON.parse(localStorage.getItem('token')!)
-    this.user = JSON.parse(localStorage.getItem('user')!)
-
-    this.wsService.listenToUserNotifications(this.user!.user_id, (notificacion) => {
+    this.wsService.listenToUserNotifications(this.user()!.user_id, (notificacion) => {
       this.allNotifications.update(value => [notificacion, ...value]);
       this.notificationService.addWebSocketNotification(notificacion);
     })
 
-    this.current_tenant = JSON.parse(localStorage.getItem('default_tenant')!);
-
     this.items = [{
-      label: this.user?.user_name,
+      label: this.user()?.user_name,
       icon: 'pi pi-user',
     }]
   }
@@ -133,8 +143,6 @@ export class AppTopbar implements OnInit {
         })
       }
     }
-
-
 
     await this.notificationService.readNotifications(readedNotifications)
   }
