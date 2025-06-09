@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { computed, Injectable, OnInit, signal } from '@angular/core';
 import { User } from '../interfaces/user';
-import { map, Observable, of, tap } from 'rxjs';
+import { lastValueFrom, map, Observable, of, tap } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { Token } from '../interfaces/token';
 @Injectable({
@@ -9,18 +9,30 @@ import { Token } from '../interfaces/token';
 })
 export class AuthService {
 
-  private user!: User;
+  public user = signal<User | null>(null);
   private token = signal<Token | null>(null);
-  readonly exposedToken = this.token.asReadonly();
 
+  readonly exposedToken = this.token.asReadonly();
+  readonly exposedUser = this.user.asReadonly();
+
+  readonly userImgPath = computed<string>(() => {
+    const userPhoto = this.user()?.user_photoUrl
+    return userPhoto ? `${this.httpService.API_URL}/user/get_photo/${this.user()?.user_photoUrl}` : 'images/user.png'
+  });
 
   constructor(
     private http: HttpClient,
     private httpService: HttpService,
   ) {
     const tokenFromStorage = localStorage.getItem('token');
+    const userFromStorage = localStorage.getItem('user');
+
     if (tokenFromStorage) {
       this.token.set(JSON.parse(tokenFromStorage));
+    }
+
+    if(userFromStorage){
+      this.user.set(JSON.parse(userFromStorage));
     }
   }
 
@@ -29,16 +41,17 @@ export class AuthService {
       .pipe(
         tap(token => localStorage.setItem('token', JSON.stringify(token))),
         tap(token => this.token.set(token)),
-        tap(token => token.timestamp = new Date(token.timestamp))
+        tap(token => token.timestamp = new Date(token.timestamp)),
+        tap(async token => await lastValueFrom(this.storeAuthUser(token)))
       );
   }
 
-  storeAuthUser(token: Token): Observable<User> {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
+  storeAuthUser(token?: Token): Observable<User> {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token!.access_token}`);
 
     return this.http.post<User>(`${this.httpService.AUTH_URL}/me`, {}, { headers }).pipe(
       tap(user => localStorage.setItem('user', JSON.stringify(user))),
-      tap(user => this.user = user),
+      tap(user => this.user.set(user)),
     );
   }
 

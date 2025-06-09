@@ -12,7 +12,7 @@ export class AdminGuard implements CanActivate{
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
     const user: User = JSON.parse(localStorage.getItem('user')!);
 
-    if(user.roles?.name.includes('admin')) return true;
+    if(user.roles[0].name.includes('admin')) return true;
 
     this.router.navigate(['/'])
     return false;

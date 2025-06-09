@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { DataGridComponent } from '../../../../shared/component/data-grid/data-grid.component';
 import { Column } from '../../../../shared/component/data-grid/interfaces/column';
-import { lastValueFrom, map } from 'rxjs';
 import { EncfService } from '../../services/encf-service.service';
 import { Ncf } from '../../interfaces/encf';
 
@@ -13,7 +12,7 @@ import { Ncf } from '../../interfaces/encf';
 })
 export class ShowEncfsComponent implements OnInit {
   columns: Column[] = [];
-  Encfs!: Ncf[];
+  Encfs: Ncf[] = [];
   filterFields: string[] = ['transncf_encf', 'transncf_status', 'tenant_name', 'tenant_cedrnc', 'transncf_rnccomprador']
 
   constructor(protected encfService: EncfService) { }

@@ -3,16 +3,15 @@
 <p-confirmDialog [style]="{width: '450px'}" header="Confirmation" icon="pi pi-exclamation-triangle">
 </p-confirmDialog>
 
-<div class="card">
-  <p-table *ngIf="data" #dt1 [value]="data" [(selection)]="selectedRows" [dataKey]="dataKey" [rows]="10"
-    [loading]="loading" [rowHover]="true" [paginator]="true" [columns]="columns"
-    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [globalFilterFields]="filterFields" responsiveLayout="scroll"
-    [sortField]="fieldToSort" [sortOrder]="-1" class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]"
-    selectionMode="multiple">
+<div *ngIf="data()!.length > 0">
+  <p-table *ngIf="data" #dt1 [value]="data()!" [(selection)]="selectedRows" [dataKey]="dataKey" [rows]="10"
+    [rowHover]="true" [paginator]="true" [columns]="columns" [rowsPerPageOptions]="[5, 10, 25, 50, 100]"
+    [globalFilterFields]="filterFields" responsiveLayout="scroll" [sortField]="fieldToSort" [sortOrder]="-1"
+    class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]" selectionMode="multiple">
     <ng-template #caption>
       <div class="flex justify-between items-center flex-column sm:flex-row">
         <div class="flex gap-3">
-          <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
+          <button *ngIf="!isBasicTable" pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
             (click)="clear(dt1)"></button>
           <p-button *ngIf="exportable" (onClick)="exportMenu.toggle($event)" severity="secondary" icon="pi pi-upload"
             iconPos="right" label="Exportar" />
@@ -20,7 +19,7 @@
         <div class="flex gap-3">
           <p-button *ngIf="isCrud" severity="success" (onClick)="showAddForm()">Agregar</p-button>
           <p-button *ngIf="isCrud" severity="danger" (onClick)="confirmDelete()">Eliminar</p-button>
-          <p-iconfield iconPosition="left" class="ml-auto">
+          <p-iconfield *ngIf="!isBasicTable" iconPosition="left" class="ml-auto">
             <p-inputicon>
               <i class="pi pi-search"></i>
             </p-inputicon>
@@ -78,15 +77,11 @@
         </td>
       </tr>
     </ng-template>
-    <ng-template #emptymessage>
-      <tr>
-        <td colspan="8">Contenido no encontrado.</td>
-      </tr>
-    </ng-template>
-    <ng-template #loadingbody>
-      <tr>
-        <td colspan="8">Cargando contenido. Por favor espere.</td>
-      </tr>
-    </ng-template>
   </p-table>
+</div>
+<div class="border rounded-lg" *ngIf="data()!.length < 1 && !timeout()">
+  <app-loader></app-loader>
+</div>
+<div *ngIf="data()!.length < 1 && timeout()">
+  <app-not-found-message></app-not-found-message>
 </div>

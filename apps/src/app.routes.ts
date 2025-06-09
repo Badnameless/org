@@ -7,40 +7,45 @@ import { AdminGuard } from './app/features/admin/guards/admin.guard';
 import { DashboardGuard } from './app/features/auth/guards/dashboard.guard';
 import { ProfileComponent } from './app/features/profile/profile.component';
 import { LoadingPageComponent } from './app/features/loading-page/loading-page.component';
+import { BillingComponent } from './app/features/billing/billing.component';
 
 export const appRoutes: Routes = [
-    {
+  {
+    path: '',
+    component: AppLayout,
+    canActivate: [DashboardGuard],
+    children: [
+      {
         path: '',
-        component: AppLayout,
-        canActivate: [DashboardGuard],
-        children: [
-            {
-              path: '',
-              component: Dashboard,
-            },
-            {
-              path: 'pages',
-              loadChildren: () => import('./app/features/pages.routes')
-            },
-            {
-              path: 'admin',
-              loadChildren: () => import('./app/features/admin/admin.routes'),
-              canActivate: [AdminGuard]
-            },
-            {
-              path: 'encf',
-              loadChildren: () => import('./app/features/encf/encf.routes'),
-            },
-            {
-              path: 'profile',
-              component: ProfileComponent
-            }
+        component: Dashboard,
+      },
+      {
+        path: 'pages',
+        loadChildren: () => import('./app/features/pages.routes')
+      },
+      {
+        path: 'admin',
+        loadChildren: () => import('./app/features/admin/admin.routes'),
+        canActivate: [AdminGuard]
+      },
+      {
+        path: 'encf',
+        loadChildren: () => import('./app/features/encf/encf.routes'),
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent
+      },
+      {
+        path: 'billing',
+        component: BillingComponent
+      },
 
-        ]
-    },
-    { path: 'landing', component: Landing },
-    { path: 'notfound', component: Notfound },
-    { path: 'auth', loadChildren: () => import('./app/features/auth/auth.routes') },
-    { path: 'loading', component: LoadingPageComponent },
-    { path: '**', redirectTo: '/notfound' },
+    ]
+  },
+  { path: 'landing', component: Landing },
+  { path: 'notfound', component: Notfound },
+  { path: 'auth', loadChildren: () => import('./app/features/auth/auth.routes') },
+  { path: 'loading', component: LoadingPageComponent },
+  { path: '**', redirectTo: '/notfound' },
 ];
