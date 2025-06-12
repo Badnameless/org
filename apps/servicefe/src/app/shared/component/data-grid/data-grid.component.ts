@@ -130,7 +130,6 @@ export class DataGridComponent implements OnInit {
   isBasicTable: boolean = false;
 
   @ViewChild('dt1') dt1!: Table;
-  @ViewChild('filter') filter!: ElementRef;
   @ContentChild('addForm') addFormTemplate!: TemplateRef<any>;
 
   ngOnInit() {
@@ -167,12 +166,13 @@ export class DataGridComponent implements OnInit {
 
     const headers = visibleColumns.map(col => col.name);
 
-    const filteredValue = signal<any[] | null>(this.dt1.filteredValue!);
+    const filteredValue = this.dt1.filteredValue!;
 
-    const dataRows = filteredValue || this.data();
+    const dataRows = filteredValue ? filteredValue : this.data();
+
     const csvContent = [
       headers.join(','),
-      ...dataRows()!.map(row =>
+      ...dataRows!.map(row =>
         visibleColumns.map(col => {
           let value = row[col.field];
 
@@ -236,7 +236,6 @@ export class DataGridComponent implements OnInit {
 
   clear(table: Table) {
     table.clear();
-    this.filter.nativeElement.value = '';
   }
 
   getSeverity(status: number) {
