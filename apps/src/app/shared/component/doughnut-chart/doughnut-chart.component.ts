@@ -4,10 +4,11 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MessageModule } from 'primeng/message';
 import { CommonModule } from '@angular/common';
+import { NotFoundMessageComponent } from '../not-found-message/not-found-message.component';
 
 @Component({
   selector: 'app-doughnut-chart',
-  imports: [ChartModule, DatePickerModule, ReactiveFormsModule, MessageModule, CommonModule],
+  imports: [ChartModule, DatePickerModule, ReactiveFormsModule, MessageModule, CommonModule, NotFoundMessageComponent],
   templateUrl: './doughnut-chart.component.html',
 })
 export class DoughnutChartComponent implements OnInit{
@@ -41,7 +42,6 @@ export class DoughnutChartComponent implements OnInit{
     this.toDateControl.valueChanges.subscribe(() => {
       this.onChangeDate();
     });
-
   }
 
   onChangeDate(){

@@ -7,10 +7,10 @@ import { Ncf } from '../encf/interfaces/encf';
 import { Tenant } from '../auth/interfaces/user';
 import { DateOption } from '../../shared/component/revenuestreamwidget/interfaces/DateOptions';
 import { DoughnutChartComponent } from '../../shared/component/doughnut-chart/doughnut-chart.component';
-import { AuthService } from '../auth/services/auth.service';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-dashboard',
-  imports: [StatsWidget, RevenueStreamWidget, DoughnutChartComponent],
+  imports: [StatsWidget, RevenueStreamWidget, DoughnutChartComponent, CommonModule],
   templateUrl: './dashboard.html',
 })
 export class Dashboard implements OnInit {
@@ -170,6 +170,16 @@ export class Dashboard implements OnInit {
   initDoughnutData(dates: Date[]) {
     let stats = this.getDoughnutStadistics(dates)
 
+    let data: number = 0;
+    stats.forEach(stat => {
+      data += stat.numEcfs;
+    })
+
+    if(data < 1) {
+      this.pieData = null
+      return;
+    }
+
     this.pieData = {
       labels: ['Tipo 31', 'Tipo 32', 'Tipo 33', 'Tipo 34', 'Tipo 41', 'Tipo 43', 'Tipo 44', 'Tipo 45'],
       datasets: [
@@ -297,6 +307,5 @@ export class Dashboard implements OnInit {
     });
 
     return this.tipos;
-
   }
 }
