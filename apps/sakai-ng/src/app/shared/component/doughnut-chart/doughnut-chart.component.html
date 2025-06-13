@@ -16,5 +16,6 @@
       </div>
     </div>
   </div>
-  <p-chart type="doughnut" [data]="pieData" [options]="pieOptions" width="350"></p-chart>
+  <p-chart *ngIf="pieData" type="doughnut" [data]="pieData" [options]="pieOptions" width="350"></p-chart>
+  <app-not-found-message *ngIf="!pieData"></app-not-found-message>
 </div>
