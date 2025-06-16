@@ -7,7 +7,7 @@ import { Ncf } from '../encf/interfaces/encf';
 import { Tenant } from '../auth/interfaces/user';
 import { DateOption } from '../../shared/component/revenuestreamwidget/interfaces/DateOptions';
 import { DoughnutChartComponent } from '../../shared/component/doughnut-chart/doughnut-chart.component';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 @Component({
   selector: 'app-dashboard',
   imports: [StatsWidget, RevenueStreamWidget, DoughnutChartComponent, CommonModule],
@@ -26,6 +26,8 @@ export class Dashboard implements OnInit {
   public tenant!: Tenant;
   public pieData!: any;
   public pieOptions!: any;
+  private currencyType = new CurrencyPipe('EN');
+
 
   public filterDataOptions: DateOption[] = [
     {
@@ -64,14 +66,14 @@ export class Dashboard implements OnInit {
   ]
 
   private tipos = [
-    { code: 31, numEcfs: 0 },
-    { code: 32, numEcfs: 0 },
-    { code: 33, numEcfs: 0 },
-    { code: 34, numEcfs: 0 },
-    { code: 41, numEcfs: 0 },
-    { code: 43, numEcfs: 0 },
-    { code: 44, numEcfs: 0 },
-    { code: 45, numEcfs: 0 },
+    { code: 31, encf: <Ncf[]>[], color: 'rgba(25, 111, 61)' },
+    { code: 32, encf: <Ncf[]>[], color: 'rgba(205, 97, 85)' },
+    { code: 33, encf: <Ncf[]>[], color: 'rgba(245, 176, 65)' },
+    { code: 34, encf: <Ncf[]>[], color: 'rgba(93, 173, 226)' },
+    { code: 41, encf: <Ncf[]>[], color: 'rgba(69, 179, 157)' },
+    { code: 43, encf: <Ncf[]>[], color: 'rgba(255, 160, 122)' },
+    { code: 44, encf: <Ncf[]>[], color: 'rgba(206, 147, 216)' },
+    { code: 45, encf: <Ncf[]>[], color: 'rgba(0, 102, 102)' },
   ];
 
   async ngOnInit() {
@@ -83,13 +85,13 @@ export class Dashboard implements OnInit {
     this.initDoughnutData(this.donughDates);
   }
 
-  drawBarGraphic(stats: any){
+  drawBarGraphic(stats: any) {
     this.chartData = {
       labels: ['Tipo 31', 'Tipo 32', 'Tipo 33', 'Tipo 34', 'Tipo 41', 'Tipo 43', 'Tipo 44', 'Tipo 45'],
       datasets: [
         {
           backgroundColor: this.documentStyle.getPropertyValue('--p-primary-400'),
-          data: stats.map((s: { numEcfs: any; }) => s.numEcfs)
+          data: stats.map((s: { encf: Ncf[] } ) => s.encf.length)
         }
       ]
     };
@@ -170,46 +172,63 @@ export class Dashboard implements OnInit {
   initDoughnutData(dates: Date[]) {
     let stats = this.getDoughnutStadistics(dates)
 
-    let data: number = 0;
-    stats.forEach(stat => {
-      data += stat.numEcfs;
-    })
+    const filteredStats = stats.filter(stat => stat.encf.length > 0);
 
-    if(data < 1) {
-      this.pieData = null
+    if (filteredStats.length === 0) {
+      this.pieData = null;
       return;
     }
 
     this.pieData = {
-      labels: ['Tipo 31', 'Tipo 32', 'Tipo 33', 'Tipo 34', 'Tipo 41', 'Tipo 43', 'Tipo 44', 'Tipo 45'],
+      labels: filteredStats.map(stat => `Tipo ${stat.code}`),
       datasets: [
         {
-          data: [
-            stats[0].numEcfs,
-            stats[1].numEcfs,
-            stats[2].numEcfs,
-            stats[3].numEcfs,
-            stats[4].numEcfs,
-            stats[5].numEcfs,
-            stats[6].numEcfs,
-            stats[7].numEcfs,
-          ],
-          backgroundColor: [
-            'rgba(25, 111, 61)',
-            'rgba(205, 97, 85)',
-            'rgba(245, 176, 65)',
-            'rgba(93, 173, 226)',
-            'rgba(69, 179, 157)',
-            'rgba(255, 160, 122)',
-            'rgba(206, 147, 216)',
-            'rgba(0, 102, 102)',
-          ]
+          data: filteredStats.map(stat => stat.encf.length),
+
+          backgroundColor: filteredStats.map(stat => stat.color),
+
+        },
+        {
+          data: filteredStats.map(stat => stat.encf)
         }
       ]
     };
 
     this.pieOptions = {
       plugins: {
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              let label = context.label as string;
+              let ncfType: number = Number(label.slice(label.length - 2));
+              let ncfName: string = '';
+              let totalItbis: number = 0;
+              let montoTotal: number = 0;
+              let cantNcf: number = 0;
+              const dataNcf = context.chart.data.datasets[1].data as [Ncf[]];
+
+              dataNcf.forEach((element: Ncf[]) => {
+                element.forEach(ncf => {
+                  if (ncf.tipoNcf_code == ncfType) {
+                    totalItbis += Number(ncf.transncf_itbis);
+                    montoTotal += Number(ncf.transncf_montototal);
+                    cantNcf++;
+                    ncfName = ncf.tipoNcf_code == ncfType ? ncf.tipoNcf_name : ncfName;
+                  } else {
+
+                  }
+                })
+              });
+
+              return [
+                `${ncfName}`,
+                `Cantidad: ${cantNcf}`,
+                `Total ITBIS: RD${this.currencyType.transform(totalItbis)}`,
+                `Monto Total: RD${this.currencyType.transform(montoTotal)}`
+              ];
+            }
+          }
+        },
         legend: {
           labels: {
             usePointStyle: true,
@@ -251,11 +270,11 @@ export class Dashboard implements OnInit {
     const today = new Date();
 
     this.tipos.forEach(tipo => {
-      tipo.numEcfs = this.encfs.filter(encf => {
+      tipo.encf = this.encfs.filter(encf => {
         const date = new Date(encf.transncf_fechaemision);
         const diffInDays = Math.floor((today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
         return encf.tipoNcf_code === tipo.code && diffInDays >= 0 && diffInDays < 7;
-      }).length;
+      });
     });
 
     return this.tipos;
@@ -274,11 +293,11 @@ export class Dashboard implements OnInit {
     });
 
     this.tipos.forEach(tipo => {
-      tipo.numEcfs = this.encfs.filter(encf => {
+      tipo.encf = this.encfs.filter(encf => {
         const encfDate = new Date(encf.transncf_fechaemision);
         const encfKey = this.formatMonthYear(encfDate);
         return encf.tipoNcf_code === tipo.code && validMonthKeys.includes(encfKey);
-      }).length;
+      });
     });
 
     return this.tipos;
@@ -286,10 +305,10 @@ export class Dashboard implements OnInit {
 
   getStadisticsByTypeYearly() {
     this.tipos.forEach(tipo => {
-      tipo.numEcfs = this.encfs.filter(encf => {
+      tipo.encf = this.encfs.filter(encf => {
         const encfDate = new Date(encf.transncf_fechaemision);
         return encf.tipoNcf_code === tipo.code && encfDate.getFullYear() === this.today.getFullYear();
-      }).length;
+      });
     });
 
     return this.tipos;
@@ -297,13 +316,14 @@ export class Dashboard implements OnInit {
 
   getDoughnutStadistics(dates: Date[]) {
     let status: number[] = [1, 4];
+    let counter: number = 0;
 
     this.tipos.forEach(tipo => {
-      tipo.numEcfs = this.encfs.filter(encf => {
+      tipo.encf = this.encfs.filter(encf => {
         const date = new Date(encf.transncf_fechaemision);
 
         return encf.tipoNcf_code === tipo.code && date >= dates[0] && date <= dates[1] && status.includes(encf.transncf_status);
-      }).length;
+      });
     });
 
     return this.tipos;
