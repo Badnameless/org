@@ -84,10 +84,10 @@
     <div class="flex justify-between">
       <div class="flex items-center gap-5">
         <div (click)="this.photoDialogVisible = true" (mouseover)="this.mouseOverAvatar = true"
-          (mouseleave)="mouseOverAvatar = false" class="cursor-pointer border-4 rounded-full border-gray-50">
-          <p-avatar *ngIf="!mouseOverAvatar" class="border-4 border-white object-contain aspect-square"
+          (mouseleave)="mouseOverAvatar = false" class="cursor-pointer border-4 rounded-full border-gray-50 dark:border-gray-50/10">
+          <p-avatar *ngIf="!mouseOverAvatar" class="border-4 border-white dark:border-gray-50/10 object-contain aspect-square"
             [style]="{width: '70px', height: '70px'}" [image]="userImgPath()" shape="circle" size="xlarge"></p-avatar>
-          <div class="w-[70px] h-[70px] flex justify-center items-center bg-slate-200 rounded-full"
+          <div class="w-[70px] h-[70px] flex justify-center items-center bg-slate-200 dark:bg-blue-400/10 rounded-full"
             *ngIf="mouseOverAvatar">
             <i class="pi pi-pencil" style="font-size: 18px;"></i>
           </div>
@@ -118,12 +118,12 @@
         <span>Se unió el {{ user()?.created_at | date:'longDate' }}</span>
       </div>
     </div>
-    <div class="flex items-center gap-2 border-b pb-6">
-      <div class="flex gap-3 items-center border border-gray-200 rounded-xl w-fit px-8 py-2">
+    <div class="flex items-center gap-2 border-b dark:border-gray-50/10 pb-6">
+      <div class="flex gap-3 items-center border border-gray-200 dark:border-gray-50/10 rounded-xl w-fit px-8 py-2">
         <i class="pi pi-envelope text-slate-500"></i>
         <span class="text-slate-500"> {{ user()?.user_email }} </span>
       </div>
-      <p-button severity="info" (onClick)="emailDialogVisible = true"><i class="pi pi-pencil"></i></p-button>
+      <p-button severity="contrast" variant="outlined" (onClick)="emailDialogVisible = true"><i class="pi pi-pencil"></i></p-button>
     </div>
 
     <div>
@@ -141,7 +141,7 @@
             <ng-container *ngIf="notificationLoading()" [ngTemplateOutlet]="loader"></ng-container>
             <div *ngIf="!notificationLoading()" class="flex flex-col gap-4">
               @for (notificacion of notifications(); track $index) {
-              <div class="flex items-center gap-5 p-5 bg-gray-100 rounded-lg">
+              <div class="flex items-center gap-5 p-5 bg-gray-100 dark:bg-blue-400/10 dark:border-gray-50/10 rounded-lg">
                 <div>
                   <i *ngIf="notificacion.tipo_notificacion.tipoNotificaciones_code != 3"
                     [ngClass]="['p-3 rounded-full',
@@ -188,7 +188,7 @@
                 autenticación.</span>
             </div>
 
-            <div class="flex flex-col gap-6 items-start border p-5 rounded-md">
+            <div class="flex flex-col gap-6 items-start border dark:border-gray-50/10 p-5 rounded-md">
               <div class="flex flex-col gap-2">
                 <span class="text-2xl font-black leading-none">Contraseña y recuperación</span>
                 <span class="text-sm text-muted-color">Administra tu contraseña y opciones de recuperación.</span>
