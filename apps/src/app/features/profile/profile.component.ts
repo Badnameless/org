@@ -15,7 +15,6 @@ import { lastValueFrom } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
 import { AuthService } from '../auth/services/auth.service';
 import { FileUploadModule } from 'primeng/fileupload';
-import { HttpService } from '../../services/http.service';
 import { SelectModule } from 'primeng/select';
 import { EmailValidatorService } from '../admin/pages/users/validators/email-validator.service';
 import { AvatarModule } from 'primeng/avatar';
