@@ -1,13 +1,13 @@
-import { Component, ContentChild, effect, ElementRef, input, Input, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, computed, ContentChild, effect, ElementRef, input, Input, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MenuModule } from 'primeng/menu';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, FilterMetadata, MenuItem, MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { SliderModule } from 'primeng/slider';
-import { Table, TableModule } from 'primeng/table';
+import { Table, TableFilterEvent, TableModule } from 'primeng/table';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToastModule } from 'primeng/toast';
@@ -29,6 +29,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PopoverModule } from 'primeng/popover';
 import { LoaderComponent } from '../loader/loader.component';
 import { NotFoundMessageComponent } from '../not-found-message/not-found-message.component';
+import { filterNameMap } from '../../utils/FilterNameMap';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -90,11 +91,45 @@ export class DataGridComponent implements OnInit {
   }
 
   exportItems!: MenuItem[]
-  columnNames: string[] = [];
   selectedRows!: any[];
   timeout = signal<boolean>(false);
   showAddDialog: boolean = false;
   data = input<any[] | null>();
+
+  filters = signal<{
+    [s: string]: FilterMetadata | undefined;
+  } | undefined>(undefined);
+
+  readonly activeFilters = computed(() => {
+    const current = this.filters();
+    if (!current) return [];
+
+    const fieldMap = new Map();
+
+    this.columns.forEach(column => {
+      fieldMap.set(column.field, column.name)
+    })
+
+    return Object.entries(current)
+      .flatMap(([field, filterArray]) => {
+        if (!Array.isArray(filterArray)) return [];
+
+        return filterArray
+          .filter(f => {
+            console.log(f.matchMode);
+            const val = f?.value;
+            if (Array.isArray(val)) return val.length > 0;
+            return val !== undefined && val !== null && val !== '';
+          })
+          .map(f => (
+            {
+              field,
+              fieldName: fieldMap.get(field),
+              value: f.value,
+              matchMode: filterNameMap.get(f.matchMode)
+            }));
+      });
+  });
 
   @Input()
   columns: Column[] = [];
@@ -310,5 +345,17 @@ export class DataGridComponent implements OnInit {
 
   closeDialog() {
     this.showAddDialog = false;
+  }
+
+  onFilter(event: TableFilterEvent) {
+    this.filters.set(event.filters!);
+  }
+
+  onRemoveFilter(filteredColumn: string) {
+    let filters = Object.entries(this.dt1.filters);
+    filters = filters.filter(filter => filter[0] != filteredColumn )
+    const newTableFilters = Object.fromEntries(filters);
+    this.dt1.filters = newTableFilters;
+    console.log(this.dt1.filters);
   }
 }
