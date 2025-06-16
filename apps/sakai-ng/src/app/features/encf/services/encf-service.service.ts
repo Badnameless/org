@@ -3,27 +3,40 @@ import { HttpService } from '../../../services/http.service';
 import { Token } from '../../auth/interfaces/token';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Tenant } from '../../auth/interfaces/user';
-import { from, lastValueFrom, map, Observable, of, switchMap } from 'rxjs';
+import { lastValueFrom, map } from 'rxjs';
 import { Ncf } from '../interfaces/encf';
 import { CacheService } from '../../../services/cache.service';
-
 @Injectable({
   providedIn: 'root'
 })
 export class EncfService {
 
   constructor(private httpService: HttpService,
-              private http: HttpClient,
-              private cache: CacheService
-            ) { }
+    private http: HttpClient,
+    private cache: CacheService
+  ) { }
 
   private ttl: number = 1000 * 60 * 10;
 
+  get ncfTypes() {
+    const tiposComprobante: Record<number, string> = {
+      31: 'Factura de Crédito Fiscal',
+      32: 'Factura de Consumo Electrónica',
+      33: 'Nota de Débito Electrónica',
+      34: 'Nota de Crédito Electrónica',
+      41: 'Comprobante Electrónico de Compras',
+      43: 'Comprobante Electrónico para Gastos Menores',
+      44: 'Comprobante Electrónico para Regímenes Especiales',
+      45: 'Comprobante Electrónico Gubernamental'
+    };
+    return tiposComprobante;
+  }
+
   async getEncfs(): Promise<Ncf[]> {
     const cacheKey = 'api/encfs';
-    const cached: Promise<Ncf[]> =  await this.cache.getCache(cacheKey, this.ttl);
+    const cached: Promise<Ncf[]> = await this.cache.getCache(cacheKey, this.ttl);
 
-    if(cached) return cached;
+    if (cached) return cached;
 
     const token: Token = JSON.parse(localStorage.getItem('token')!);
     const current_tenant: Tenant = JSON.parse(localStorage.getItem('current_tenant')!);
@@ -45,9 +58,9 @@ export class EncfService {
 
   async getAllEncfs(): Promise<Ncf[]> {
     const cacheKey = 'api/encfs/all';
-    const cached: Promise<Ncf[]> =  await this.cache.getCache(cacheKey, this.ttl);
+    const cached: Promise<Ncf[]> = await this.cache.getCache(cacheKey, this.ttl);
 
-    if(cached) return cached;
+    if (cached) return cached;
 
     const token: Token = JSON.parse(localStorage.getItem('token')!);
 

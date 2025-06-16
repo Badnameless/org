@@ -57,8 +57,6 @@ export class DoughnutChartComponent implements OnInit{
 
     this.dateError = false;
 
-    console.log(dates)
-
     this._onChangeDate.emit(dates);
   }
 }
