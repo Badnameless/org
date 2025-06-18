@@ -1,0 +1,15 @@
+{
+  "routes": [
+    {
+      "route": "/profile",
+      "methods": [
+        "get",
+        "post",
+        "put",
+        "delete",
+        "patch",
+        "options"
+      ]
+    }
+  ]
+}
