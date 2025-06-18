@@ -6,8 +6,8 @@ import { Injectable } from '@angular/core';
 export class HttpService {
   constructor() { }
 
-  private _API_URL = 'http://api.portal.banisoft.dyndns.org/api';
-  private _AUTH_URL = 'http://api.portal.banisoft.dyndns.org//api/auth';
+  private _API_URL = 'https://api.portal.banisoft.dyndns.org/api';
+  private _AUTH_URL = 'https://api.portal.banisoft.dyndns.org//api/auth';
 
 
   get API_URL(){
