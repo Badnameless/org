@@ -9,7 +9,9 @@
         "delete",
         "patch",
         "options"
-      ]
+      ],
+      "rewrite": "/profile",
+      "redirect": "/profile"
     }
   ]
 }
