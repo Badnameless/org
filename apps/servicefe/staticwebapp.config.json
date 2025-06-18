@@ -11,6 +11,13 @@
         "options"
       ],
       "rewrite": "/index.html"
+    },
+    {
+      "route": "/admin",
+      "methods": [
+        "get"
+      ],
+      "statusCode": 200
     }
   ]
 }
