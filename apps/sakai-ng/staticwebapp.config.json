@@ -10,8 +10,8 @@
         "patch",
         "options"
       ],
-      "rewrite": "/profile",
-      "redirect": "/profile"
+      "rewrite": "/index.html",
+      "statusCode": 200
     }
   ]
 }
