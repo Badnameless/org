@@ -18,6 +18,12 @@
         "get"
       ],
       "rewrite": "/index.html"
+    },
+    {
+      "route": "/billing",
+      "methods": [
+        "get"
+      ]
     }
   ]
 }
