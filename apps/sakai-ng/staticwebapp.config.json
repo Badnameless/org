@@ -25,6 +25,13 @@
         "get"
       ],
       "rewrite": "/index.html"
+    },
+    {
+      "route": "/admin/companies",
+      "methods": [
+        "get"
+      ],
+      "rewrite": "/index.html"
     }
   ]
 }
