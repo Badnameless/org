@@ -23,7 +23,8 @@
       "route": "/billing",
       "methods": [
         "get"
-      ]
+      ],
+      "rewrite": "/index.html"
     }
   ]
 }
