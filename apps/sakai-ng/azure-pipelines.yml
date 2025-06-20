@@ -24,3 +24,14 @@ stages:
           Dockerfile: '$(Build.Repository.LocalPath)/Dockerfile'
           tags: 'portalfe-sg'
           buildContext: '$(Build.Repository.LocalPath)/'
+
+      - task: AzureRmWebAppDeployment@4
+        displayName: "Deploy Fe Api Production"
+        inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'Azure DevOps'
+          appType: 'webAppContainer'
+          WebAppName: 'portal-fe'
+          DockerNamespace: 'deivycode'
+          DockerRepository: 'services'
+          DockerImageTag: 'portalfe-sg'
