@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { computed, Injectable, OnInit, signal } from '@angular/core';
 import { User } from '../interfaces/user';
-import { lastValueFrom, map, Observable, of, tap } from 'rxjs';
+import { lastValueFrom, map, Observable, of, retry, Subscription, tap } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { Token } from '../interfaces/token';
 @Injectable({
@@ -15,9 +15,12 @@ export class AuthService {
   readonly exposedToken = this.token.asReadonly();
   readonly exposedUser = this.user.asReadonly();
 
-  readonly userImgPath = computed<string>(() => {
-    const userPhoto = this.user()?.user_photoUrl
-    return userPhoto ? `${this.httpService.API_URL}/user/get_photo/${this.user()?.user_photoUrl}` : 'images/user.png'
+  readonly userImg = computed<Promise<Blob>>(async () => {
+
+    const imgObservable = this.http.get<Blob>(`${this.httpService.API_URL}/user/get_photo/${this.user()?.user_photoUrl}`, { responseType: 'blob' as 'json' });
+    const img: Blob = await lastValueFrom(imgObservable);
+
+    return img;
   });
 
   constructor(

@@ -16,7 +16,7 @@
           <p-button *ngIf="exportable" (onClick)="exportMenu.toggle($event)" severity="secondary" icon="pi pi-upload"
             iconPos="right" label="Exportar" />
 
-          <div class="flex items-center gap-3">
+          <!-- <div class="flex items-center gap-3">
             <div class="flex flex-wrap gap-2" *ngIf="activeFilters().length > 0">
               <div *ngFor="let filter of activeFilters()">
                 <p-tag *ngFor="let fil of filter"
@@ -31,7 +31,7 @@
                 </p-tag>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="flex gap-3">
           <p-button *ngIf="isCrud" severity="success" (onClick)="showAddForm()">Agregar</p-button>
