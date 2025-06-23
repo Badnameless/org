@@ -6,8 +6,8 @@
 <div *ngIf="data()!.length > 0">
   <p-table *ngIf="data" #dt1 [value]="data()!" [(selection)]="selectedRows" [dataKey]="dataKey" [rows]="10"
     [rowHover]="true" [paginator]="true" [columns]="columns" [rowsPerPageOptions]="[5, 10, 25, 50, 100]"
-    [globalFilterFields]="filterFields" responsiveLayout="scroll" [sortField]="fieldToSort" [sortOrder]="-1"
-    (onFilter)="onFilter($event)" class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]" selectionMode="multiple">
+    [globalFilterFields]="filterFields" responsiveLayout="scroll" [sortField]="fieldToSort" (contextMenuSelectionChange)="onFilter()"
+    [sortOrder]="-1" class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]" selectionMode="multiple">
     <ng-template #caption>
       <div class="flex justify-between items-center flex-column sm:flex-row">
         <div class="flex items-center gap-3">
@@ -18,19 +18,20 @@
 
           <div class="flex items-center gap-3">
             <div class="flex flex-wrap gap-2" *ngIf="activeFilters().length > 0">
-              <p-tag *ngFor="let filter of activeFilters(); let i = index"
-                [style]="{ border: '1px solid #d5d8dc',  background: 'transparent', color: 'black'}">
-                <div class="flex items-center gap-2 px-1">
-                  <span class="text-base">
-                    {{ filter.fieldName }} <span class="text-blue-500">{{ filter.matchMode }}</span> {{ filter.value |
-                    date:'shortDate' }}
-                  </span>
-                  <p-button [style]="{ margin: 0 }" severity="secondary" icon="pi pi-times" size="small" variant="text" (onClick)="onRemoveFilter(filter.field)"></p-button>
-                </div>
-              </p-tag>
+              <div *ngFor="let filter of activeFilters()">
+                <p-tag *ngFor="let fil of filter"
+                  [style]="{ border: '1px solid #d5d8dc',  background: 'transparent', color: 'black'}">
+                  <div class="flex items-center gap-2 px-1">
+                    <span class="text-base">
+                      {{ fil.fieldName }} <span class="text-blue-500">{{ fil.matchMode }}</span> {{ fil.value | date:'shortDate' }}
+                    </span>
+                    <p-button [style]="{ margin: 0 }" severity="secondary" icon="pi pi-times" size="small"
+                      variant="text" (onClick)="onRemoveFilter(fil.field, fil.value)"></p-button>
+                  </div>
+                </p-tag>
+              </div>
             </div>
           </div>
-
         </div>
         <div class="flex gap-3">
           <p-button *ngIf="isCrud" severity="success" (onClick)="showAddForm()">Agregar</p-button>
@@ -50,7 +51,8 @@
         <th [ngClass]="{'hidden': column.type === 'hidden'}" *ngFor="let column of columns" style="min-width: 12rem">
           <div class="flex justify-between items-center">
             {{ column.name }}
-            <p-columnFilter [type]="column.type" [field]="column.field" display="menu" placeholder="Buscar por">
+            <p-columnFilter (onShow)="addFilterFunctionality()" #ColumnFilter [type]="column.type" [field]="column.field" display="menu"
+              placeholder="Buscar por">
             </p-columnFilter>
           </div>
         </th>
