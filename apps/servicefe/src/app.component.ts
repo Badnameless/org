@@ -1,8 +1,9 @@
-import { Component, effect, inject, Injector } from '@angular/core';
+import { Component, effect, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Token } from './app/features/auth/interfaces/token';
 import { AuthService } from './app/features/auth/services/auth.service';
 import { lastValueFrom } from 'rxjs';
+import { LayoutService } from './app/shared/service/layout.service';
 
 @Component({
   selector: 'app-root',
@@ -14,9 +15,9 @@ export class AppComponent {
 
   public token!: Token | null;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private layoutService: LayoutService) {
     addEventListener("storage", async (event) => {
-      if(!event.newValue){
+      if (!event.newValue) {
         window.location.reload();
       }
 

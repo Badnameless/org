@@ -11,7 +11,7 @@ import { Tenant } from '../auth/interfaces/user';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ProfileService } from './services/profile.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
 import { AuthService } from '../auth/services/auth.service';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -68,7 +68,17 @@ export class ProfileComponent implements OnInit {
 
   public user = computed(() => this.authService.exposedUser());
   public token = computed(() => this.authService.exposedToken());
-  public userImgPath = computed<string>(() => this.authService.userImgPath())
+
+  public userImgPath = computed<Promise<string | undefined>>(async () => {
+    const userImg = await this.authService.userImg();
+
+    if (!userImg || userImg.size === 0 || !userImg.type.startsWith('image/')) {
+      return undefined;
+    }
+
+    return URL.createObjectURL(userImg);
+  });
+
   public notifications = computed<Notificacion[]>(() => {
     let notifications = this.notificationService.notifications().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     return notifications.slice(0, 5)
@@ -90,8 +100,6 @@ export class ProfileComponent implements OnInit {
 
 
   public loading = signal<boolean>(false);
-
-
 
   constructor(private fb: FormBuilder,
     private message: MessageService,
