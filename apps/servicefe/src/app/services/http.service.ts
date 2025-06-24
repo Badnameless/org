@@ -9,7 +9,6 @@ export class HttpService {
   private _API_URL = 'https://api.portal.banisoft.dyndns.org/api';
   private _AUTH_URL = 'https://api.portal.banisoft.dyndns.org/api/auth';
 
-
   get API_URL(){
     return this._API_URL;
   }
