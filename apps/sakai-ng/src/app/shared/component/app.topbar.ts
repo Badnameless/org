@@ -58,7 +58,17 @@ export class AppTopbar implements OnInit {
       return this.authService.user()?.tenants[0];
     }
   });
-  public userImgPath = computed<string>(() => this.authService.userImgPath())
+
+  public userImgPath = computed<Promise<string | undefined>>(async () => {
+    const blob = await this.authService.userImg();
+
+    if (!blob || blob.size === 0 || !blob.type.startsWith('image/')) {
+      return undefined;
+    }
+
+    return URL.createObjectURL(blob);
+  });
+
 
   public notifications = signal<Notificacion[]>([]);
   public isAllNotificationMode = signal<boolean>(false);

@@ -1,13 +1,13 @@
-import { Component, ContentChild, effect, ElementRef, input, Input, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, computed, ContentChild, effect, ElementRef, input, Input, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MenuModule } from 'primeng/menu';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, FilterMetadata, MenuItem, MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { SliderModule } from 'primeng/slider';
-import { Table, TableModule } from 'primeng/table';
+import { ColumnFilter, Table, TableFilterEvent, TableModule } from 'primeng/table';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToastModule } from 'primeng/toast';
@@ -22,17 +22,18 @@ import { CustomerService } from '../../../features/service/customer.service';
 import { ProductService } from '../../../features/crud/services/product.service';
 import { Column } from './interfaces/column';
 import { MessageModule } from 'primeng/message';
-import { lastValueFrom, Observable } from 'rxjs';
+import { filter, lastValueFrom, Observable } from 'rxjs';
 import { PdfExportService } from '../../service/pdf-export.service';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PopoverModule } from 'primeng/popover';
 import { LoaderComponent } from '../loader/loader.component';
 import { NotFoundMessageComponent } from '../not-found-message/not-found-message.component';
+import { filterNameMap } from '../../utils/FilterNameMap';
+import { DatePicker } from 'primeng/datepicker';
 
-interface expandedRows {
-  [key: string]: boolean;
-}
+type Filters = { [key: string]: FilterMetadata | FilterMetadata[] };
+
 
 @Component({
   selector: 'app-data-grid',
@@ -81,6 +82,8 @@ export class DataGridComponent implements OnInit {
     private pdfExport: PdfExportService) {
 
     effect(() => {
+
+
       if (this.data()!.length < 1) {
         setTimeout(() => {
           this.timeout.set(true)
@@ -90,11 +93,45 @@ export class DataGridComponent implements OnInit {
   }
 
   exportItems!: MenuItem[]
-  columnNames: string[] = [];
   selectedRows!: any[];
   timeout = signal<boolean>(false);
   showAddDialog: boolean = false;
   data = input<any[] | null>();
+
+  filters = signal<{
+    [s: string]: FilterMetadata | FilterMetadata[];
+  } | undefined>(undefined);
+
+  readonly activeFilters = computed(() => {
+    const current = this.filters();
+    if (!current) return [];
+
+    const filters = Object.entries(current).flatMap(([field, filterValue]) => {
+      return { field, filterValue }
+    })
+
+    const fieldMap = new Map();
+
+    this.columns.forEach(column => {
+      fieldMap.set(column.field, column.name)
+    })
+
+    const parsedFilters = filters.map(filter => {
+      if (Array.isArray(filter.filterValue)) {
+        const parsedFilters = filter.filterValue.map(filterVal => ({
+          ...filterVal,
+          fieldName: fieldMap.get(filter.field),
+          field: filter.field
+        }))
+        return parsedFilters
+      }
+      return
+    })
+
+    console.log(parsedFilters)
+
+    return parsedFilters
+  });
 
   @Input()
   columns: Column[] = [];
@@ -131,6 +168,8 @@ export class DataGridComponent implements OnInit {
 
   @ViewChild('dt1') dt1!: Table;
   @ContentChild('addForm') addFormTemplate!: TemplateRef<any>;
+  @ViewChild('ColumnFilter') columnFilter!: ColumnFilter;
+  @ViewChild('') filterbutton!: ElementRef;
 
   ngOnInit() {
     setTimeout(() => {
@@ -290,7 +329,7 @@ export class DataGridComponent implements OnInit {
       })
     }
 
-    console.log(await lastValueFrom(this.deleteFunction(ids)))
+    await lastValueFrom(this.deleteFunction(ids))
     window.location.reload();
   }
 
@@ -310,5 +349,53 @@ export class DataGridComponent implements OnInit {
 
   closeDialog() {
     this.showAddDialog = false;
+  }
+
+  onFilter() {
+    this.filters.set(this.dt1.filters);
+  }
+
+
+  addFilterFunctionality() {
+
+    let filterMenu = document.querySelector('.p-datatable-filter-overlay-popover')
+
+    filterMenu?.addEventListener('keyup', (event: any) => {
+      if(event.key === 'Enter'){
+        console.log('entered')
+      }
+    })
+
+    console.log(filterMenu);
+
+    let DatePickerInput = document.getElementsByTagName('p-datepicker')
+    let ApplyButton = document.querySelector('[aria-label="Apply"]');
+
+    console.log(DatePickerInput)
+
+    DatePickerInput.item(0)!.addEventListener('click', () => {
+      let DataPickerButton = document.querySelectorAll('.p-datepicker-day-cell');
+
+      DataPickerButton.forEach(dayButton => {
+        dayButton.addEventListener('click', () => {
+          this.onFilter()
+        })
+      })
+    })
+
+    ApplyButton?.addEventListener('click', () => {
+      this.onFilter();
+    })
+  }
+
+  onRemoveFilter(filteredColumn: string, value: any) {
+    const filters: Filters = { ...this.dt1.filters };
+    console.log(filters)
+
+    this.dt1.filters = filters;
+    this.filters.set(this.dt1.filters);
+
+    this.dt1._filter();
+
   }
 }
