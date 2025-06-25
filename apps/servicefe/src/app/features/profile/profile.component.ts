@@ -72,11 +72,11 @@ export class ProfileComponent implements OnInit {
   public userImgPath = computed<Promise<string | undefined>>(async () => {
     const userImg = await this.authService.userImg();
 
-    if (!userImg || userImg.size === 0 || !userImg.type.startsWith('image/')) {
-      return undefined;
+    if(userImg instanceof Blob){
+      return URL.createObjectURL(userImg);
+    }else{
+      return userImg;
     }
-
-    return URL.createObjectURL(userImg);
   });
 
   public notifications = computed<Notificacion[]>(() => {

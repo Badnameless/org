@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <p-button type="submit">{{ buttonText }}</p-button>
+      <p-button [loading]="isLoading()" type="submit">{{ buttonText }}</p-button>
     </div>
   </form>
 </p-fluid>

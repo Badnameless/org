@@ -15,12 +15,17 @@ export class AuthService {
   readonly exposedToken = this.token.asReadonly();
   readonly exposedUser = this.user.asReadonly();
 
-  readonly userImg = computed<Promise<Blob>>(async () => {
+  readonly userImg = computed<Promise<Blob | string>>(async () => {
+    if (this.user()?.user_photoUrl) {
+      const imgObservable = this.http.get<Blob>(`${this.httpService.API_URL}/user/get_photo/${this.user()?.user_photoUrl}`, { responseType: 'blob' as 'json' });
+      const img: Blob = await lastValueFrom(imgObservable);
 
-    const imgObservable = this.http.get<Blob>(`${this.httpService.API_URL}/user/get_photo/${this.user()?.user_photoUrl}`, { responseType: 'blob' as 'json' });
-    const img: Blob = await lastValueFrom(imgObservable);
+      return img;
+    }else{
+      return 'images/user.png';
+    }
 
-    return img;
+
   });
 
   constructor(
@@ -34,7 +39,7 @@ export class AuthService {
       this.token.set(JSON.parse(tokenFromStorage));
     }
 
-    if(userFromStorage){
+    if (userFromStorage) {
       this.user.set(JSON.parse(userFromStorage));
     }
   }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, computed, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MessageModule } from 'primeng/message';
 import { FluidModule } from 'primeng/fluid';
@@ -24,11 +24,10 @@ import { Company } from './interfaces/company';
 })
 export class UpdateAddCompanyComponent implements OnInit {
 
-  @Output() onSuccess = new EventEmitter<void>();
-
-  public plans: Plan[] = [];
+  public plans = computed<Plan[]>(() => this.planService.plans())
   public companyFormGroup!: FormGroup;
   public loading: boolean = true;
+  isLoading = signal<boolean>(false);
 
   @Input()
   public tenant_name!: string;
@@ -75,10 +74,9 @@ export class UpdateAddCompanyComponent implements OnInit {
     }
 
     try {
-      this.plans = await this.planService.getPlans();
       this.loading = false;
 
-      const selectedPlan = this.plans.find(p => p.plan_id === this.plan_id);
+      const selectedPlan = this.planService.plans().find(p => p.plan_id === this.plan_id);
       this.companyFormGroup.controls['plan'].setValue(selectedPlan?.plan_id)
 
     } catch {
@@ -100,24 +98,22 @@ export class UpdateAddCompanyComponent implements OnInit {
     this.companyFormGroup.markAllAsTouched();
 
     if (this.companyFormGroup.valid) {
+      this.isLoading.set(true);
       if (this.tenant_name) {
-
-        let response: RnccedTakenResponse | Company;
-        response = await lastValueFrom(this.companyService.updateCompany(this.companyFormGroup.value, this.tenant_id))
+        let response: RnccedTakenResponse | Company[];
+        response = await this.companyService.updateCompany(this.companyFormGroup.value, this.tenant_id)
 
         if ('rnccedIsTaken' in response) {
           this.companyFormGroup.controls['tenant_cedrnc'].setErrors(await lastValueFrom(this.rnccedValidator.validate(this.companyFormGroup.controls['tenant_cedrnc'])))
-        } else {
-          this.onSuccess.emit();
-          window.location.reload();
+          this.isLoading.set(false);
+          return;
         }
 
       } else {
-        await lastValueFrom(this.companyService.storeCompany(this.companyFormGroup.value))
-
-        this.onSuccess.emit();
-        window.location.reload();
+        await this.companyService.storeCompany(this.companyFormGroup.value)
       }
+      this.isLoading.set(false);
+      this.ref.close()
     }
   }
 }

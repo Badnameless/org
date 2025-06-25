@@ -1,4 +1,4 @@
-  <p-fluid *ngIf="!loading">
+  <p-fluid *ngIf="!isLoadingView()">
     <form [formGroup]="userFormGroup" (ngSubmit)="onSubmit()">
       <div class="card flex flex-col gap-4">
 
@@ -30,18 +30,12 @@
                 }})</p-message>
             </span>
           </div>
-          <p-multiselect class="z-50" [options]="companies" optionLabel="tenant_name" optionValue="tenant_id" placeholder="Seleccione las compañias"
+          <p-multiselect class="z-50" [options]="companies()" optionLabel="tenant_name" optionValue="tenant_id" placeholder="Seleccione las compañias"
             [maxSelectedLabels]="3" formControlName="tenants" appendTo="body" />
         </div>
 
-        <p-button type="submit">{{ buttonText }}</p-button>
+        <p-button [loading]="isLoading()" type="submit">{{ buttonText }}</p-button>
       </div>
     </form>
   </p-fluid>
-
-  <ng-template #loader *ngIf="loading">
-    <div class="flex">
-      <img src="**/*/loaders/tail-spin.svg">
-    </div>
-  </ng-template>
 

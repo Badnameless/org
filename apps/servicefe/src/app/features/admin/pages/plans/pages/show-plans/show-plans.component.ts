@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { DataGridComponent } from '../../../../../../shared/component/data-grid/data-grid.component';
 import { Column } from '../../../../../../shared/component/data-grid/interfaces/column';
 import { lastValueFrom } from 'rxjs';
@@ -16,10 +16,12 @@ import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
   providers: [DialogService]
 })
 export class ShowPlansComponent {
-  constructor(protected planService: PlanService, public dialogService:DialogService) {}
+  constructor(protected planService: PlanService, public dialogService: DialogService) {
+    planService.getPlans();
+  }
 
   columns: Column[] = [];
-  plans: Plan[] = [];
+  plans = computed<Plan[]>(() => this.planService.plans());
   addFormref!: DynamicDialogRef;
   filterFields: string[] = ['plan_name'];
 
@@ -27,7 +29,7 @@ export class ShowPlansComponent {
     await this.loadPlans();
   }
 
-  show(plan?: Plan){
+  show(plan?: Plan) {
     if (plan) {
       const { plan_name, planDetail_from, planDetail_to, planDetail_tolerance, planDetail_priceXdoc, plan_id } = plan
       const filteredPlan = { plan_name, planDetail_from, planDetail_to, planDetail_tolerance, planDetail_priceXdoc, plan_id }
@@ -38,7 +40,7 @@ export class ShowPlansComponent {
           closable: true,
           modal: true,
           width: '20vw',
-          inputValues: filteredPlan
+          inputValues: filteredPlan,
         })
     } else {
       this.addFormref = this.dialogService.open(UpdateAddPlanComponent,
@@ -52,8 +54,6 @@ export class ShowPlansComponent {
   }
 
   async loadPlans() {
-    this.plans = await this.planService.getPlans();
-
     this.columns = [
       {
         name: 'id',
