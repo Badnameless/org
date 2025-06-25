@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpService } from '../../../../../services/http.service';
 import { Observable, tap, lastValueFrom, switchMap } from 'rxjs';
 import { FormGroup } from '@angular/forms';
@@ -12,82 +12,79 @@ import { CacheService } from '../../../../../services/cache.service';
 })
 export class PlanService {
 
+  private ttl: number = 1000 * 60 * 30;
+  private cacheKey: string = 'api/plans/all';
+
+  public plans = signal<Plan[]>([]);
+
   constructor(private http: HttpClient,
     private httpService: HttpService,
     private cache: CacheService
-  ) { }
+  ) {}
 
-  private ttl: number = 1000 * 60 * 30;
-  private cacheKey: string = 'api/plans/all' ;
-
-  async getPlans(): Promise<Plan[]> {
+  async getPlans() {
     const cached: Promise<Plan[]> = await this.cache.getCache(this.cacheKey, this.ttl);
 
-    if (cached) return cached;
+    if (cached) {
+      this.plans.set(await cached);
+    } else {
+      const token: Token = JSON.parse(localStorage.getItem('token')!);
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
+      const data = await lastValueFrom(this.http.get<Plan[]>(`${this.httpService.API_URL}/get/plans`, { headers }));
+
+      this.cache.setCache(this.cacheKey, data);
+
+      this.plans.set(data);
+    }
+  }
+
+  async storePlan(form: FormGroup) {
     const token: Token = JSON.parse(localStorage.getItem('token')!);
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    const data = await lastValueFrom(this.http.get<Plan[]>(`${this.httpService.API_URL}/get/plans`, { headers }));
+    const response = await lastValueFrom(this.http.post<Plan>(`${this.httpService.API_URL}/create/plan`, form));
 
-    this.cache.setCache(this.cacheKey, data);
+    const cached: Plan[] = await this.cache.getCache(this.cacheKey, this.ttl)
 
-    return data;
+    if (cached) {
+      cached.push(await response)
+      await this.cache.setCache(this.cacheKey, cached);
+      this.plans.set(cached)
+    } else {
+      this.plans.update((currentValue) => [...currentValue, response])
+    }
   }
 
-  storePlan(form: FormGroup): Observable<Plan> {
+  async updatePlan(form: FormGroup, id: number) {
     const token: Token = JSON.parse(localStorage.getItem('token')!);
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    return this.http.post<Plan>(`${this.httpService.API_URL}/create/plan`, form).pipe(
-      switchMap(async (response) => {
-        const cached: Plan[] = await this.cache.getCache(this.cacheKey, this.ttl)
+    const response = await lastValueFrom(this.http.put<Plan>(`${this.httpService.API_URL}/update/plan`, form, { headers }));
 
-        if(cached){
-          cached.push(response)
-          await this.cache.setCache(this.cacheKey, cached);
-        }
-        return response;
-      })
-    );
+    const cached: Plan[] = await this.cache.getCache(this.cacheKey, this.ttl)
+
+    const updatedCache = cached.map(plan =>
+      plan.plan_id === id ? response : plan
+    )
+    await this.cache.setCache(this.cacheKey, updatedCache);
+
+    this.plans.set(updatedCache);
   }
 
-  updatePlan(form: FormGroup, id: number): Observable<FormGroup> {
-    const token: Token = JSON.parse(localStorage.getItem('token')!);
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
-
-    return this.http.put<FormGroup>(`${this.httpService.API_URL}/update/plan`, form, { headers }).pipe(
-      switchMap(async (response) => {
-        const cached: Plan[] = await this.cache.getCache(this.cacheKey, this.ttl)
-
-        if(cached){
-          const updatedCache = cached.map(plan =>
-            plan.plan_id === id ? response : plan
-          )
-          await this.cache.setCache(this.cacheKey, updatedCache);
-        }
-
-        return response;
-      })
-    );
-  }
-
-  deletePlans(plan_ids: number[]) {
+  async deletePlans(plan_ids: number[]) {
     const token: Token = JSON.parse(localStorage.getItem('token')!);
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
     const params = new HttpParams().set('plan_ids', plan_ids.join(','));
 
-    return this.http.delete<number[]>(`${this.httpService.API_URL}/delete/plans`, { headers, params }).pipe(
-      switchMap(async (response) => {
-        const cached: Plan[] = await this.cache.getCache(this.cacheKey, this.ttl);
+    await lastValueFrom(this.http.delete<number[]>(`${this.httpService.API_URL}/delete/plans`, { headers, params }))
 
-        if(cached){
-          const updated = cached.filter(plan => !plan_ids.includes(plan.plan_id))
-          await this.cache.setCache(this.cacheKey, updated);
-        }
-        return response
-      })
-    );
+    const cached: Plan[] = await this.cache.getCache(this.cacheKey, this.ttl);
+
+    const updated = cached.filter(plan => !plan_ids.includes(plan.plan_id))
+    await this.cache.setCache(this.cacheKey, updated);
+
+    this.plans.set(updated);
   }
 }

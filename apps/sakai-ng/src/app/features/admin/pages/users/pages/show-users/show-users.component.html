@@ -1,9 +1,9 @@
 <div class="card">
-  <app-data-grid [showAddForm]="show.bind(this)" [columns]="columns" [data]="users" [isCrud]="true" dataKey="user_id"
+  <app-data-grid [showAddForm]="show.bind(this)" [columns]="columns" [data]="users()" [isCrud]="true" dataKey="user_id"
   [filterFields]="filterFields" [deleteFunction]="userService.deleteUsers.bind(userService)">
 
-  <ng-template #addForm let-close="close">
-    <app-add-user (onSuccess)="close()"></app-add-user>
+  <ng-template #addForm>
+    <app-add-user></app-add-user>
   </ng-template>
 
 </app-data-grid>

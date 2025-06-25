@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, computed, Input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { MessageModule } from 'primeng/message';
@@ -15,7 +15,8 @@ import { Company } from '../companies/interfaces/company';
 import { lastValueFrom } from 'rxjs';
 import { EmailValidatorService } from './validators/email-validator.service';
 import { EmailTakenResponse } from './interfaces/email-taken-response';
-import { User } from '../../../auth/interfaces/user';
+import { Tenant, User } from '../../../auth/interfaces/user';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-add-user',
@@ -24,9 +25,11 @@ import { User } from '../../../auth/interfaces/user';
 })
 export class UpdateAddUserComponent implements OnInit {
 
-  @Output() onSuccess = new EventEmitter<void>();
-
-  public companies!: Company[];
+  companies = computed<Company[]>(() => {
+    return this.companyService.companies()
+  });
+  isLoading = signal<boolean>(false);
+  isLoadingView = signal<boolean>(true);
 
   public userFormGroup!: FormGroup;
 
@@ -40,9 +43,7 @@ export class UpdateAddUserComponent implements OnInit {
   public user_id!: number;
 
   @Input()
-  public tenants: number[] = [];
-
-  public loading: boolean = true;
+  public tenants: Tenant[] = [];
 
   public buttonText: string = '';
 
@@ -50,7 +51,8 @@ export class UpdateAddUserComponent implements OnInit {
     private validatorService: ValidatorService,
     private userService: UserService,
     private companyService: CompanyService,
-    private emailValidator: EmailValidatorService
+    private emailValidator: EmailValidatorService,
+    private ref: DynamicDialogRef
   ) {
     this.userFormGroup = this.fb.group({
       user_name: ['', [Validators.required, Validators.pattern(validatorService.FullnamePattern)]],
@@ -70,12 +72,14 @@ export class UpdateAddUserComponent implements OnInit {
     }
 
     try {
-      this.companies = await this.companyService.getCompanies();
-      this.loading = false;
-      this.userFormGroup.controls['tenants'].setValue(this.tenants);
+
+      const tenantIds = this.tenants.map(tenant => tenant.tenant_id)
+      this.userFormGroup.controls['tenants'].setValue(tenantIds);
     } catch {
       console.log('Error al cargar data de las compañias');
     }
+    this.isLoadingView.set(false);
+
 
     this.buttonText = this.user_id ? 'Modificar' : 'Registrar'
   }
@@ -92,23 +96,25 @@ export class UpdateAddUserComponent implements OnInit {
     this.userFormGroup.markAllAsTouched();
     if (this.userFormGroup.valid) {
 
+      this.isLoading.set(true);
       if (this.user_name) {
         let response: EmailTakenResponse | User;
-        response = await lastValueFrom(this.userService.updateUser(this.userFormGroup.value, this.user_id))
+        response = await this.userService.updateUser(this.userFormGroup.value, this.user_id)
 
-        if ('emailIsTaken' in  response) {
+        if ('emailIsTaken' in response) {
           this.userFormGroup.controls['tenants'].setErrors(await lastValueFrom(this.emailValidator.validate(this.userFormGroup.controls['tenants'])))
         } else {
-          this.onSuccess.emit();
-          window.location.reload();
+          this.isLoading.set(false)
+          this.ref.close();
         }
 
-      }else{
-        await lastValueFrom(this.userService.storeUser(this.userFormGroup.value))
-        window.location.reload();
+      } else {
+        await this.userService.storeUser(this.userFormGroup.value)
+        this.isLoading.set(false)
+        this.ref.close();
       }
-
     }
+    this.isLoading.set(false)
   }
 
 }

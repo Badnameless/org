@@ -1,9 +1,9 @@
+import { Company } from './../interfaces/company';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable} from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpService } from '../../../../../services/http.service';
 import { FormGroup } from '@angular/forms';
 import { lastValueFrom, Observable, switchMap } from 'rxjs';
-import { Company } from '../interfaces/company';
 import { Token } from '../../../../auth/interfaces/token';
 import { RnccedTakenResponse } from '../interfaces/rncced-taken-response';
 import { CacheService } from '../../../../../services/cache.service';
@@ -13,80 +13,76 @@ import { CacheService } from '../../../../../services/cache.service';
 })
 export class CompanyService {
 
+  private ttl: number = 1000 * 60 * 30;
+  private cacheKey: string = 'api/companies/all';
+  companies = signal<Company[]>([])
+
   constructor(private http: HttpClient,
     private httpService: HttpService,
     private cache: CacheService
-  ) { }
+  ) {}
 
-  private ttl: number = 1000 * 60 * 30;
-  private cacheKey: string = 'api/companies/all';
-
-  async getCompanies(): Promise<Company[]> {
+  async getCompanies() {
     const cached: Promise<Company[]> = await this.cache.getCache(this.cacheKey, this.ttl);
 
-    if (cached) return cached;
+    if (cached) {
+      this.companies.set(await cached)
+    } else {
+      const token: Token = JSON.parse(localStorage.getItem('token')!);
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    const token: Token = JSON.parse(localStorage.getItem('token')!);
+      const data = await lastValueFrom(this.http.get<Company[]>(`${this.httpService.API_URL}/get/companies`, { headers }));
 
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
+     await this.cache.setCache(this.cacheKey, data);
 
-    const data = await lastValueFrom(this.http.get<Company[]>(`${this.httpService.API_URL}/get/companies`, { headers }));
-
-    this.cache.setCache(this.cacheKey, data);
-
-    return data;
+      this.companies.set(data);
+    }
   }
 
-  storeCompany(form: FormGroup): Observable<Company> {
-    return this.http.post<Company>(`${this.httpService.API_URL}/create/company`, form).pipe(
-      switchMap(async (response) => {
-        const cached: Company[] = await this.cache.getCache(this.cacheKey, this.ttl);
+  async storeCompany(form: FormGroup) {
+    const response = await lastValueFrom(this.http.post<Company>(`${this.httpService.API_URL}/create/company`, form))
 
-        if (cached) {
-          cached.push(response)
-          this.cache.setCache(this.cacheKey, cached);
-        }
-        return response;
-      })
-    )
+    const cached: Company[] = await this.cache.getCache(this.cacheKey, this.ttl);
+
+    cached.push(response)
+    this.cache.setCache(this.cacheKey, cached);
+
+    this.companies.set(cached);
   }
 
-  updateCompany(form: FormGroup, id: number): Observable<RnccedTakenResponse | Company> {
+  async updateCompany(form: FormGroup, id: number) {
     const token: Token = JSON.parse(localStorage.getItem('token')!);
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    return this.http.put<RnccedTakenResponse | Company>(`${this.httpService.API_URL}/update/company`, form, { headers }).pipe(
-      switchMap(async (response) => {
-        const cached: Company[] = await this.cache.getCache(this.cacheKey, this.ttl);
+    const response = await lastValueFrom(this.http.put<RnccedTakenResponse | Company>(`${this.httpService.API_URL}/update/company`, form, { headers }))
 
-        if(cached){
-          const updatedCache = cached.map(company =>
-            company.tenant_id === id ? response : company
-          )
-          await this.cache.setCache(this.cacheKey, updatedCache);
-        }
+    if ('rnccedIsTaken' in response) {
+      return response;
+    } else {
+      const cached: Company[] = await this.cache.getCache(this.cacheKey, this.ttl);
 
-        return response;
-      })
-    );
+      const updatedCache = cached.map(company =>
+        company.tenant_id === id ? response : company
+      )
+      await this.cache.setCache(this.cacheKey, updatedCache);
+      this.companies.set(updatedCache)
+      return updatedCache
+    }
   }
 
-  deleteCompanies(tenant_ids: number[]) {
+  async deleteCompanies(tenant_ids: number[]) {
     const token: Token = JSON.parse(localStorage.getItem('token')!);
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
     const params = new HttpParams().set('tenant_ids', tenant_ids.join(','));
 
-    console.log(tenant_ids)
+    await lastValueFrom(this.http.delete<number[]>(`${this.httpService.API_URL}/delete/companies`, { headers, params }));
 
-    return this.http.delete<number[]>(`${this.httpService.API_URL}/delete/companies`, { headers, params }).pipe(
-      switchMap(async () => {
-        const cached: Company[] = await this.cache.getCache(this.cacheKey, this.ttl);
-        if (cached) {
-          const updated = cached.filter(company => !tenant_ids.includes(company.tenant_id));
-          await this.cache.setCache(this.cacheKey, updated);
-        }
-      })
-    )
+    const cached: Company[] = await this.cache.getCache(this.cacheKey, this.ttl);
+
+    const updated = cached.filter(company => !tenant_ids.includes(company.tenant_id));
+    await this.cache.setCache(this.cacheKey, updated);
+
+    this.companies.set(updated);
   }
 }
