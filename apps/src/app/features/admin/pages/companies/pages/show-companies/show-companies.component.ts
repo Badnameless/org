@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CompanyService } from '../../services/company.service';
 import { DataGridComponent } from '../../../../../../shared/component/data-grid/data-grid.component';
 import { Column } from '../../../../../../shared/component/data-grid/interfaces/column';
 import { Company } from '../../interfaces/company';
-import { lastValueFrom } from 'rxjs';
 import { UpdateAddCompanyComponent } from '../../UpdateAddcompany.component';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { PlanService } from '../../../plans/services/plan.service';
 
 @Component({
   selector: 'app-show-companies',
@@ -16,9 +16,13 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 })
 
 export class ShowCompaniesComponent {
-  constructor(protected companyService: CompanyService, private dialogService: DialogService) { }
+  constructor(protected companyService: CompanyService, private dialogService: DialogService, private planService: PlanService) {
+    companyService.getCompanies();
+    planService.getPlans();
+  }
+
   columns: Column[] = [];
-  companies: Company[] = [];
+  companies = computed<Company[]>(() => this.companyService.companies());
   filterFields: string[] = ['tenant_name', 'tenant_cedrnc'];
 
   addFormref!: DynamicDialogRef;
@@ -28,6 +32,7 @@ export class ShowCompaniesComponent {
   }
 
   show(company?: Company){
+    console.log(this.companies())
     if(company){
       const { tenant_name, tenant_cedrnc, plan_name, tenant_id, plan_id } = company
       const reducedCompany = { tenant_name, tenant_cedrnc, plan_name, tenant_id, plan_id }
@@ -52,8 +57,6 @@ export class ShowCompaniesComponent {
   }
 
   async loadCompanies() {
-    this.companies = await this.companyService.getCompanies();
-
     this.columns = [
       {
         name: 'plan_name',

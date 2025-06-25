@@ -1,10 +1,10 @@
 <div class="card">
-  <app-data-grid [showAddForm]="show.bind(this)" [isCrud]="true" [columns]="columns" [data]="companies"
+  <app-data-grid [showAddForm]="show.bind(this)" [isCrud]="true" [columns]="columns" [data]="companies()"
     [filterFields]="filterFields" dataKey="tenant_id" fieldToSort="tenant_id"
     [deleteFunction]="companyService.deleteCompanies.bind(companyService)">
 
-    <ng-template #addForm let-close="close">
-      <app-add-company (onSuccess)="close()"></app-add-company>
+    <ng-template #addForm>
+      <app-add-company></app-add-company>
     </ng-template>
 
   </app-data-grid>
