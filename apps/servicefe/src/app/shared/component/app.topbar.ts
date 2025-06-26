@@ -60,13 +60,13 @@ export class AppTopbar implements OnInit {
   });
 
   public userImgPath = computed<Promise<string | undefined>>(async () => {
-    const blob = await this.authService.userImg();
+    const userImg = await this.authService.userImg();
 
-    if (!blob || blob.size === 0 || !blob.type.startsWith('image/')) {
-      return undefined;
+    if(userImg instanceof Blob){
+      return URL.createObjectURL(userImg);
+    }else{
+      return userImg;
     }
-
-    return URL.createObjectURL(blob);
   });
 
 

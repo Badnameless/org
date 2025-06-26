@@ -9,7 +9,7 @@ import { NotificationService } from '../shared/service/notification.service';
 @Injectable({
   providedIn: 'root'
 })
-export class LoadDataService{
+export class LoadDataService {
 
   constructor(
     private companyService: CompanyService,
@@ -17,19 +17,20 @@ export class LoadDataService{
     private planService: PlanService,
     private userService: UserService,
     private notificationService: NotificationService
-  ) {}
+  ) { }
 
-  async loadUserData(){
+  async loadUserData() {
     forkJoin([
       from(await this.encfService.getEncfs())
     ]).subscribe();
   }
 
-  async loadAdminData(){
+  async loadAdminData() {
+    await this.planService.getPlans();
+    await this.companyService.getCompanies();
+    await this.userService.getUsers();
+
     forkJoin([
-      from(await this.companyService.getCompanies()),
-      from(await this.planService.getPlans()),
-      from(await this.userService.getUsers()),
       from(await this.encfService.getEncfs()),
       from(await this.encfService.getAllEncfs()),
       from(this.notificationService.getNotifications())

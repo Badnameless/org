@@ -1,10 +1,10 @@
 <div class="card">
-  <app-data-grid [showAddForm]="show.bind(this)" [columns]="columns" [data]="plans" [isCrud]="true"
+  <app-data-grid [showAddForm]="show.bind(this)" [columns]="columns" [data]="plans()" [isCrud]="true"
     [filterFields]="filterFields" [deleteFunction]="planService.deletePlans.bind(planService)" dataKey="plan_id"
     fieldToSort="plan_id">
 
-    <ng-template #addForm let-close="close">
-      <app-add-plan (onSuccess)="close()"></app-add-plan>
+    <ng-template #addForm>
+      <app-add-plan></app-add-plan>
     </ng-template>
 
   </app-data-grid>
