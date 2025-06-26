@@ -5,8 +5,6 @@ export interface Ncf {
   transncf_encf:         string;
   transncf_fechaemision: Date;
   transncf_rnccomprador: string;
-  transncf_codigoqr:     string;
-  transncf_urlxml:       string;
   transncf_valor:        string;
   transncf_itbis:        number;
   transncf_montototal:   number;

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { MessageModule } from 'primeng/message';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
 import { FluidModule } from 'primeng/fluid';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -10,6 +10,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { ValidatorService } from '../../../../services/validator.service';
 import { PlanService } from './services/plan.service';
 import { lastValueFrom } from 'rxjs';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-add-plan',
@@ -17,9 +18,9 @@ import { lastValueFrom } from 'rxjs';
   templateUrl: './UpdateAddplan.component.html',
   styles: ``
 })
-export class UpdateAddPlanComponent implements OnInit{
+export class UpdateAddPlanComponent implements OnInit {
 
-  @Output() onSuccess = new EventEmitter<void>();
+  isLoading = signal<boolean>(false);
 
   public planFormGroup!: FormGroup;
 
@@ -54,7 +55,7 @@ export class UpdateAddPlanComponent implements OnInit{
     this.buttonText = this.plan_id ? 'Modificar' : 'Agregar';
   }
 
-  constructor(private fb: FormBuilder, private validatorService: ValidatorService, private planService: PlanService) {
+  constructor(private fb: FormBuilder, private validatorService: ValidatorService, private planService: PlanService, private ref: DynamicDialogRef) {
     this.planFormGroup = this.fb.group({
       plan_name: ['', [Validators.required]],
       planDetail_from: ['', [Validators.required, Validators.pattern(validatorService.floatPattern)]],
@@ -78,14 +79,18 @@ export class UpdateAddPlanComponent implements OnInit{
 
     if (this.planFormGroup.valid) {
 
-      if(this.plan_id){
-        console.log(await lastValueFrom(this.planService.updatePlan(this.planFormGroup.value, this.plan_id)));
-      }else{
-        await lastValueFrom(this.planService.storePlan(this.planFormGroup.value));
+      this.isLoading.set(true)
+
+      if (this.plan_id) {
+        await this.planService.updatePlan(this.planFormGroup.value, this.plan_id)
+      } else {
+        await this.planService.storePlan(this.planFormGroup.value);
       }
 
+      this.isLoading.set(false)
+
       this.planFormGroup.reset();
-      window.location.reload();
+      this.ref.close();
     }
   }
 

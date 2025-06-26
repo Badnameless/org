@@ -155,7 +155,7 @@ export class DataGridComponent implements OnInit {
   fieldToSort!: string;
 
   @Input()
-  deleteFunction!: (id: number[]) => Observable<any>
+  deleteFunction!: (id: number[]) => Promise<void>
 
   @Input()
   showAddForm!: (data?: any) => void
@@ -329,8 +329,7 @@ export class DataGridComponent implements OnInit {
       })
     }
 
-    await lastValueFrom(this.deleteFunction(ids))
-    window.location.reload();
+    await this.deleteFunction(ids)
   }
 
   confirmDelete(id?: number) {
@@ -396,6 +395,5 @@ export class DataGridComponent implements OnInit {
     this.filters.set(this.dt1.filters);
 
     this.dt1._filter();
-
   }
 }

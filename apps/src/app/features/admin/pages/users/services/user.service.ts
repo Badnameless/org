@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpService } from '../../../../../services/http.service';
 import { FormGroup } from '@angular/forms';
 import { lastValueFrom, Observable, switchMap } from 'rxjs';
@@ -13,82 +13,85 @@ import { CacheService } from '../../../../../services/cache.service';
 })
 export class UserService {
 
+  private ttl: number = 1000 * 60 * 10;
+  private cacheKey: string = 'api/users/all';
+  users = signal<User[]>([]);
+
   constructor(private http: HttpClient,
     private httpService: HttpService,
     private cache: CacheService
   ) { }
 
-  private ttl: number = 1000 * 60 * 10;
-  private cacheKey: string = 'api/users/all';
-
-  async getUsers(): Promise<User[]> {
+  async getUsers() {
     const cached: Promise<User[]> = await this.cache.getCache(this.cacheKey, this.ttl);
 
-    if (cached) return cached;
+    if (cached) {
+      this.users.set(await cached)
+    } else {
+      const token: Token = JSON.parse(localStorage.getItem('token')!);
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    const token: Token = JSON.parse(localStorage.getItem('token')!);
+      const data = await lastValueFrom(this.http.get<User[]>(`${this.httpService.API_URL}/get/users`, { headers }));
 
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
+      this.cache.setCache(this.cacheKey, data);
 
-    const data = await lastValueFrom(this.http.get<User[]>(`${this.httpService.API_URL}/get/users`, { headers }));
-
-    this.cache.setCache(this.cacheKey, data);
-
-    return data;
+      this.users.set(data);
+    }
   }
 
-  storeUser(form: FormGroup): Observable<User> {
-    const token: Token = JSON.parse(localStorage.getItem('token')!);
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
-
-    return this.http.post<User>(`${this.httpService.API_URL}/create/user`, form).pipe(
-      switchMap(async (response) => {
-        const cached: User[] = await this.cache.getCache(this.cacheKey, this.ttl);
-
-        if(cached){
-          cached.push(response)
-          await this.cache.setCache(this.cacheKey, cached);
-        }
-        return response;
-      })
-    );
-  }
-
-  updateUser(form: FormGroup, id: number): Observable<EmailTakenResponse | User> {
+  async storeUser(form: FormGroup) {
     const token: Token = JSON.parse(localStorage.getItem('token')!);
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    return this.http.put<EmailTakenResponse | User>(`${this.httpService.API_URL}/update/user`, form, { headers }).pipe(
-      switchMap(async (response) => {
-        const cached: User[] = await this.cache.getCache(this.cacheKey, this.ttl);
+    const response = await lastValueFrom(this.http.post<User>(`${this.httpService.API_URL}/create/user`, form));
 
-        if(cached){
-          const updatedUser = cached.map(user =>
-            user.user_id === id ? response : user
-          )
-          await this.cache.setCache(this.cacheKey, updatedUser)
-        }
-        return response
-      })
-    );
+    if (response) {
+      const cached: User[] = await this.cache.getCache(this.cacheKey, this.ttl);
+
+      cached.push(response)
+      await this.cache.setCache(this.cacheKey, cached);
+      this.users.set(cached)
+    }
   }
 
-  deleteUsers(user_ids: number[]) {
+  async updateUser(form: FormGroup, id: number): Promise<EmailTakenResponse | User> {
+    const token: Token = JSON.parse(localStorage.getItem('token')!);
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
+
+    const response = await lastValueFrom(this.http.put<EmailTakenResponse | User>(`${this.httpService.API_URL}/update/user`, form, { headers }))
+
+    if ('emailIsTaken' in response) {
+      return response
+    } else {
+      const cached: User[] = await this.cache.getCache(this.cacheKey, this.ttl);
+
+      const updatedUser = cached.map(user =>
+        user.user_id === id ? response : user
+      )
+      await this.cache.setCache(this.cacheKey, updatedUser)
+      this.users.set(updatedUser)
+      return response
+    }
+  }
+
+  async deleteUsers(user_ids: number[]) {
     const token: Token = JSON.parse(localStorage.getItem('token')!);
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
     const params = new HttpParams().set('user_ids', user_ids.join(','));
 
-    return this.http.delete<number[]>(`${this.httpService.API_URL}/delete/users`, { headers, params }).pipe(
-      switchMap(async () => {
-        const cached: User[] = await this.cache.getCache(this.cacheKey, this.ttl);
+    try {
+      await lastValueFrom(this.http.delete<number[]>(`${this.httpService.API_URL}/delete/users`, { headers, params }))
 
-        if(cached){
-          const updated = cached.filter(user => !user_ids.includes(user.user_id))
-          await this.cache.setCache(this.cacheKey, updated);
-        }
-      })
-    );
+      const cached: User[] = await this.cache.getCache(this.cacheKey, this.ttl);
+
+      const updated = cached.filter(user => !user_ids.includes(user.user_id))
+      await this.cache.setCache(this.cacheKey, updated);
+      this.users.set(updated);
+    } catch (error) {
+      console.log(error)
+    }
+
   }
 
   changePassword(form: FormGroup): Observable<HttpResponse<FormGroup>> {
