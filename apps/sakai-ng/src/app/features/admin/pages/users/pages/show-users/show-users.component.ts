@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { User } from '../../../../../auth/interfaces/user';
 import { Column } from '../../../../../../shared/component/data-grid/interfaces/column';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, map } from 'rxjs';
 import { UpdateAddUserComponent } from "../../UpdateAdduser.component";
 import { DataGridComponent } from '../../../../../../shared/component/data-grid/data-grid.component';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
+import { Company } from '../../../companies/interfaces/company';
+import { CompanyService } from '../../../companies/services/company.service';
 
 @Component({
   selector: 'app-show-users',
@@ -15,9 +17,13 @@ import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
   providers: [DialogService]
 })
 export class ShowUsersComponent {
-  constructor(protected userService: UserService, private dialogService: DialogService) { }
+  constructor(protected userService: UserService, private dialogService: DialogService, private companyService: CompanyService) {
+    userService.getUsers();
+    companyService.getCompanies();
+  }
+
   columns: Column[] = [];
-  users: User[] = [];
+  users = computed<User[]>(() => this.userService.users())
   addFormref!: DynamicDialogRef;
   filterFields: string[] = ['user_name', 'user_email'];
 
@@ -47,12 +53,9 @@ export class ShowUsersComponent {
           width: '20vw',
         })
     }
-
   }
 
   async loadUsers() {
-    this.users = await this.userService.getUsers();
-
     this.columns = [
       {
         name: 'id',
