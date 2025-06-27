@@ -1,6 +1,6 @@
 <p-fluid *ngIf="!loading">
   <form [formGroup]="companyFormGroup" (ngSubmit)="onSubmit()">
-    <div class="card flex flex-col gap-4">
+    <div class=" card flex flex-col gap-4">
       <div class="flex flex-col gap-2">
         <div class="flex items-center gap-2">
           <label for="tenant_name">Nombre</label>
@@ -29,7 +29,7 @@
             <p-message severity="error" variant="simple" size="small">({{ getFieldError('plan') }})</p-message>
           </span>
         </div>
-        <p-select [showClear]="true" [options]="plans()" formControlName="plan" optionLabel="plan_name" optionValue="plan_id"
+        <p-select appendTo="body" [showClear]="true" [options]="plans()" formControlName="plan" optionLabel="plan_name" optionValue="plan_id"
           placeholder="Seleccione un plan">
         </p-select>
       </div>

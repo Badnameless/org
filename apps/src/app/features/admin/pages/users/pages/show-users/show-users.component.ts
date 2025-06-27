@@ -42,7 +42,10 @@ export class ShowUsersComponent {
           closable: true,
           width: '20vw',
           modal: true,
-          inputValues: filteredUser
+          inputValues: filteredUser,
+          breakpoints: {
+            '545px': '85vw',
+          },
         })
     } else {
       this.addFormref = this.dialogService.open(UpdateAddUserComponent,
@@ -51,6 +54,9 @@ export class ShowUsersComponent {
           closable: true,
           modal: true,
           width: '20vw',
+          breakpoints: {
+            '545px': '85vw',
+          },
         })
     }
   }

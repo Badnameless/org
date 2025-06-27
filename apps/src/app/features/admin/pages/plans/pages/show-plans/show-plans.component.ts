@@ -41,6 +41,9 @@ export class ShowPlansComponent {
           modal: true,
           width: '20vw',
           inputValues: filteredPlan,
+          breakpoints: {
+            '545px': '85vw',
+          },
         })
     } else {
       this.addFormref = this.dialogService.open(UpdateAddPlanComponent,
@@ -49,6 +52,9 @@ export class ShowPlansComponent {
           closable: true,
           modal: true,
           width: '20vw',
+          breakpoints: {
+            '545px': '85vw',
+          },
         })
     }
   }

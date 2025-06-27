@@ -56,7 +56,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     ConfirmDialogModule
   ],
   templateUrl: './profile.component.html',
-  styles: ``,
+  styleUrl: 'profile.component.css',
   providers: [MessageService, ProfileService, NotificationService, ConfirmationService]
 })
 export class ProfileComponent implements OnInit {

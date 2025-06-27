@@ -1,0 +1,28 @@
+.billing-progressbar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: large;
+}
+
+/* Small devices (phones) */
+@media (max-width: 575px) {
+  .billing-progressbar-header {
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    gap: 15px;
+    padding: 0px;
+  }
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 768px) {}
+
+/* Large devices (laptops/desktops) */
+@media (min-width: 992px) {}
+
+/* Extra large devices (desktops) */
+@media (min-width: 1280px) {}

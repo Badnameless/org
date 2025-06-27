@@ -28,7 +28,7 @@
 
 <div class="card">
   <div id="billing">
-    <h2 class="text-2xl font-semibold mb-6">Pagos y Subscripciones</h2>
+    <h2 class="text-2xl font-semibold mb-6">Subscripciones</h2>
     <div class="space-y-8">
       <section>
         <h3 class="text-lg font-medium mb-3">Mi Subscripción</h3>
@@ -52,26 +52,31 @@
               </p-button>
             </div>
           </div>
-          <div class="mt-4 border-t border-gray-200 dark:border-gray-50/10">
-            <div class="flex items-center justify-between">
-              <h4>Documentos emitidos este mes</h4>
-              <h4>{{progressbar.value}}/1000</h4>
+          <div class="mt-4 border-t pt-3 border-gray-200 dark:border-gray-50/10">
+            <div class="billing-progressbar-header">
+              <div>
+                <span>Documentos emitidos este mes</span>
+              </div>
+              <div>
+                <span>{{progressbar.value}}/1000</span>
+              </div>
             </div>
             <p-progressbar #progressbar value="50"></p-progressbar>
-            <p class="text-sm text-gray-500 mt-2">Actualmente usted tiene el plan base, pagado a RD$99 Mensual. <a href="#"
-                class="text-blue-600 hover:underline">Ver detalles del plan</a>.</p>
+            <p class="text-sm text-gray-500 mt-2">Actualmente usted tiene el plan base, pagado a RD$99 Mensual. <a
+                href="#" class="text-blue-600 hover:underline">Ver detalles del plan</a>.</p>
           </div>
         </div>
       </section>
 
-      <section>
+      <!-- <section>
         <div class="flex justify-between items-center mb-3">
           <h3 class="text-lg font-medium">Metodos de pago</h3>
           <p-button size="small" icon="pi pi-plus" label="Añadir nueva tarjeta" (onClick)="isCardDialogVisible = true"
             severity="success" />
         </div>
         <div class="bg-gray-100 dark:bg-blue-400/10 p-6 rounded-lg shadow-sm space-y-4">
-          <div class="p-4 border border-gray-200 dark:border-gray-50/10 rounded-md flex flex-wrap justify-between items-center">
+          <div
+            class="p-4 border border-gray-200 dark:border-gray-50/10 rounded-md flex flex-wrap justify-between items-center">
             <div class="flex items-center mb-2 sm:mb-0">
               <i class="fab fa-cc-visa text-3xl text-blue-600 mr-4"></i>
               <div>
@@ -92,7 +97,8 @@
               </p-popover>
             </div>
           </div>
-          <div class="p-4 border border-gray-200 dark:border-gray-50/10 rounded-md flex flex-wrap justify-between items-center">
+          <div
+            class="p-4 border border-gray-200 dark:border-gray-50/10 rounded-md flex flex-wrap justify-between items-center">
             <div class="flex items-center mb-2 sm:mb-0">
               <i class="fab fa-cc-mastercard text-3xl text-orange-500 mr-4"></i>
               <div>
@@ -119,7 +125,7 @@
         <div class="card border dark:border-gray-50/10 rounded-lg shadow-sm overflow-x-auto">
           <app-payment-record></app-payment-record>
         </div>
-      </section>
+      </section> -->
     </div>
   </div>
 </div>
