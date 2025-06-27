@@ -1,7 +1,7 @@
 <div class="card">
-  <div class="flex justify-between items-center">
+  <div class="flex justify-between items-center linear-chart-header-container">
     <div class="font-semibold text-xl mb-4">{{ title }}</div>
-    <div class="w-64">
+    <div class="linear-chart-container">
       <p-select class="w-full" [options]="filterDataOptions" optionLabel="label" [formControl]="timeFilter" (onChange)="changeTimeFilter()"></p-select>
     </div>
   </div>

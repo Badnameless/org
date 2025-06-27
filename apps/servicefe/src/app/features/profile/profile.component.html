@@ -22,7 +22,8 @@
 </p-confirmdialog>
 
 <!-- Modal de cambio de email -->
-<p-dialog [style]="{ width: '25rem', height: 'fit-content' }" [modal]="true" [(visible)]="emailDialogVisible">
+<p-dialog [breakpoints]="{ '575px': '85vw' }" [style]="{ width: '25rem', height: 'fit-content' }" [modal]="true"
+  [(visible)]="emailDialogVisible">
   <ng-template #header>
     <app-modal-title title="Cambiar E-mail" subtitle="Ingrese y confirme el nuevo E-mail."></app-modal-title>
   </ng-template>
@@ -43,7 +44,9 @@
   </form>
 </p-dialog>
 
-<p-dialog [style]="{width: '30rem', height: 'fit-content'}" [modal]="true" [(visible)]="editProfileVisible">
+<!-- Modal de cambio de perfil -->
+<p-dialog [breakpoints]="{ '575px': '85vw' }" [style]="{width: '30rem', height: 'fit-content'}" [modal]="true"
+  [(visible)]="editProfileVisible">
   <ng-template #header>
     <app-modal-title title="Editar perfil" subtitle="Cambie la información publica de su perfil."></app-modal-title>
   </ng-template>
@@ -68,6 +71,7 @@
   </p-fluid>
 </p-dialog>
 
+
 <!-- Modal de cambio de foto de perfil -->
 <p-dialog header="Actualizar foto de perfil" [style]="{ width: '25rem', height: 'fit-content' }" [modal]="true"
   [(visible)]="photoDialogVisible">
@@ -83,8 +87,12 @@
 <div class="flex h-full gap-8">
   <div class="card h-full w-full flex flex-col gap-5">
 
-    <div class="flex justify-between">
-      <div class="flex items-center gap-5">
+    <div class="border-b lg:border-none border-gray-200 dark:border-gray-50/10 pb-5 profile-avatar-container">
+      <div class="profile-edit-button">
+        <p-button icon="pi pi-pencil" severity="secondary" [raised]="true"
+          (onClick)="editProfileVisible = true"></p-button>
+      </div>
+      <div class="profile-avatar">
         <div (click)="this.photoDialogVisible = true" (mouseover)="this.mouseOverAvatar = true"
           (mouseleave)="mouseOverAvatar = false"
           class="cursor-pointer border-4 rounded-full border-gray-50 dark:border-gray-50/10">
@@ -98,22 +106,25 @@
             <i class="pi pi-pencil" style="font-size: 18px;"></i>
           </div>
         </div>
-        <div class="flex gap-1 flex-col">
-          <div class="flex items-center gap-2">
-            <span class="text-xl font-bold">{{ user()?.user_name}}</span>
-            <i class="pi pi-check text-green-600 border-2 border-green-600 p-[2px] rounded-full"
-              style="font-size: 0.5rem; font-weight:bold;"></i>
-            <span class="text-green-600 text-sm">Activo</span>
+        <div class="profile-info-container">
+          <div class="profile-info">
+            <div>
+              <span class="text-xl font-bold">{{ user()?.user_name}}</span>
+            </div>
+            <div>
+              <span class="text-slate-500">{{ user()!.roles[0].name| titlecase }}</span>
+            </div>
+            <div class="user-state">
+              <i class="pi pi-check text-green-600 border-2 border-green-600 p-[2px] rounded-full"
+                style="font-size: 0.5rem; font-weight:bold;"></i>
+              <span class="text-green-600 text-sm">Activo</span>
+            </div>
           </div>
-          <span class="text-slate-500">{{ user()!.roles[0].name| titlecase }}</span>
         </div>
       </div>
-      <div>
-        <p-button icon="pi pi-pencil" severity="secondary" [raised]="true"
-          (onClick)="editProfileVisible = true"></p-button>
-      </div>
     </div>
-    <div class="flex gap-4">
+
+    <div class="flex gap-4 overflow-scroll pb-4">
       <div *ngFor="let user of user()?.tenants">
         <p-tag [rounded]="true" severity="secondary" icon="pi pi-building" [value]="user.tenant_name"></p-tag>
       </div>
@@ -134,8 +145,7 @@
     </div>
 
     <div>
-      <p-tabs value="Activity">
-
+      <p-tabs value="Activity" scrollable>
         <p-tablist>
           <p-tab value="Activity">Actividad</p-tab>
           <p-tab value="Payment">Pagos</p-tab>
