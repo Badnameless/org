@@ -45,7 +45,7 @@ export class SelectTenantComponent implements OnInit{
     localStorage.setItem('current_tenant', JSON.stringify(selectedTenant));
 
     await this.cache.deleteCache(this.cacheKey);
-    await this.encfService.getEncfs();
+    await this.encfService.getEncfs(10, 1);
     window.location.reload();
   }
 }
