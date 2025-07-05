@@ -33,6 +33,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     RippleModule,
     AppFloatingConfigurator],
   templateUrl: './login.html',
+  styleUrl: 'login.css',
   providers: [MessageService]
 })
 export class Login implements OnInit {

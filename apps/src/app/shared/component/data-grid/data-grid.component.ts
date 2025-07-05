@@ -31,6 +31,7 @@ import { LoaderComponent } from '../loader/loader.component';
 import { NotFoundMessageComponent } from '../not-found-message/not-found-message.component';
 import { filterNameMap } from '../../utils/FilterNameMap';
 import { DatePicker } from 'primeng/datepicker';
+import { FluidModule } from 'primeng/fluid';
 
 type Filters = { [key: string]: FilterMetadata | FilterMetadata[] };
 
@@ -61,7 +62,8 @@ type Filters = { [key: string]: FilterMetadata | FilterMetadata[] };
     DialogModule,
     PopoverModule,
     LoaderComponent,
-    NotFoundMessageComponent
+    NotFoundMessageComponent,
+    FluidModule
   ],
   templateUrl: 'data-grid.component.html',
   styles: `
@@ -73,6 +75,7 @@ type Filters = { [key: string]: FilterMetadata | FilterMetadata[] };
             font-weight: bold;
         }
     `,
+  styleUrl: 'data-grid.component.css',
   providers: [ConfirmationService, MessageService, CustomerService, ProductService, DialogService]
 })
 export class DataGridComponent implements OnInit {
@@ -360,7 +363,7 @@ export class DataGridComponent implements OnInit {
     let filterMenu = document.querySelector('.p-datatable-filter-overlay-popover')
 
     filterMenu?.addEventListener('keyup', (event: any) => {
-      if(event.key === 'Enter'){
+      if (event.key === 'Enter') {
         console.log('entered')
       }
     })

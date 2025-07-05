@@ -1,18 +1,18 @@
 <div class="card">
-  <div class="flex justify-between items-center mb-8">
-    <div>
-      <div class="font-semibold text-xl mb-4">E-NCFs Emitidos Aceptados</div>
+  <div class="doughnut-header-container mb-8">
+    <div class="mb-4">
+      <span class="font-semibold text-xl">E-NCFs Emitidos Aceptados</span>
     </div>
     <div class="flex justify-center items-center gap-3">
       <div *ngIf="dateError">
         <p-message severity="error" size="small">Rango invalido</p-message>
       </div>
       <div>
-        <p-datepicker [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" [formControl]="fromDateControl" [dateFormat]="dateFormat"/>
+        <p-datepicker appendTo="body" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" [formControl]="fromDateControl" [dateFormat]="dateFormat"/>
       </div>
       <span class="font-bold">-</span>
       <div>
-        <p-datepicker [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" [formControl]="toDateControl" [dateFormat]="dateFormat"/>
+        <p-datepicker appendTo="body" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" [formControl]="toDateControl" [dateFormat]="dateFormat"/>
       </div>
     </div>
   </div>
