@@ -1,5 +1,5 @@
 export interface DateOption {
   label: string,
-  division: 'day' | 'month' | 'year',
+  division: 'week' | 'month' | 'year',
   value: number
 }

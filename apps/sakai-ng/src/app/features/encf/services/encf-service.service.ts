@@ -3,9 +3,11 @@ import { HttpService } from '../../../services/http.service';
 import { Token } from '../../auth/interfaces/token';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Tenant } from '../../auth/interfaces/user';
-import { lastValueFrom, map } from 'rxjs';
+import { lastValueFrom, map, tap } from 'rxjs';
 import { Ncf } from '../interfaces/encf';
 import { CacheService } from '../../../services/cache.service';
+import { TableLazyLoadEvent } from 'primeng/table';
+import { ExportEncfResponse } from '../interfaces/export-encf-response';
 @Injectable({
   providedIn: 'root'
 })
@@ -16,25 +18,17 @@ export class EncfService {
     private cache: CacheService
   ) { }
 
-  private ttl: number = 1000 * 60 * 10;
+  private ttl: number = 1000 * 60 * 1;
 
-  get ncfTypes() {
-    const tiposComprobante: Record<number, string> = {
-      31: 'Factura de Crédito Fiscal',
-      32: 'Factura de Consumo Electrónica',
-      33: 'Nota de Débito Electrónica',
-      34: 'Nota de Crédito Electrónica',
-      41: 'Comprobante Electrónico de Compras',
-      43: 'Comprobante Electrónico para Gastos Menores',
-      44: 'Comprobante Electrónico para Regímenes Especiales',
-      45: 'Comprobante Electrónico Gubernamental'
-    };
-    return tiposComprobante;
-  }
+  async getEncfs(perPage: number, page: number, onLazyLoad?: TableLazyLoadEvent): Promise<Ncf> {
+    const cacheKey = JSON.stringify({
+      type: 'encf',
+      page: page,
+      perpage: perPage,
+      filters: onLazyLoad?.filters
+    });
 
-  async getEncfs(): Promise<Ncf[]> {
-    const cacheKey = 'api/encfs';
-    const cached: Promise<Ncf[]> = await this.cache.getCache(cacheKey, this.ttl);
+    const cached: Promise<Ncf> = await this.cache.getPaginateCache(cacheKey, this.ttl);
 
     if (cached) return cached;
 
@@ -44,36 +38,40 @@ export class EncfService {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    const data = await lastValueFrom(this.http.get<Ncf[]>(`${this.httpService.API_URL}/get/encfs/${tenant_id}`, { headers }).pipe(
-      map(encfs => encfs.map(encfs => ({
-        ...encfs,
-        transncf_fechaemision: new Date(encfs.transncf_fechaemision)
-      })))
-    ));
+    const data = await lastValueFrom(this.http.post<Ncf>(`${this.httpService.API_URL}/get/encfs/${tenant_id}/${perPage}?page=${page}`, onLazyLoad, { headers }));
 
-    this.cache.setCache(cacheKey, data);
+    this.cache.setPaginateCache(cacheKey, data, this.ttl);
 
     return data;
   }
 
-  async getAllEncfs(): Promise<Ncf[]> {
-    const cacheKey = 'api/encfs/all';
-    const cached: Promise<Ncf[]> = await this.cache.getCache(cacheKey, this.ttl);
+  async getAllEncfs(perPage: number, page: number, onLazyLoad?: TableLazyLoadEvent): Promise<Ncf> {
+    const cacheKey = JSON.stringify({
+      type: 'allEncf',
+      page: page,
+      perpage: perPage,
+      filters: onLazyLoad?.filters
+    });
+
+    const cached: Promise<Ncf> = await this.cache.getPaginateCache(cacheKey, this.ttl);
 
     if (cached) return cached;
 
     const token: Token = JSON.parse(localStorage.getItem('token')!);
-
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    const data = await lastValueFrom(this.http.get<Ncf[]>(`${this.httpService.API_URL}/get/encfs`, { headers }).pipe(
-      map(encfs => encfs.map(encfs => ({
-        ...encfs,
-        transncf_fechaemision: new Date(encfs.transncf_fechaemision)
-      })))
-    ));
+    const data = await lastValueFrom(this.http.post<Ncf>(`${this.httpService.API_URL}/get/all_encfs/${perPage}?page=${page}`, onLazyLoad, { headers }));
 
-    this.cache.setCache(cacheKey, data);
+    this.cache.setPaginateCache(cacheKey, data, this.ttl);
+
+    return data;
+  }
+
+  async getEncfExportData(tenantId: number, onLazyLoad?: TableLazyLoadEvent): Promise<ExportEncfResponse[]> {
+    const token: Token = JSON.parse(localStorage.getItem('token')!);
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
+
+    const data = await lastValueFrom(this.http.post<ExportEncfResponse[]>(`${this.httpService.API_URL}/encfs/export_data/${tenantId}`, onLazyLoad, { headers }));
 
     return data;
   }
