@@ -10,7 +10,8 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
     standalone: true,
     selector: 'app-revenue-stream-widget',
     imports: [ChartModule, SelectModule, ReactiveFormsModule],
-    templateUrl: 'revenuestreamwidget.component.html'
+    templateUrl: 'revenuestreamwidget.component.html',
+    styleUrl: 'revenuestreamwidget.component.css'
 })
 export class RevenueStreamWidget implements OnInit{
 

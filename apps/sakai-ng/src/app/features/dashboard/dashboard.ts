@@ -141,30 +141,26 @@ export class Dashboard implements OnInit {
       {
         name: 'E-NCFs totales',
         stat: this.getCardEncfStatus([1, 2, 3, 4]),
-        subtext: 'E-NCFs totales emitidos este mes',
         type: 'wholeNumber',
         icon: 'pi pi-receipt text-blue-500'
       },
       {
         name: 'E-NCFs aceptados',
         stat: this.getCardEncfStatus([1, 4]),
-        subtext: 'E-NCFs aceptados este mes',
         type: 'wholeNumber',
         icon: 'pi pi-check text-green-500'
       },
       {
         name: 'E-NCFs rechazados',
         stat: this.getCardEncfStatus([2]),
-        subtext: 'E-NCFs rechazados este mes',
         type: 'wholeNumber',
         icon: 'pi pi-times text-red-500'
       },
       {
         name: 'ITBIS total',
         stat: this.getTotalItbis(),
-        subtext: 'ITBIS Total este mes',
         type: 'currency',
-        icon: 'pi pi-dollar text-teal-700'
+        icon: 'pi pi-dollar text-teal-500'
       }
     ]
   }

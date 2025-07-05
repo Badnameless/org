@@ -1,10 +1,10 @@
-<app-stats-widget [data]="statData" />
-<div class="mt-8">
-  <div class="col-6 xl:col-span-12 mb-8">
+<div class="w-full">
+  <app-stats-widget [data]="statData" />
+  <div class="mb-8 mt-8">
     <app-doughnut-chart (_onChangeDate)="onChangeTimeDoughnut($event)" [dates]="donughDates" [pieData]="pieData"
       [pieOptions]="pieOptions"></app-doughnut-chart>
   </div>
-  <div class="col-6 xl:col-span-12">
+  <div>
     <app-revenue-stream-widget (onChangeTime)="onChangeTime($event)" [filterDataOptions]="filterDataOptions"
       [selectedTime]="selectedTime" [title]="title" [chartData]="chartData" [chartOptions]="chartOptions" />
   </div>

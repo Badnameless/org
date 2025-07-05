@@ -31,9 +31,9 @@ export class ShowCompaniesComponent {
     await this.loadCompanies();
   }
 
-  show(company?: Company){
+  show(company?: Company) {
     console.log(this.companies())
-    if(company){
+    if (company) {
       const { tenant_name, tenant_cedrnc, plan_name, tenant_id, plan_id } = company
       const reducedCompany = { tenant_name, tenant_cedrnc, plan_name, tenant_id, plan_id }
 
@@ -43,15 +43,21 @@ export class ShowCompaniesComponent {
           closable: true,
           modal: true,
           width: '20vw',
-          inputValues: reducedCompany
+          inputValues: reducedCompany,
+          breakpoints: {
+            '545px': '85vw',
+          },
         })
-    }else{
+    } else {
       this.addFormref = this.dialogService.open(UpdateAddCompanyComponent,
         {
           header: 'Agregar una compañia',
           closable: true,
           modal: true,
           width: '20vw',
+          breakpoints: {
+            '545px': '85vw',
+          },
         })
     }
   }

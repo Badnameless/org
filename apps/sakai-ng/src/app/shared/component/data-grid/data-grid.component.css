@@ -1,0 +1,46 @@
+.table-actions-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-right: 12px;
+}
+
+.table-search-container{
+  display: flex;
+  gap: 12px;
+}
+
+/* Small devices (phones) */
+@media (max-width: 575px) {
+  .table-actions-container {
+    flex-direction: column;
+  }
+
+  .table-buttons-container {
+    margin: 0;
+    margin-bottom: 12px;
+  }
+
+  .table-search-container{
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+}
+
+/* Medium devices (tablets) */
+@media (min-width: 768px) {}
+
+/* Large devices (laptops/desktops) */
+@media (min-width: 992px) {}
+
+/* Extra large devices (desktops) */
+@media (min-width: 1280px) {}
