@@ -12,22 +12,22 @@ import { Router } from '@angular/router';
   styles: ``,
   providers: [LoadDataService]
 })
-export class LoadingPageComponent implements OnInit{
+export class LoadingPageComponent implements OnInit {
   public iconClass: string = 'w-28'
 
   constructor(
     private loadService: LoadDataService,
     private router: Router
-  ){}
+  ) { }
 
   async ngOnInit() {
     const user: User = JSON.parse(localStorage.getItem('user')!);
 
-    if(user.roles[0].name === 'admin'){
+    if (user.roles[0].name === 'admin') {
       await this.loadService.loadAdminData();
-    }else{
-      await this.loadService.loadUserData();
     }
+
+    await this.loadService.loadUserData();
 
     this.router.navigate(['/'])
   }

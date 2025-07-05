@@ -10,33 +10,34 @@ import { CacheService } from '../../services/cache.service';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
-    selector: 'app-user-configurator',
-    standalone: true,
-    imports: [CommonModule, FormsModule, SelectButtonModule, ButtonModule],
-    templateUrl: './userConfigurator.html',
-    host: {
-        class: 'hidden absolute top-[4.00rem] right-0 w-72 p-4 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border origin-top shadow-[0px_3px_5px_rgba(0,0,0,0.02),0px_0px_2px_rgba(0,0,0,0.05),0px_1px_4px_rgba(0,0,0,0.08)]'
-    }
+  selector: 'app-user-configurator',
+  standalone: true,
+  imports: [CommonModule, FormsModule, SelectButtonModule, ButtonModule],
+  templateUrl: './userConfigurator.html',
+  host: {
+    class: 'hidden absolute top-[4.00rem] right-0 w-72 p-4 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border origin-top shadow-[0px_3px_5px_rgba(0,0,0,0.02),0px_0px_2px_rgba(0,0,0,0.05),0px_1px_4px_rgba(0,0,0,0.08)]'
+  }
 })
 export class UserConfigurator {
 
   public token = computed<Token | null>(() => this.authService.exposedToken());
 
-  constructor(private router:Router,
-              private authService:AuthService,
-              private cache: CacheService
-            ){}
+  constructor(private router: Router,
+    private authService: AuthService,
+    private cache: CacheService
+  ) { }
 
-  showProfile(){
+  showProfile() {
     this.router.navigate(['profile']);
   }
 
-  async logout(){
+  async logout() {
     await lastValueFrom(this.authService.logout(this.token()!));
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('current_tenant')
     await this.cache.cachedItems.clear();
+    await this.cache.paginatedItems.clear();
     this.router.navigate(['auth/login']);
 
   }

@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, computed, ContentChild, effect, ElementRef, input, Input, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, computed, ContentChild, effect, ElementRef, EventEmitter, input, Input, OnInit, Output, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MenuModule } from 'primeng/menu';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, FilterMetadata, MenuItem, MessageService } from 'primeng/api';
@@ -7,7 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { SliderModule } from 'primeng/slider';
-import { ColumnFilter, Table, TableFilterEvent, TableModule } from 'primeng/table';
+import { ColumnFilter, Table, TableFilterEvent, TableLazyLoadEvent, TableModule, TablePageEvent } from 'primeng/table';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToastModule } from 'primeng/toast';
@@ -32,6 +32,8 @@ import { NotFoundMessageComponent } from '../not-found-message/not-found-message
 import { filterNameMap } from '../../utils/FilterNameMap';
 import { DatePicker } from 'primeng/datepicker';
 import { FluidModule } from 'primeng/fluid';
+import { OnExportEmit } from '../../interfaces/on-export-emit';
+import { CacheService } from '../../../services/cache.service';
 
 type Filters = { [key: string]: FilterMetadata | FilterMetadata[] };
 
@@ -82,15 +84,15 @@ export class DataGridComponent implements OnInit {
 
   constructor(public confirm: ConfirmationService,
     private msg: MessageService,
-    private pdfExport: PdfExportService) {
+    private pdfExport: PdfExportService,
+    private cache: CacheService
+  ) {
 
     effect(() => {
-
-
       if (this.data()!.length < 1) {
         setTimeout(() => {
           this.timeout.set(true)
-        }, 1000);
+        }, 10000);
       }
     })
   }
@@ -100,6 +102,8 @@ export class DataGridComponent implements OnInit {
   timeout = signal<boolean>(false);
   showAddDialog: boolean = false;
   data = input<any[] | null>();
+  isLazy = input<boolean>(false);
+
 
   filters = signal<{
     [s: string]: FilterMetadata | FilterMetadata[];
@@ -169,6 +173,15 @@ export class DataGridComponent implements OnInit {
   @Input()
   isBasicTable: boolean = false;
 
+  @Input()
+  totalRecords!: number;
+
+  lazyEvent: TableLazyLoadEvent | null = null;
+
+
+  @Output() onChangePage = new EventEmitter();
+  @Output() onExport = new EventEmitter<OnExportEmit>();
+
   @ViewChild('dt1') dt1!: Table;
   @ContentChild('addForm') addFormTemplate!: TemplateRef<any>;
   @ViewChild('ColumnFilter') columnFilter!: ColumnFilter;
@@ -201,48 +214,69 @@ export class DataGridComponent implements OnInit {
     }
   }
 
+  reapplyTableConstraints() {
+    this.dt1._filter();
+    console.log('hey')
+  }
+
+  onPage(event: TableLazyLoadEvent | null) {
+    this.lazyEvent = event;
+    this.onChangePage.emit(event);
+  }
+
   exportCSV() {
     if (!this.dt1 || !this.data) return;
 
-    const visibleColumns = this.columns.filter(col => col.type !== 'hidden');
+    if (this.isLazy()) {
+      this.onExport.emit({
+        type: 'CSV',
+        event: this.lazyEvent
+      });
+    } else {
+      const visibleColumns = this.columns.filter(col => col.type !== 'hidden');
+      const headers = visibleColumns.map(col => col.name);
+      const filteredValue = this.dt1.filteredValue!;
+      const dataRows = filteredValue ? filteredValue : this.data();
 
-    const headers = visibleColumns.map(col => col.name);
+      const csvContent = [
+        headers.join(','),
+        ...dataRows!.map(row =>
+          visibleColumns.map(col => {
+            let value = row[col.field];
 
-    const filteredValue = this.dt1.filteredValue!;
+            switch (col.type) {
+              case 'numeric':
+                return `"${value?.toLocaleString() || ''}"`;
+              case 'date':
+                return `"${new Date(value).toLocaleDateString() || ''}"`;
+              default:
+                return `"${(value || '').toString().replace(/"/g, '""')}"`;
+            }
+          }).join(',')
+        )
+      ].join('\n');
 
-    const dataRows = filteredValue ? filteredValue : this.data();
-
-    const csvContent = [
-      headers.join(','),
-      ...dataRows!.map(row =>
-        visibleColumns.map(col => {
-          let value = row[col.field];
-
-          switch (col.type) {
-            case 'numeric':
-              return `"${value?.toLocaleString() || ''}"`;
-            case 'date':
-              return `"${new Date(value).toLocaleDateString() || ''}"`;
-            default:
-              return `"${(value || '').toString().replace(/"/g, '""')}"`;
-          }
-        }).join(',')
-      )
-    ].join('\n');
-
-    this.downloadCSV(csvContent, 'export.csv');
+      this.downloadCSV(csvContent, 'export.csv');
+    }
   }
 
   exportPDF() {
     if (!this.data) return;
 
-    const data = this.dt1.filteredValue || this.data();
-    this.pdfExport.exportToPDF(
-      data!,
-      this.columns,
-      'E-NCF Report',
-      'encf_export'
-    );
+    if (this.isLazy()) {
+      this.onExport.emit({
+        type: 'PDF',
+        event: this.lazyEvent
+      });
+    } else {
+      const data = this.dt1.filteredValue || this.data();
+      this.pdfExport.exportToPDF(
+        data!,
+        this.columns,
+        'E-NCF Report',
+        'encf_export'
+      );
+    }
   }
 
   private downloadCSV(content: string, fileName: string) {
