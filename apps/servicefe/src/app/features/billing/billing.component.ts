@@ -13,7 +13,7 @@ import { PaymentRecordComponent } from '../../shared/component/payment-record/pa
   selector: 'app-billing',
   imports: [PaymentRecordComponent, ButtonModule, PopoverModule, TagModule, DialogModule, InputTextModule, DatePickerModule, ProgressBarModule],
   templateUrl: './billing.component.html',
-  styles: ``
+  styleUrl: 'billing.component.css'
 })
 export class BillingComponent {
 

@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-not-found-message',
   imports: [],
   templateUrl: './not-found-message.component.html',
-  styles: ``
+  styleUrl: 'not-found-message.component.css'
 })
 export class NotFoundMessageComponent {
 

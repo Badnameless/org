@@ -10,6 +10,7 @@ import { NotFoundMessageComponent } from '../not-found-message/not-found-message
   selector: 'app-doughnut-chart',
   imports: [ChartModule, DatePickerModule, ReactiveFormsModule, MessageModule, CommonModule, NotFoundMessageComponent],
   templateUrl: './doughnut-chart.component.html',
+  styleUrl: './doughnut-chart.component.css'
 })
 export class DoughnutChartComponent implements OnInit{
   @Output() _onChangeDate = new EventEmitter();

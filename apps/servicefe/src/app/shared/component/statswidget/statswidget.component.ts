@@ -7,6 +7,7 @@ import { DataStats } from './interfaces/data-stats';
     selector: 'app-stats-widget',
     imports: [CommonModule],
     templateUrl: './statswidget.component.html',
+    styleUrl: './statswidget.component.css'
 })
 export class StatsWidget {
   @Input()
