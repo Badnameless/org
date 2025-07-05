@@ -1,57 +1,97 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, effect, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { debounceTime, Subscription } from 'rxjs';
 import { LayoutService } from '../../service/layout.service';
 import { SelectModule } from 'primeng/select';
 import { DateOption } from './interfaces/DateOptions';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { MetricsService } from '../../service/metrics.service';
 
 @Component({
-    standalone: true,
-    selector: 'app-revenue-stream-widget',
-    imports: [ChartModule, SelectModule, ReactiveFormsModule],
-    templateUrl: 'revenuestreamwidget.component.html',
-    styleUrl: 'revenuestreamwidget.component.css'
+  standalone: true,
+  selector: 'app-revenue-stream-widget',
+  imports: [ChartModule, SelectModule, ReactiveFormsModule],
+  templateUrl: 'revenuestreamwidget.component.html',
+  styleUrl: 'revenuestreamwidget.component.css'
 })
-export class RevenueStreamWidget implements OnInit{
+export class RevenueStreamWidget implements OnInit {
 
-    @Output() onChangeTime = new EventEmitter();
+  chartData!: any;
+  chartOptions!: any;
+  subscription!: Subscription;
+  timeFilter = new FormControl();
 
-    @Input()
-    title!: any;
+  public filterDataOptions: DateOption[] = [
+    {
+      label: 'Ultimos 7 días',
+      division: 'week',
+      value: 1
+    },
+    {
+      label: 'Ultimo mes',
+      division: 'month',
+      value: 1
+    },
+    {
+      label: 'Ultimos 3 meses',
+      division: 'month',
+      value: 3
+    },
+    {
+      label: 'Ultimo año',
+      division: 'year',
+      value: 1
+    },
+  ];
 
-    @Input()
-    chartData!: any;
+  public selectedTime: DateOption = this.filterDataOptions[1];
 
-    @Input()
-    chartOptions!: any;
+  constructor(public layoutService: LayoutService, private metrics: MetricsService) {
+    effect(() => {
+      console.log('hey')
+      metrics.calculateBarStats(metrics.tenantId)
+    })
+    this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => { });
+  }
 
-    @Input()
-    filterDataOptions!: DateOption[];
+  async ngOnInit() {
+    this.timeFilter.setValue(this.selectedTime);
+    await this.metrics.calculateBarStats(this.metrics.tenantId, this.selectedTime);
+    this.initChartData();
+  }
 
-    @Input()
-    selectedTime!: DateOption
-
-    subscription!: Subscription;
-
-    timeFilter = new FormControl();
-
-    constructor(public layoutService: LayoutService) {
-        this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
-        });
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
+  }
 
-    ngOnInit(): void {
-      this.timeFilter.setValue(this.selectedTime);
-    }
+  async onChangeTime() {
+    const timeSelected: DateOption = this.timeFilter.value;
+    await this.metrics.calculateBarStats(this.metrics.tenantId, timeSelected)
+    this.initChartData();
+  }
 
-    changeTimeFilter(){
-      this.onChangeTime.emit(this.timeFilter.value);
-    }
-
-    ngOnDestroy() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
+  initChartData() {
+    const documentStyle = getComputedStyle(document.documentElement);
+    this.chartData = {
+      labels: this.metrics.barStats().map(stat => `Tipo ${stat.tipoNcf_code}`),
+      datasets: [
+        {
+          data: this.metrics.barStats().map(stat => stat.quantity),
+          backgroundColor: documentStyle.getPropertyValue('--p-primary-400')
         }
+      ]
+    };
+
+    this.chartOptions = {
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      maintainAspectRatio: false,
+      aspectRatio: 0.8,
     }
+  }
 }
