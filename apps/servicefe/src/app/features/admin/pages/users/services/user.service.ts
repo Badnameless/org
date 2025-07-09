@@ -2,11 +2,13 @@ import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/comm
 import { Injectable, signal } from '@angular/core';
 import { HttpService } from '../../../../../services/http.service';
 import { FormGroup } from '@angular/forms';
-import { lastValueFrom, Observable, switchMap } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 import { Token } from '../../../../auth/interfaces/token';
 import { User } from '../../../../auth/interfaces/user';
 import { EmailTakenResponse } from '../interfaces/email-taken-response';
 import { CacheService } from '../../../../../services/cache.service';
+import { AuthService } from '../../../../auth/services/auth.service';
+import { LocalStorageService } from '../../../../../shared/service/local-storage-service.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,9 @@ export class UserService {
 
   constructor(private http: HttpClient,
     private httpService: HttpService,
-    private cache: CacheService
+    private cache: CacheService,
+    private auth: AuthService,
+    private local: LocalStorageService
   ) { }
 
   async getUsers() {
@@ -70,28 +74,41 @@ export class UserService {
       )
       await this.cache.setCache(this.cacheKey, updatedUser)
       this.users.set(updatedUser)
+
+      console.log(response.user_id);
+      if (this.local.user.user_id === response.user_id) {
+        console.log('hey')
+        await lastValueFrom(this.auth.storeAuthUser(this.local.token));
+      }
+
       return response
     }
   }
 
   async deleteUsers(user_ids: number[]) {
-    const token: Token = JSON.parse(localStorage.getItem('token')!);
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    const params = new HttpParams().set('user_ids', user_ids.join(','));
+    if (user_ids.includes(this.local.user.user_id)) {
+      return new Error('selfDeleting');
+    } else {
+      const token: Token = JSON.parse(localStorage.getItem('token')!);
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
 
-    try {
-      await lastValueFrom(this.http.delete<number[]>(`${this.httpService.API_URL}/delete/users`, { headers, params }))
+      const params = new HttpParams().set('user_ids', user_ids.join(','));
 
-      const cached: User[] = await this.cache.getCache(this.cacheKey, this.ttl);
+      try {
+        await lastValueFrom(this.http.delete<number[]>(`${this.httpService.API_URL}/delete/users`, { headers, params }))
 
-      const updated = cached.filter(user => !user_ids.includes(user.user_id))
-      await this.cache.setCache(this.cacheKey, updated);
-      this.users.set(updated);
-    } catch (error) {
-      console.log(error)
+        const cached: User[] = await this.cache.getCache(this.cacheKey, this.ttl);
+
+        const updated = cached.filter(user => !user_ids.includes(user.user_id))
+        await this.cache.setCache(this.cacheKey, updated);
+        this.users.set(updated);
+      } catch (error) {
+        console.log(error)
+      }
+
+      return;
     }
-
   }
 
   changePassword(form: FormGroup): Observable<HttpResponse<FormGroup>> {

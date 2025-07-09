@@ -1,22 +1,5 @@
 <div class="card">
-  <div class="doughnut-header-container mb-8">
-    <div class="mb-4">
-      <span class="font-semibold text-xl">E-NCFs Emitidos Aceptados</span>
-    </div>
-    <div class="flex justify-center items-center gap-3">
-      <div *ngIf="dateError">
-        <p-message severity="error" size="small">Rango invalido</p-message>
-      </div>
-      <div>
-        <p-datepicker appendTo="body" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" [formControl]="fromDateControl" [dateFormat]="dateFormat"/>
-      </div>
-      <span class="font-bold">-</span>
-      <div>
-        <p-datepicker appendTo="body" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" [formControl]="toDateControl" [dateFormat]="dateFormat"/>
-      </div>
-    </div>
-  </div>
-  <p-chart #pieChart *ngIf="pieData.labels.length > 1 && !isLoading()" type="doughnut" [data]="pieData" [options]="pieOptions" width="350"></p-chart>
-  <app-not-found-message *ngIf="pieData.labels.length < 1 && !isLoading()"></app-not-found-message>
+  <p-chart #pieChart *ngIf="pieData.labels.length > 1" type="doughnut" [data]="pieData" [options]="pieOptions" width="350"></p-chart>
+  <app-not-found-message *ngIf="pieData.labels.length < 1"></app-not-found-message>
   <app-loader *ngIf="isLoading()"></app-loader>
 </div>

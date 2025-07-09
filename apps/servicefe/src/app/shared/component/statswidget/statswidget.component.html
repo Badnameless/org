@@ -1,7 +1,4 @@
 <div class="card w-full">
-  <div class="mb-3">
-    <span class="font-semibold text-xl mb-4">Estadisticas mensuales</span>
-  </div>
   <div class="stats-container">
     <!-- Totales -->
     <div class="bg-gray-100/50 dark:bg-blue-400/10 shadow rounded-md stats-card-container">
@@ -16,7 +13,7 @@
       <div class="mb-2 stat-numbers">
         <div class="text-surface-900 dark:text-surface-0 font-medium">
           <span>
-            {{ metrics.monthStats().total ?? 0 }}
+            {{ stats()?.total ?? 0 }}
           </span>
         </div>
       </div>
@@ -35,7 +32,7 @@
       <div class="mb-2 stat-numbers">
         <div class="text-surface-900 dark:text-surface-0 font-medium">
           <span>
-            {{ metrics.monthStats().accepted ?? 0 }}
+            {{ stats()?.accepted ?? 0}}
           </span>
         </div>
       </div>
@@ -54,7 +51,7 @@
       <div class="mb-2 stat-numbers">
         <div class="text-surface-900 dark:text-surface-0 font-medium">
           <span>
-            {{ metrics.monthStats().rejected ?? 0 }}
+            {{ stats()?.rejected ?? 0}}
           </span>
         </div>
       </div>
@@ -73,7 +70,7 @@
       <div class="mb-2 stat-numbers">
         <div class="text-surface-900 dark:text-surface-0 font-medium">
           <span>
-            {{ metrics.monthStats().totalItbis | currency:'DOP':'symbol':'1.2-2'  }}
+            ${{stats()?.totalItbis | currency:'':'':'1.2-2' }}
           </span>
         </div>
       </div>

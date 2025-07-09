@@ -77,8 +77,6 @@ export class ShowEncfsComponent implements OnInit {
     const page: number = (event.first! / event.rows!) + 1;
     const perPage: number = event.rows!;
 
-    console.log(event)
-
     this.encfWholeData = await this.encfService.getEncfs(perPage, page, event);
     this.totalRecords = this.encfWholeData.total;
     this.encfs = this.encfWholeData.data;
@@ -147,6 +145,4 @@ export class ShowEncfsComponent implements OnInit {
       'encf_export'
     );
   }
-
-
 }
