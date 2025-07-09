@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
 import { SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { Tenant, User } from '../../../features/auth/interfaces/user';
@@ -6,6 +6,7 @@ import { FormControl } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { EncfService } from '../../../features/encf/services/encf-service.service';
 import { CacheService } from '../../../services/cache.service';
+import { AuthService } from '../../../features/auth/services/auth.service';
 
 @Component({
   selector: 'app-select-tenant',
@@ -16,13 +17,14 @@ import { CacheService } from '../../../services/cache.service';
 export class SelectTenantComponent implements OnInit{
 
   public cacheKey: string = 'api/encfs';
-  public user: User = JSON.parse(localStorage.getItem('user')!);
+  public user = computed(() => this.auth.exposedUser());
   public current_tenant!: Tenant;
 
   public selectTenant = new FormControl();
 
   constructor(private encfService: EncfService,
-              private cache: CacheService
+              private cache: CacheService,
+              private auth: AuthService
   ){}
 
   ngOnInit(): void {
@@ -35,7 +37,7 @@ export class SelectTenantComponent implements OnInit{
     }
 
     if (storedTenant) {
-      const matchingTenant = this.user.tenants.find(t => t.tenant_id === storedTenant.tenant_id);
+      const matchingTenant = this.user()!.tenants.find(t => t.tenant_id === storedTenant.tenant_id);
       this.selectTenant.setValue(matchingTenant || null);
     }
   }

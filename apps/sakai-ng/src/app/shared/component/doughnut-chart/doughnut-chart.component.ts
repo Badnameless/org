@@ -1,87 +1,48 @@
-import { Component, effect, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
+import { Component, effect, input, OnInit } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
-import { DatePickerModule } from 'primeng/datepicker';
-import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { MessageModule } from 'primeng/message';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { NotFoundMessageComponent } from '../not-found-message/not-found-message.component';
-import { MetricsService } from '../../service/metrics.service';
-import { Tenant } from '../../../features/auth/interfaces/user';
 import { DoughnutColorMap } from '../../utils/DoughnutColorMap';
-import { DoughnutStats } from '../../interfaces/doughnut-stats';
 import { LoaderComponent } from '../loader/loader.component';
+import { DoughnutMetric } from '../../interfaces/metrics';
 
 @Component({
   selector: 'app-doughnut-chart',
-  imports: [ChartModule, DatePickerModule, ReactiveFormsModule, MessageModule, CommonModule, NotFoundMessageComponent, LoaderComponent],
+  imports: [ChartModule, CommonModule, NotFoundMessageComponent, LoaderComponent],
   templateUrl: './doughnut-chart.component.html',
   styleUrl: './doughnut-chart.component.css'
 })
 export class DoughnutChartComponent implements OnInit {
 
   public pieData: any;
-
   public pieOptions: any;
-
-  public dateFormat: string = 'dd/mm/yy';
-
-  public dateError: boolean = false
-
-  fromDateControl = new FormControl();
-
-  toDateControl = new FormControl();
 
   private currencyType = new CurrencyPipe('EN');
 
-  public isLoading = signal<boolean>(true);
+  doughnutMetrics = input<DoughnutMetric[] | null>(null);
+  isLoading = input<boolean>(false);
 
-  constructor(private metrics: MetricsService) {
+  constructor() {
     effect(() => {
       this.initDoughnutChart()
     })
   }
 
   async ngOnInit() {
-    const currentTenant: Tenant = JSON.parse(localStorage.getItem('current_tenant')!);
-    await this.metrics.calculateDoughnutStats(currentTenant.tenant_id);
-    this.setDates();
-
-    this.isLoading.set(false);
-
     this.initDoughnutChart();
-
-    this.fromDateControl.valueChanges.subscribe(() => {
-      this.onChangeDate();
-    });
-
-    this.toDateControl.valueChanges.subscribe(() => {
-      this.onChangeDate();
-    });
-  }
-
-  setDates(){
-    const today: Date = new Date();
-
-    const donughDates: Date[] = [
-      new Date(today.getFullYear(), today.getMonth(), 1),
-      new Date(today.getFullYear(), today.getMonth(), today.getDate())
-    ]
-
-    this.fromDateControl.setValue(donughDates[0]);
-    this.toDateControl.setValue(donughDates[1]);
   }
 
   initDoughnutChart() {
     this.pieData = {
-      labels: this.metrics.doughnutStats().map(stat => `Tipo ${stat.tipoNcf_code}`),
+      labels: this.doughnutMetrics()!.map(stat => `Tipo ${stat.tipoNcf_code}`),
       datasets: [
         {
-          data: this.metrics.doughnutStats().map(stat => stat.quantity),
-          backgroundColor: this.metrics.doughnutStats().map(stat => DoughnutColorMap.get(stat.tipoNcf_code)),
+          data: this.doughnutMetrics()!.map(stat => stat.quantity),
+          backgroundColor: this.doughnutMetrics()!.map(stat => DoughnutColorMap.get(stat.tipoNcf_code)),
 
         },
         {
-          data: this.metrics.doughnutStats()
+          data: this.doughnutMetrics()!
         }
       ]
     };
@@ -93,7 +54,7 @@ export class DoughnutChartComponent implements OnInit {
             label: (context: any) => {
               let label = context.label as string;
               let ncfType: number = Number(label.slice(label.length - 2));
-              const stats = context.chart.data.datasets[1].data as DoughnutStats[];
+              const stats = context.chart.data.datasets[1].data as DoughnutMetric[];
               const stat = stats.find(stat => stat.tipoNcf_code === ncfType)
 
               return [
@@ -113,26 +74,5 @@ export class DoughnutChartComponent implements OnInit {
       },
       widthpx: '90'
     };
-  }
-
-
-  onChangeDate() {
-    this.isLoading.set(true);
-    let dates: Date[] = [
-      this.fromDateControl.value,
-      this.toDateControl.value
-    ];
-
-    if (dates[0] > dates[1] || dates[1] < dates[0]) {
-      this.dateError = true;
-      this.isLoading.set(false);
-      return;
-    }
-
-    this.dateError = false;
-
-    const currentTenant: Tenant = JSON.parse(localStorage.getItem('current_tenant')!);
-    this.metrics.calculateDoughnutStats(this.metrics.tenantId, dates)
-    this.isLoading.set(false);
   }
 }
