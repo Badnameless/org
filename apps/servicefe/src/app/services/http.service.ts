@@ -25,5 +25,4 @@ export class HttpService {
 
     return headers;
   }
-
 }

@@ -6,6 +6,7 @@ import { FormGroup } from '@angular/forms';
 import { Observable, tap } from 'rxjs';
 import { User } from '../../auth/interfaces/user';
 import { AuthService } from '../../auth/services/auth.service';
+import { LocalStorageService } from '../../../shared/service/local-storage-service.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,9 @@ export class ProfileService {
 
   constructor(public http: HttpClient,
     private httpService: HttpService,
-    private authService: AuthService) {
+    private authService: AuthService,
+    private local: LocalStorageService
+  ) {
 
   }
 

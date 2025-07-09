@@ -63,7 +63,6 @@ type Filters = { [key: string]: FilterMetadata | FilterMetadata[] };
     MenuModule,
     DialogModule,
     PopoverModule,
-    LoaderComponent,
     NotFoundMessageComponent,
     FluidModule
   ],
@@ -105,39 +104,18 @@ export class DataGridComponent implements OnInit {
   isLazy = input<boolean>(false);
 
 
-  filters = signal<{
-    [s: string]: FilterMetadata | FilterMetadata[];
-  } | undefined>(undefined);
+  filters = signal<{[s: string]: FilterMetadata | FilterMetadata[] | undefined } | undefined>({ undefined });
 
   readonly activeFilters = computed(() => {
-    const current = this.filters();
-    if (!current) return [];
+    const filters = this.filters()
 
-    const filters = Object.entries(current).flatMap(([field, filterValue]) => {
-      return { field, filterValue }
-    })
+    if (Array.isArray(filters)) {
+      this.columns.forEach(column => {
+        console.log(column.field)
+      })
+    }
 
-    const fieldMap = new Map();
-
-    this.columns.forEach(column => {
-      fieldMap.set(column.field, column.name)
-    })
-
-    const parsedFilters = filters.map(filter => {
-      if (Array.isArray(filter.filterValue)) {
-        const parsedFilters = filter.filterValue.map(filterVal => ({
-          ...filterVal,
-          fieldName: fieldMap.get(filter.field),
-          field: filter.field
-        }))
-        return parsedFilters
-      }
-      return
-    })
-
-    console.log(parsedFilters)
-
-    return parsedFilters
+    return filters;
   });
 
   @Input()
@@ -162,7 +140,7 @@ export class DataGridComponent implements OnInit {
   fieldToSort!: string;
 
   @Input()
-  deleteFunction!: (id: number[]) => Promise<void>
+  deleteFunction!: (id: number[]) => Promise<Error | void>
 
   @Input()
   showAddForm!: (data?: any) => void
@@ -177,7 +155,6 @@ export class DataGridComponent implements OnInit {
   totalRecords!: number;
 
   lazyEvent: TableLazyLoadEvent | null = null;
-
 
   @Output() onChangePage = new EventEmitter();
   @Output() onExport = new EventEmitter<OnExportEmit>();
@@ -222,6 +199,9 @@ export class DataGridComponent implements OnInit {
   onPage(event: TableLazyLoadEvent | null) {
     this.lazyEvent = event;
     this.onChangePage.emit(event);
+    this.filters.set(this.lazyEvent?.filters)
+
+    console.log(this.activeFilters());
   }
 
   exportCSV() {
@@ -366,7 +346,15 @@ export class DataGridComponent implements OnInit {
       })
     }
 
-    await this.deleteFunction(ids)
+    const response: Error | void = await this.deleteFunction(ids)
+
+    if (response instanceof Error) {
+      switch (response.message) {
+        case 'selfDeleting':
+          this.msg.add({ sticky: true, severity: 'error', summary: 'Error al borrar', detail: 'Se ha intentado eliminar al usuario actual.' })
+          break;
+      }
+    }
   }
 
   confirmDelete(id?: number) {
@@ -385,52 +373,5 @@ export class DataGridComponent implements OnInit {
 
   closeDialog() {
     this.showAddDialog = false;
-  }
-
-  onFilter() {
-    this.filters.set(this.dt1.filters);
-  }
-
-
-  addFilterFunctionality() {
-
-    let filterMenu = document.querySelector('.p-datatable-filter-overlay-popover')
-
-    filterMenu?.addEventListener('keyup', (event: any) => {
-      if (event.key === 'Enter') {
-        console.log('entered')
-      }
-    })
-
-    console.log(filterMenu);
-
-    let DatePickerInput = document.getElementsByTagName('p-datepicker')
-    let ApplyButton = document.querySelector('[aria-label="Apply"]');
-
-    console.log(DatePickerInput)
-
-    DatePickerInput.item(0)!.addEventListener('click', () => {
-      let DataPickerButton = document.querySelectorAll('.p-datepicker-day-cell');
-
-      DataPickerButton.forEach(dayButton => {
-        dayButton.addEventListener('click', () => {
-          this.onFilter()
-        })
-      })
-    })
-
-    ApplyButton?.addEventListener('click', () => {
-      this.onFilter();
-    })
-  }
-
-  onRemoveFilter(filteredColumn: string, value: any) {
-    const filters: Filters = { ...this.dt1.filters };
-    console.log(filters)
-
-    this.dt1.filters = filters;
-    this.filters.set(this.dt1.filters);
-
-    this.dt1._filter();
   }
 }

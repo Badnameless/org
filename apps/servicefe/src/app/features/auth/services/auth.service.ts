@@ -24,8 +24,6 @@ export class AuthService {
     }else{
       return 'images/user.png';
     }
-
-
   });
 
   constructor(
