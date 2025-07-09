@@ -1,12 +1,40 @@
-.doughnut-header-container {
+.header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.custom-date-filter {
+  width: 100%;
+}
+
+.date-filter {
+  width: 256px;
+}
+
+.date-filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
 /* Small devices (phones) */
 @media (max-width: 575px) {
-  .doughnut-header-container {
+  .header-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .custom-date-filter {
+    width: 100%;
+  }
+
+  .date-filter {
+    width: 100%;
+  }
+
+  .date-filter-container {
     display: flex;
     flex-direction: column;
     align-items: start;

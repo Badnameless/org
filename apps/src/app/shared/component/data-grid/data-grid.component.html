@@ -6,7 +6,7 @@
 <div>
   <p-table *ngIf="data" #dt1 [value]="data()!" [(selection)]="selectedRows" [dataKey]="dataKey" [rowHover]="true"
     [paginator]="true" [columns]="columns" [globalFilterFields]="filterFields" responsiveLayout="scroll"
-    [sortField]="fieldToSort" (contextMenuSelectionChange)="onFilter()" [sortOrder]="-1"
+    [sortField]="fieldToSort" [sortOrder]="-1"
     class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]" selectionMode="multiple" [rows]="10"
     [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [lazy]="isLazy()" (onLazyLoad)="onPage($event)"
     [totalRecords]="this.totalRecords">
