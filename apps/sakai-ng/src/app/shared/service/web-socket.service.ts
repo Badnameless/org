@@ -12,6 +12,7 @@ export class WebSocketService {
 
     private echo: any;
 
+
   constructor(private httpService: HttpService) {
     (window as any).Pusher = Pusher;
 

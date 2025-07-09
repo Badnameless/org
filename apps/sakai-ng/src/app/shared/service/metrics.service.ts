@@ -1,72 +1,73 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
-import { MonthStats } from '../interfaces/month-stats';
 import { lastValueFrom } from 'rxjs';
 import { CacheService } from '../../services/cache.service';
-import { DoughnutStats } from '../interfaces/doughnut-stats';
 import { Tenant } from '../../features/auth/interfaces/user';
-import { BarStats } from '../interfaces/bar-stats';
 import { DateOption } from '../component/revenuestreamwidget/interfaces/DateOptions';
+import { Metrics } from '../interfaces/metrics';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MetricsService {
 
-  monthStats = signal<MonthStats>({
-    rejected: 0,
-    pending: 0,
-    accepted: 0,
-    total: 0,
-    totalItbis: 0
-  });
+  filterDataOptions: DateOption[] = [
+    {
+      label: 'Ultimos 7 días',
+      division: 'week',
+      value: 1
+    },
+    {
+      label: 'Ultimo mes',
+      division: 'month',
+      value: 1
+    },
+    {
+      label: 'Ultimos tres meses',
+      division: 'month',
+      value: 3
+    },
+    {
+      label: 'Ultimo año',
+      division: 'year',
+      value: 1
+    },
+    {
+      label: 'Personalizado',
+      division: 'custom',
+      dateFrom: undefined,
+      dateTo: undefined,
+    },
+  ];
 
-  doughnutStats = signal<DoughnutStats[]>([{
-    tipoNcf_code: 0,
-    tipoNcf_name: '',
-    montototal: 0,
-    itbistotal: 0,
-    quantity: 0
-  }])
-
-  barStats = signal<BarStats[]>([{
-    tipoNcf_code: 0,
-    quantity: 0
-  }])
+  metrics = signal<Metrics>({
+    statMetrics: null,
+    doughnutMetrics: [],
+    barMetrics: []
+  })
 
   private ttl: number = 1000 * 60 * 5;
 
-  constructor(private httpService: HttpService, private http: HttpClient, private cacheService: CacheService) { }
+  constructor(private httpService: HttpService, private http: HttpClient, private cache: CacheService) { }
 
-  get tenantId() {
-    const currentTenant: Tenant = JSON.parse(localStorage.getItem('current_tenant')!);
+  async getMetrics(tenantId: number, dateOption: DateOption) {
+    const cacheKey = JSON.stringify(dateOption);
+    const cached: Metrics = await this.cache.getCache(cacheKey, this.ttl)
 
-    return currentTenant.tenant_id;
-  }
-
-  async getMonthStats(tenantId: number) {
-    const cacheKey = 'api/calculateMetricsByMonth';
-    const cached: MonthStats = await this.cacheService.getCache(cacheKey, this.ttl);
-
-    if (cached) {
-
-      this.monthStats.set(cached)
-
+    if (dateOption.division != 'custom' && cached) {
+      this.metrics.set(cached);
+      console.log('heya')
     } else {
-      const monthStatsResponse = await lastValueFrom(this.http.get<MonthStats>(`${this.httpService.API_URL}/get_month_metrics/${tenantId}`, { headers: this.httpService.header }))
-      await this.cacheService.setCache(cacheKey, monthStatsResponse);
-      this.monthStats.set(monthStatsResponse);
+      const metricsResponse = await lastValueFrom(
+        this.http.post<Metrics>(`${this.httpService.API_URL}/calculate_metrics/${tenantId}`,
+          dateOption,
+          { headers: this.httpService.header })
+      )
+
+      this.metrics.set(metricsResponse);
+      dateOption.division != 'custom' ? await this.cache.setCache(cacheKey, metricsResponse) : cacheKey
+      console.log('heyo')
     }
-  }
-
-  async calculateDoughnutStats(tenantId: number, dateRange?: Date[]) {
-    const doughnutStatsResponse = await lastValueFrom(this.http.post<DoughnutStats[]>(`${this.httpService.API_URL}/calculate_doughnut_metrics/${tenantId}`, { date_from: dateRange?.[0], date_to: dateRange?.[1] }, { headers: this.httpService.header }))
-    this.doughnutStats.set(doughnutStatsResponse);
-  }
-
-  async calculateBarStats(tenantId: number, selectedTime?: DateOption){
-    const barStatsResponse = await lastValueFrom(this.http.post<BarStats[]>(`${this.httpService.API_URL}/calculate_bar_metrics/${tenantId}`, selectedTime, { headers: this.httpService.header }))
-    this.barStats.set(barStatsResponse);
   }
 }

@@ -79,11 +79,5 @@ export class AppMenu {
     if (this.user_rol?.includes('admin')) {
       this.model.push(this.admin_model[0]);
     }
-
-
-
-
-
-
   }
 }
