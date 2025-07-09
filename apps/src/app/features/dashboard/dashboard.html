@@ -1,9 +1,30 @@
 <div class="w-full">
-  <app-stats-widget />
+  <div class="card">
+    <div class="flex justify-between items-center header-container">
+      <div class="font-semibold text-2xl">Estadisticas</div>
+      <div class="date-filter-container">
+        <div class="flex justify-center items-center gap-3">
+          <div *ngIf="dateError">
+            <p-message severity="error" size="small">Rango invalido</p-message>
+          </div>
+          <div class="custom-date-filter">
+            <p-datepicker [style]="{'width': '215px'}" appendTo="body" [iconDisplay]="'input'" [showIcon]="true"
+              inputId="icondisplay" [formControl]="rangeDateControl" [dateFormat]="dateFormat" selectionMode="range" />
+          </div>
+        </div>
+        <div class="date-filter">
+          <p-select class="w-full" [options]="metrics.filterDataOptions" optionLabel="label" [formControl]="timeFilter"
+            (onChange)="onChangeTime()"></p-select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-stats-widget [stats]="metrics.metrics().statMetrics" />
   <div class="mb-8 mt-8">
-    <app-doughnut-chart></app-doughnut-chart>
+    <app-doughnut-chart [doughnutMetrics]="metrics.metrics().doughnutMetrics"></app-doughnut-chart>
   </div>
   <div>
-    <app-revenue-stream-widget />
+    <app-revenue-stream-widget [barMetrics]="metrics.metrics().barMetrics" />
   </div>
 </div>
