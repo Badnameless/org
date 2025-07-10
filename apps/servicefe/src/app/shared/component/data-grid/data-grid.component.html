@@ -6,10 +6,9 @@
 <div>
   <p-table *ngIf="data" #dt1 [value]="data()!" [(selection)]="selectedRows" [dataKey]="dataKey" [rowHover]="true"
     [paginator]="true" [columns]="columns" [globalFilterFields]="filterFields" responsiveLayout="scroll"
-    [sortField]="fieldToSort" [sortOrder]="-1"
-    class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]" selectionMode="multiple" [rows]="10"
-    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [lazy]="isLazy()" (onLazyLoad)="onPage($event)"
-    [totalRecords]="this.totalRecords">
+    [sortField]="fieldToSort" [sortOrder]="-1" class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]"
+    selectionMode="multiple" [rows]="10" [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [lazy]="isLazy()"
+    (onLazyLoad)="onPage($event)" [totalRecords]="this.totalRecords">
     <ng-template #caption>
       <div class="table-actions-container">
         <div class="table-buttons-container">
@@ -23,22 +22,21 @@
             <p-button severity="success" (onClick)="showAddForm()">Agregar</p-button>
             <p-button severity="danger" (onClick)="confirmDelete()">Eliminar</p-button>
           </div>
-          <!-- <div class="flex items-center gap-3">
-            <div class="flex flex-wrap gap-2" *ngIf="activeFilters().length > 0">
-              <div *ngFor="let filter of activeFilters()">
-                <p-tag *ngFor="let fil of filter"
-                  [style]="{ border: '1px solid #d5d8dc',  background: 'transparent', color: 'black'}">
-                  <div class="flex items-center gap-2 px-1">
-                    <span class="text-base">
-                      {{ fil.fieldName }} <span class="text-blue-500">{{ fil.matchMode }}</span> {{ fil.value | date:'shortDate' }}
-                    </span>
-                    <p-button [style]="{ margin: 0 }" severity="secondary" icon="pi pi-times" size="small"
-                      variant="text" (onClick)="onRemoveFilter(fil.field, fil.value)"></p-button>
-                  </div>
-                </p-tag>
-              </div>
+          <div class="flex items-center gap-3">
+            <div class="flex flex-wrap gap-2">
+              @for (fieldfilters of activeFilters(); track $index) {
+              @for (filter of fieldfilters.filters; track $index) {
+              <p-tag [style]="{ border: '1px solid #d5d8dc',  background: 'transparent', color: 'black'}">
+                <div class="flex items-center gap-2 px-1">
+                  <span class="text-base">
+                    {{ fieldfilters.name }} <span class="text-blue-500">{{ filter.matchMode }}</span> {{ filter.value | date:'shortDate'}}
+                  </span>
+                </div>
+              </p-tag>
+              }
+              }
             </div>
-          </div> -->
+          </div>
         </div>
         <div class="table-search-container">
           <p-fluid>
