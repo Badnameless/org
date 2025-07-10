@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, computed, ContentChild, effect, ElementRef, EventEmitter, input, Input, OnInit, Output, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, computed, ContentChild, effect, ElementRef, EventEmitter, input, Input, OnInit, Output, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MenuModule } from 'primeng/menu';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, FilterMetadata, MenuItem, MessageService } from 'primeng/api';
@@ -7,7 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { SliderModule } from 'primeng/slider';
-import { ColumnFilter, Table, TableFilterEvent, TableLazyLoadEvent, TableModule, TablePageEvent } from 'primeng/table';
+import { ColumnFilter, Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToastModule } from 'primeng/toast';
@@ -22,7 +22,6 @@ import { CustomerService } from '../../../features/service/customer.service';
 import { ProductService } from '../../../features/crud/services/product.service';
 import { Column } from './interfaces/column';
 import { MessageModule } from 'primeng/message';
-import { filter, lastValueFrom, Observable } from 'rxjs';
 import { PdfExportService } from '../../service/pdf-export.service';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -30,13 +29,9 @@ import { PopoverModule } from 'primeng/popover';
 import { LoaderComponent } from '../loader/loader.component';
 import { NotFoundMessageComponent } from '../not-found-message/not-found-message.component';
 import { filterNameMap } from '../../utils/FilterNameMap';
-import { DatePicker } from 'primeng/datepicker';
 import { FluidModule } from 'primeng/fluid';
 import { OnExportEmit } from '../../interfaces/on-export-emit';
-import { CacheService } from '../../../services/cache.service';
-
-type Filters = { [key: string]: FilterMetadata | FilterMetadata[] };
-
+import { Filter } from './interfaces/filters';
 
 @Component({
   selector: 'app-data-grid',
@@ -84,10 +79,11 @@ export class DataGridComponent implements OnInit {
   constructor(public confirm: ConfirmationService,
     private msg: MessageService,
     private pdfExport: PdfExportService,
-    private cache: CacheService
   ) {
-
     effect(() => {
+      console.log('filters updated:', this.getFilters());
+
+
       if (this.data()!.length < 1) {
         setTimeout(() => {
           this.timeout.set(true)
@@ -103,20 +99,9 @@ export class DataGridComponent implements OnInit {
   data = input<any[] | null>();
   isLazy = input<boolean>(false);
 
+  filters = signal<{ [s: string]: FilterMetadata | FilterMetadata[] | undefined } | undefined>({});
 
-  filters = signal<{[s: string]: FilterMetadata | FilterMetadata[] | undefined } | undefined>({ undefined });
-
-  readonly activeFilters = computed(() => {
-    const filters = this.filters()
-
-    if (Array.isArray(filters)) {
-      this.columns.forEach(column => {
-        console.log(column.field)
-      })
-    }
-
-    return filters;
-  });
+  readonly activeFilters = signal<Filter[]>([]);
 
   @Input()
   columns: Column[] = [];
@@ -165,6 +150,8 @@ export class DataGridComponent implements OnInit {
   @ViewChild('') filterbutton!: ElementRef;
 
   ngOnInit() {
+    this.getFilters();
+
     setTimeout(() => {
       if (this.data()!.length < 1) {
         this.timeout.set(true);
@@ -191,17 +178,39 @@ export class DataGridComponent implements OnInit {
     }
   }
 
-  reapplyTableConstraints() {
-    this.dt1._filter();
-    console.log('hey')
-  }
-
   onPage(event: TableLazyLoadEvent | null) {
     this.lazyEvent = event;
     this.onChangePage.emit(event);
-    this.filters.set(this.lazyEvent?.filters)
+    this.filters.set(event?.filters)
+  }
 
-    console.log(this.activeFilters());
+  getFilters() {
+    const rawFilters = this.filters();
+    let filters: Filter[] = [{
+      filters: [],
+      name: ''
+    }];
+
+    for (const key in rawFilters) {
+      const filterArray = rawFilters[key];
+      if (Array.isArray(filterArray)) {
+        const hasValue = filterArray.find(filter => filter.value != null)
+        if (hasValue) {
+          const filter = {
+            filters: filterArray.map(filter => ({
+              ...filter,
+              matchMode: filterNameMap.get(filter.matchMode)
+            })),
+            name: this.columns.find(column => column.field == key)?.name
+          }
+          filters.push(filter); // Spread the array
+        }
+      }
+    }
+
+    this.activeFilters.set(filters)
+
+    return this.activeFilters();
   }
 
   exportCSV() {
