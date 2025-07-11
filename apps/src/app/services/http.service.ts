@@ -8,8 +8,8 @@ import { HttpHeaders } from '@angular/common/http';
 export class HttpService {
   constructor() { }
 
-  private _API_URL = 'http://localhost:8080/api';
-  private _AUTH_URL = 'http://localhost:8080/api/auth';
+  private _API_URL = 'https://api.portal.banisoft.dyndns.org/api';
+  private _AUTH_URL = 'https://api.portal.banisoft.dyndns.org/api/auth';
 
   get API_URL() {
     return this._API_URL;
