@@ -11,7 +11,7 @@ import { Tenant } from '../auth/interfaces/user';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ProfileService } from './services/profile.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { lastValueFrom, of } from 'rxjs';
+import { lastValueFrom, Observable, of } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
 import { AuthService } from '../auth/services/auth.service';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -29,6 +29,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { ModalTitleComponent } from '../../shared/component/modal-title/modal-title.component';
 import { LoaderComponent } from '../../shared/component/loader/loader.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile',
@@ -69,16 +70,6 @@ export class ProfileComponent implements OnInit {
   public user = computed(() => this.authService.exposedUser());
   public token = computed(() => this.authService.exposedToken());
 
-  public userImgPath = computed<Promise<string | undefined>>(async () => {
-    const userImg = await this.authService.userImg();
-
-    if(userImg instanceof Blob){
-      return URL.createObjectURL(userImg);
-    }else{
-      return userImg;
-    }
-  });
-
   public notifications = computed<Notificacion[]>(() => {
     let notifications = this.notificationService.notifications().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     return notifications.slice(0, 5)
@@ -95,23 +86,25 @@ export class ProfileComponent implements OnInit {
   public changeEmailLoading = signal<boolean>(false);
   public saveUserLoading = signal<boolean>(false);
   public notificationLoading = signal<boolean>(false);
+  public imgUrl!: string;
 
   public emailControl = new FormControl({ value: '', disabled: true });
 
-
   public loading = signal<boolean>(false);
 
-  constructor(private fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
     private message: MessageService,
     private validatorService: ValidatorService,
     private profileService: ProfileService,
     private authService: AuthService,
     private emailValidator: EmailValidatorService,
     private notificationService: NotificationService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
   ) {
+    effect(async () => {
+      this.imgUrl = await profileService.getUserPhoto()
 
-    effect(() => {
       this.emailControl.setValue(this.user()?.user_email!)
     })
 
@@ -141,6 +134,7 @@ export class ProfileComponent implements OnInit {
 
   async ngOnInit() {
     // seteando la data del usuario en los textbox
+    this.imgUrl = await this.profileService.getUserPhoto()
     this.userFormGroup.controls['user_name'].setValue(this.user()?.user_name);
 
     this.default_tenant = JSON.parse(localStorage.getItem('default_tenant')!)
