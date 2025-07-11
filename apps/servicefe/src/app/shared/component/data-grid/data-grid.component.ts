@@ -32,6 +32,8 @@ import { filterNameMap } from '../../utils/FilterNameMap';
 import { FluidModule } from 'primeng/fluid';
 import { OnExportEmit } from '../../interfaces/on-export-emit';
 import { Filter } from './interfaces/filters';
+import { DynamicDataFilterPipe } from '../../pipes/dynamic-data-filter.pipe';
+
 
 @Component({
   selector: 'app-data-grid',
@@ -59,7 +61,9 @@ import { Filter } from './interfaces/filters';
     DialogModule,
     PopoverModule,
     NotFoundMessageComponent,
-    FluidModule
+    FluidModule,
+    DynamicDataFilterPipe,
+    LoaderComponent
   ],
   templateUrl: 'data-grid.component.html',
   styles: `
@@ -98,6 +102,7 @@ export class DataGridComponent implements OnInit {
   showAddDialog: boolean = false;
   data = input<any[] | null>();
   isLazy = input<boolean>(false);
+  isLoading = signal<boolean>(true);
 
   filters = signal<{ [s: string]: FilterMetadata | FilterMetadata[] | undefined } | undefined>({});
 
@@ -199,7 +204,9 @@ export class DataGridComponent implements OnInit {
           const filter = {
             filters: filterArray.map(filter => ({
               ...filter,
-              matchMode: filterNameMap.get(filter.matchMode)
+              matchMode: filterNameMap.get(filter.matchMode!),
+              type: this.columns.find(column => column.field === key)?.type
+
             })),
             name: this.columns.find(column => column.field == key)?.name
           }
