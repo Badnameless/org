@@ -23,4 +23,9 @@ export class LocalStorageService {
     const user: User = JSON.parse(localStorage.getItem('user')!);
     return user;
   }
+
+  get userAvatar() {
+    const user: User = JSON.parse(localStorage.getItem('user')!);
+    return user.user_photoUrl;
+  }
 }

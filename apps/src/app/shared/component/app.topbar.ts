@@ -20,6 +20,7 @@ import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { HttpService } from '../../services/http.service';
+import { ProfileService } from '../../features/profile/services/profile.service';
 @Component({
   selector: 'app-topbar',
   standalone: true,
@@ -42,6 +43,7 @@ import { HttpService } from '../../services/http.service';
 export class AppTopbar implements OnInit {
 
   items!: MenuItem[];
+  imgUrl!: string;
 
   public allNotifications = signal<Notificacion[]>([]);
   public nonReadNotifications = computed<Notificacion[]>(() =>
@@ -59,17 +61,6 @@ export class AppTopbar implements OnInit {
     }
   });
 
-  public userImgPath = computed<Promise<string | undefined>>(async () => {
-    const userImg = await this.authService.userImg();
-
-    if(userImg instanceof Blob){
-      return URL.createObjectURL(userImg);
-    }else{
-      return userImg;
-    }
-  });
-
-
   public notifications = signal<Notificacion[]>([]);
   public isAllNotificationMode = signal<boolean>(false);
   public changeNotificationModeMsg = signal<string>('');
@@ -82,9 +73,10 @@ export class AppTopbar implements OnInit {
     private notificationService: NotificationService,
     private wsService: WebSocketService,
     private authService: AuthService,
-    private httpService: HttpService
+    private profileService: ProfileService
   ) {
-    effect(() => {
+    effect(async () => {
+      this.imgUrl = await this.profileService.getUserPhoto()
 
       this.nonReadNotifications = computed(() =>
         this.allNotifications().filter(notification => !notification.notificaciones_leido).sort((a, b) => a.tipoNotificaciones_id - b.tipoNotificaciones_id)
@@ -109,6 +101,8 @@ export class AppTopbar implements OnInit {
   }
 
   async ngOnInit() {
+    this.imgUrl = await this.profileService.getUserPhoto()
+
     this.allNotifications.set((await this.notificationService.getNotifications()));
     this.allNotifications.update(value => value = this.allNotifications().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()))
 
