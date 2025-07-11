@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { computed, Injectable, OnInit, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { User } from '../interfaces/user';
 import { lastValueFrom, map, Observable, of, retry, Subscription, tap } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -14,17 +14,6 @@ export class AuthService {
 
   readonly exposedToken = this.token.asReadonly();
   readonly exposedUser = this.user.asReadonly();
-
-  readonly userImg = computed<Promise<Blob | string>>(async () => {
-    if (this.user()?.user_photoUrl) {
-      const imgObservable = this.http.get<Blob>(`${this.httpService.API_URL}/user/get_photo/${this.user()?.user_photoUrl}`, { responseType: 'blob' as 'json' });
-      const img: Blob = await lastValueFrom(imgObservable);
-
-      return img;
-    }else{
-      return 'images/user.png';
-    }
-  });
 
   constructor(
     private http: HttpClient,
