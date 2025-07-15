@@ -1,24 +1,23 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { computed, Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
 import { Token } from '../../auth/interfaces/token';
 import { FormGroup } from '@angular/forms';
 import { lastValueFrom, Observable, of, tap } from 'rxjs';
 import { User } from '../../auth/interfaces/user';
 import { AuthService } from '../../auth/services/auth.service';
-import { LocalStorageService } from '../../../shared/service/local-storage-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
+
+  imgUrl = signal<string>('images/user.png')
+
   constructor(public http: HttpClient,
     private httpService: HttpService,
     private authService: AuthService,
-    private local: LocalStorageService
-  ) {
-
-  }
+  ) {}
 
   public updateName(form: FormGroup, token: Token): Observable<User> {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token.access_token}`);
@@ -54,10 +53,9 @@ export class ProfileService {
     const fileName = this.authService.user()?.user_photoUrl;
     if (fileName) {
       const imgBlob = await lastValueFrom(this.http.get<Blob>(`${this.httpService.API_URL}/user/get_photo/${fileName}`, { responseType: 'blob' as 'json' }))
-      const imgUrl = URL.createObjectURL(imgBlob);
-      return imgUrl
+      this.imgUrl.set(URL.createObjectURL(imgBlob))
     } else {
-      return 'images/user.png'
+      this.imgUrl.set('images/user.png');
     }
   }
 }
