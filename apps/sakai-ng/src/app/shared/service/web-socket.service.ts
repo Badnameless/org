@@ -13,7 +13,7 @@ export class WebSocketService {
   private echo: any;
 
 
-  constructor(private httpService: HttpService) {
+  constructor(private http: HttpService) {
     (window as any).Pusher = Pusher;
 
     const token: Token = JSON.parse(localStorage.getItem('token')!);
@@ -22,10 +22,10 @@ export class WebSocketService {
       broadcaster: 'pusher',
       key: 'oncqphaohqg4pkydsefa',
       cluster: 'mt1',
-      wsHost: http.HOST,
+      wsHost: this.http.HOST,
       wsPort: 443,
       forceTLS: true,
-      authEndpoint: `${http.AUTH_URL}/broadcasting/auth`,
+      authEndpoint: `${this.http.AUTH_URL}/broadcasting/auth`,
       auth: {
         headers: {
           Authorization: `Bearer ${token.access_token}`,
