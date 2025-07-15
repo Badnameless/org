@@ -16,6 +16,7 @@ import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
   providers: [DialogService]
 })
 export class ShowPlansComponent {
+
   constructor(protected planService: PlanService, public dialogService: DialogService) {
     planService.getPlans();
   }
