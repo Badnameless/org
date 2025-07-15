@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageModule } from 'primeng/message';
@@ -36,7 +36,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrl: 'login.css',
   providers: [MessageService]
 })
-export class Login {
+export class Login implements OnInit {
 
   public loginFormGroup!: FormGroup;
   public email: string = '';
@@ -58,6 +58,26 @@ export class Login {
     })
   }
 
+  async ngOnInit() {
+    addEventListener('storage', (event) => {
+      const changedStorage = event.key;
+
+      if (changedStorage == 'user') {
+        this.tryToLogin();
+      }
+    })
+  }
+
+  async tryToLogin() {
+    try {
+      const token: Token = JSON.parse(localStorage.getItem('token')!);
+      const user = lastValueFrom(this.authService.storeAuthUser(token));
+
+      if (await user) this.router.navigate(['loading']);
+
+    } catch (error) { }
+  }
+
   isValidField(field: string): boolean | null {
     return this.validatorService.isValidField(this.loginFormGroup, field);
   }
@@ -74,8 +94,8 @@ export class Login {
         this.isLoading = true;
         this.email = this.loginFormGroup.get('email')?.value;
         this.passsword = this.loginFormGroup.get('password')?.value;
-        let defaultTenant!: Tenant;
 
+        localStorage.removeItem('current_tenant');
 
         const token: Token = await lastValueFrom(this.authService.login(this.email, this.passsword));
         this.user = await lastValueFrom(this.authService.storeAuthUser(token));
@@ -88,7 +108,7 @@ export class Login {
           localStorage.setItem('default_tenant', JSON.stringify(firstTenant));
           localStorage.setItem('current_tenant', JSON.stringify(firstTenant));
         } else if (storedDefault) {
-          const defaultTenant = JSON.parse(storedDefault);
+          const defaultTenant: Tenant = JSON.parse(storedDefault);
 
           if (hasTenants && this.user.user_id !== defaultTenant?.pivot?.user_id) {
             const firstTenant = this.user.tenants[0];
@@ -110,7 +130,7 @@ export class Login {
             this.isLoading = false;
             this.message.add({ sticky: true, severity: 'error', summary: 'Error al iniciar sesión', detail: 'E-mail o contraseña invalidos' })
           }
-        }else{
+        } else {
           this.isLoading = false;
           this.message.add({ sticky: true, severity: 'error', summary: 'Error inesperado', detail: 'Verifique con el administrador' })
         }
