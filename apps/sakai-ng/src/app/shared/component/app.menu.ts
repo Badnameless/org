@@ -11,8 +11,8 @@ import { Token } from '../../features/auth/interfaces/token';
   selector: 'app-menu',
   standalone: true,
   imports: [CommonModule, AppMenuitem, RouterModule],
-  template: `<ul class="layout-menu">
-        <ng-container *ngFor="let item of model; let i = index">
+  template: `<ul class="layout-menu" >
+        <ng-container *ngFor="let item of model; let i = index" >
             <li app-menuitem *ngIf="!item.separator" [item]="item" [index]="i" [root]="true"></li>
             <li *ngIf="item.separator" class="menu-separator"></li>
         </ng-container>
@@ -45,7 +45,8 @@ export class AppMenu {
       {
         label: 'Billing',
         items: [{ label: 'Pagos', icon: 'pi pi-credit-card', routerLink: ['/billing'] }]
-      }
+      },
+
     ];
 
     this.admin_model = [
@@ -71,7 +72,13 @@ export class AppMenu {
             label: 'E-NCFs',
             icon: 'pi pi-receipt',
             routerLink: ['admin/encfs']
+          },
+          {
+            label: 'Status',
+            icon: 'pi pi-chart-bar',
+            routerLink: ['admin/status']
           }
+
         ]
       }
     ];
