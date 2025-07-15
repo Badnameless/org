@@ -29,7 +29,6 @@ import { PaginatorModule } from 'primeng/paginator';
 import { ModalTitleComponent } from '../../shared/component/modal-title/modal-title.component';
 import { LoaderComponent } from '../../shared/component/loader/loader.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile',
@@ -58,7 +57,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   ],
   templateUrl: './profile.component.html',
   styleUrl: 'profile.component.css',
-  providers: [MessageService, ProfileService, NotificationService, ConfirmationService]
+  providers: [MessageService, ConfirmationService]
 })
 export class ProfileComponent implements OnInit {
 
@@ -86,7 +85,7 @@ export class ProfileComponent implements OnInit {
   public changeEmailLoading = signal<boolean>(false);
   public saveUserLoading = signal<boolean>(false);
   public notificationLoading = signal<boolean>(false);
-  public imgUrl!: string;
+  imgUrl = computed<string>(() => this.profileService.imgUrl());
 
   public emailControl = new FormControl({ value: '', disabled: true });
 
@@ -103,8 +102,7 @@ export class ProfileComponent implements OnInit {
     private confirmationService: ConfirmationService,
   ) {
     effect(async () => {
-      this.imgUrl = await profileService.getUserPhoto()
-
+      await profileService.getUserPhoto()
       this.emailControl.setValue(this.user()?.user_email!)
     })
 
@@ -133,8 +131,9 @@ export class ProfileComponent implements OnInit {
   }
 
   async ngOnInit() {
+    await this.profileService.getUserPhoto()
+
     // seteando la data del usuario en los textbox
-    this.imgUrl = await this.profileService.getUserPhoto()
     this.userFormGroup.controls['user_name'].setValue(this.user()?.user_name);
 
     this.default_tenant = JSON.parse(localStorage.getItem('default_tenant')!)
