@@ -10,7 +10,7 @@ import { HttpService } from '../../services/http.service';
 })
 export class WebSocketService {
 
-    private echo: any;
+  private echo: any;
 
 
   constructor(private httpService: HttpService) {
@@ -22,11 +22,10 @@ export class WebSocketService {
       broadcaster: 'pusher',
       key: 'oncqphaohqg4pkydsefa',
       cluster: 'mt1',
-      wsHost: 'localhost',
-      wsPort: 6001,
+      wsHost: http.HOST,
+      wsPort: 443,
       forceTLS: true,
-      disableStats: true,
-      authEndpoint: `${httpService.AUTH_URL}/broadcasting/auth`,
+      authEndpoint: `${http.AUTH_URL}/broadcasting/auth`,
       auth: {
         headers: {
           Authorization: `Bearer ${token.access_token}`,
@@ -35,7 +34,7 @@ export class WebSocketService {
     });
   }
 
-    listenToUserNotifications(userId: number, callback: (notification: Notificacion) => void) {
+  listenToUserNotifications(userId: number, callback: (notification: Notificacion) => void) {
     this.echo.private(`notification.${userId}`)
       .listen('.NewNotification', (e: any) => {
         callback(e.notificacion);

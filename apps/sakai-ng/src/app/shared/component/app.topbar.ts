@@ -43,7 +43,7 @@ import { ProfileService } from '../../features/profile/services/profile.service'
 export class AppTopbar implements OnInit {
 
   items!: MenuItem[];
-  imgUrl!: string;
+  imgUrl = computed<string>(() => this.profileService.imgUrl());
 
   public allNotifications = signal<Notificacion[]>([]);
   public nonReadNotifications = computed<Notificacion[]>(() =>
@@ -76,8 +76,7 @@ export class AppTopbar implements OnInit {
     private profileService: ProfileService
   ) {
     effect(async () => {
-      this.imgUrl = await this.profileService.getUserPhoto()
-
+      await profileService.getUserPhoto();
       this.nonReadNotifications = computed(() =>
         this.allNotifications().filter(notification => !notification.notificaciones_leido).sort((a, b) => a.tipoNotificaciones_id - b.tipoNotificaciones_id)
       );
@@ -101,7 +100,7 @@ export class AppTopbar implements OnInit {
   }
 
   async ngOnInit() {
-    this.imgUrl = await this.profileService.getUserPhoto()
+    this.profileService.getUserPhoto();
 
     this.allNotifications.set((await this.notificationService.getNotifications()));
     this.allNotifications.update(value => value = this.allNotifications().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()))
