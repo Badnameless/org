@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { DataGridComponent } from '../../../../shared/component/data-grid/data-grid.component';
 import { Column } from '../../../../shared/component/data-grid/interfaces/column';
 import { ServiceStatus } from '../../interfaces/interface';
+import { StatusServicesService } from '../../services/status-services.service';
 
 @Component({
   selector: 'app-status',
@@ -9,71 +10,68 @@ import { ServiceStatus } from '../../interfaces/interface';
   templateUrl: './status.component.html',
   styleUrl: './status.component.scss'
 })
-export class StatusComponent {
-  columns: Column[] = [
-    {
-      name: 'id',
-      field: 'Id',
-      type: 'hidden'
-    },
-    {
-      name: 'Hostname',
-      field: 'Hostname',
-      type: 'text'
-    },
-    {
-      name: 'IP',
-      field: 'IP',
-      type: 'text'
-    },
+export class StatusComponent implements OnInit {
+  columns: Column[] = [];
+  statusServices = inject(StatusServicesService);
 
-    {
-      name: 'LastConnection',
-      field: 'LastConnection',
-      type: 'date'
-    },
-    {
-      name: 'Status',
-      field: 'Status',
-      type: 'text'
-    },
-    {
-      name: 'OsfInfo',
-      field: 'OsfInfo',
-      type: 'text'
-    },
-    {
-      name: 'TenantId',
-      field: 'TenantId',
-      type: 'text'
-    },
-
-  ];
 
   filterFields: string[] = ['IP', 'Hostname', 'Status', 'OsfInfo'];
 
 
-  data: ServiceStatus[] = [
-    {
-      Id: 1,
-      TenantId: 1,
-      IP: '192.168.1.1',
-      Hostname: 'localhost',
-      LastConnection: new Date(),
-      Status: 'Online',
-      OsfInfo: 'OSF Info'
-    },
-    {
-      Id: 2,
-      TenantId: 2,
-      IP: '192.168.1.2',
-      Hostname: 'localhost',
-      LastConnection: new Date(),
-      Status: 'Offline',
-      OsfInfo: 'OSF Info'
-    }
-  ];
+  data: ServiceStatus[] = [];
 
 
+  async ngOnInit() {
+    this.data = await this.statusServices.getStatus();
+    console.log(this.data);
+    this.data = this.data.map((item) => ({
+      ...item,
+      Status: item.servicefe_status ? 'Online' : 'Offline',
+      LastConnection: item.servicefe_lastconn,
+      OsfInfo: item.servicefe_osinfo,
+      TenantId: item.servicefe_tenantrnc,
+      IP: item.servicefe_ip,
+      Hostname: item.servicefe_hostname
+    }));
+    this.columns = [
+      {
+        name: 'id',
+        field: 'Id',
+        type: 'hidden'
+      },
+      {
+        name: 'Hostname',
+        field: 'Hostname',
+        type: 'text'
+      },
+      {
+        name: 'IP',
+        field: 'IP',
+        type: 'text'
+      },
 
+      {
+        name: 'Estado',
+        field: 'Status',
+        type: 'text'
+      },
+      {
+        name: 'RNC',
+        field: 'TenantId',
+        type: 'text'
+      },
+      {
+        name: 'Sistema Operativo',
+        field: 'OsfInfo',
+        type: 'text'
+      },
+
+      {
+        name: 'Ultima Conexión',
+        field: 'LastConnection',
+        type: 'date'
+      },
+
+    ];
+  }
 }
