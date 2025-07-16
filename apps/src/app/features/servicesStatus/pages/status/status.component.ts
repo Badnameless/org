@@ -15,7 +15,7 @@ export class StatusComponent implements OnInit {
   statusServices = inject(StatusServicesService);
 
 
-  filterFields: string[] = ['IP', 'Hostname', 'Status', 'OsfInfo'];
+  filterFields: string[] = ['IP', 'Hostname', 'Status', 'OsfInfo', 'LastConnection', 'TenantId' ];
 
 
   data: ServiceStatus[] = [];
