@@ -330,6 +330,7 @@ export class DataGridComponent implements OnInit {
   }
 
   getStatus(status: number): string {
+    
     switch (status) {
       case 1:
         return 'Aceptado'
@@ -343,6 +344,7 @@ export class DataGridComponent implements OnInit {
       default:
         return 'Error'
     }
+
   }
 
   calculateCustomerTotal(name: string) {

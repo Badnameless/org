@@ -11,5 +11,4 @@ export default [
   {path: 'users', component: ShowUsersComponent},
   {path: 'encfs', component: EncfsComponent},
   {path: 'status', component: StatusComponent}
-
 ] as Routes
