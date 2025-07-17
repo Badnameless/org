@@ -13,6 +13,7 @@ export class HttpService {
   private _HOST = 'api.portal.banisoft.dyndns.org';
 
 
+
   get API_URL() {
     return this._API_URL;
   }
