@@ -94,6 +94,7 @@ export class StatusComponent implements OnInit {
       },
 
     ];
+    console.log("prueba");
 
   }
 }
