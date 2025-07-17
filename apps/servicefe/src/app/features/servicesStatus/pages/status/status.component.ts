@@ -28,11 +28,32 @@ export class StatusComponent implements OnInit {
       ...item,
       Status: item.servicefe_status ? 'Online' : 'Offline',
       LastConnection: item.servicefe_lastconn,
-      OsfInfo: item.servicefe_osinfo,
+      //sacar el nombre del sistema operativo esta en una propiedad llamada os del objecto osinfo
+      //OsfInfo: item.servicefe_osinfo.os,
+      OsfInfo: (() => {
+        if (!item.servicefe_osinfo) return '';
+        if (typeof item.servicefe_osinfo === 'string') {
+          try {
+            // Intenta parsear
+            const parsed = JSON.parse(item.servicefe_osinfo);
+            return parsed.os || item.servicefe_osinfo;
+          } catch {
+            // Si no es JSON, retorna el string tal cual
+            return item.servicefe_osinfo;
+          }
+        }
+        // Si es un objeto, retorna la propiedad os
+        return (item.servicefe_osinfo as any).os || '';
+      })(),
       TenantId: item.servicefe_tenantrnc,
       IP: item.servicefe_ip,
       Hostname: item.servicefe_hostname
     }));
+
+
+
+
+
     this.columns = [
       {
         name: 'id',
@@ -73,5 +94,6 @@ export class StatusComponent implements OnInit {
       },
 
     ];
+
   }
 }
