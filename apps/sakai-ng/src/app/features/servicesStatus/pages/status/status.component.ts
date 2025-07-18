@@ -3,6 +3,7 @@ import { DataGridComponent } from '../../../../shared/component/data-grid/data-g
 import { Column } from '../../../../shared/component/data-grid/interfaces/column';
 import { ServiceStatus } from '../../interfaces/interface';
 import { StatusServicesService } from '../../services/status-services.service';
+import { WebSocketService } from '../../../../shared/service/web-socket.service';
 
 @Component({
   selector: 'app-status',
@@ -13,7 +14,7 @@ import { StatusServicesService } from '../../services/status-services.service';
 export class StatusComponent implements OnInit {
   columns: Column[] = [];
   statusServices = inject(StatusServicesService);
-
+  wsService = inject(WebSocketService);
 
   filterFields: string[] = ['IP', 'Hostname', 'Status', 'OsfInfo', 'LastConnection', 'TenantId' ];
 
@@ -22,6 +23,17 @@ export class StatusComponent implements OnInit {
 
 
   async ngOnInit() {
+    this.wsService.listenToServicesFE(()=>{
+
+
+    })
+
+
+
+
+
+
+
     this.data = await this.statusServices.getStatus();
     console.log(this.data);
     this.data = this.data.map((item) => ({
