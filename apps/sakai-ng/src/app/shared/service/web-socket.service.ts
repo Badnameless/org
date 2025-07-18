@@ -40,4 +40,11 @@ export class WebSocketService {
         callback(e.notificacion);
       });
   }
+  //actualizar Servicios Status
+  listenToServicesFE(callback: (services: any) => void) {
+    this.echo.private(`udateServiceFE`)
+      .listen('.udateServiceFE', (e: any) => {
+        callback(e.services);
+      });
+  }
 }
