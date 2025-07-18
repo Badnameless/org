@@ -23,10 +23,9 @@ export class StatusComponent implements OnInit {
 
 
   async ngOnInit() {
-    this.wsService.listenToServicesFE(()=>{
-
-
-    })
+    this.wsService.listenToServicesFE((services)=>{
+      console.log(services);
+   })
 
 
 
