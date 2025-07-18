@@ -57,7 +57,6 @@ export class MetricsService {
 
     if (dateOption.division != 'custom' && cached) {
       this.metrics.set(cached);
-      console.log('heya')
     } else {
       const metricsResponse = await lastValueFrom(
         this.http.post<Metrics>(`${this.httpService.API_URL}/calculate_metrics/${tenantId}`,
@@ -67,7 +66,6 @@ export class MetricsService {
 
       this.metrics.set(metricsResponse);
       dateOption.division != 'custom' ? await this.cache.setCache(cacheKey, metricsResponse) : cacheKey
-      console.log('heyo')
     }
   }
 }
