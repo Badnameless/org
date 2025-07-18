@@ -85,8 +85,7 @@ export class DataGridComponent implements OnInit {
     private pdfExport: PdfExportService,
   ) {
     effect(() => {
-      console.log('filters updated:', this.getFilters());
-
+      this.getFilters();
 
       if (this.data()!.length < 1) {
         setTimeout(() => {
@@ -330,7 +329,7 @@ export class DataGridComponent implements OnInit {
   }
 
   getStatus(status: number): string {
-    
+
     switch (status) {
       case 1:
         return 'Aceptado'

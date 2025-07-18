@@ -1,30 +1,38 @@
-import { Component, OnInit, signal, ViewChild, computed, effect } from '@angular/core';
-import { MenuModule } from 'primeng/menu';
-import { MenuItem } from 'primeng/api';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { StyleClassModule } from 'primeng/styleclass';
-import { AppConfigurator } from './app.configurator';
-import { LayoutService } from '../service/layout.service';
-import { Tenant, User } from '../../features/auth/interfaces/user';
-import { UserConfigurator } from './userConfigurator';
-import { Token } from '../../features/auth/interfaces/token';
-import { Popover, PopoverModule } from 'primeng/popover';
-import { OverlayBadgeModule } from 'primeng/overlaybadge';
-import { ScrollerModule, Scroller } from 'primeng/scroller';
-import { Notificacion } from '../interfaces/Notificacion';
-import { NotificationService } from '../service/notification.service';
-import { DateAgoPipe } from '../pipes/date-ago.pipe';
-import { WebSocketService } from '../service/web-socket.service';
-import { ButtonModule } from 'primeng/button';
-import { AvatarModule } from 'primeng/avatar';
-import { AuthService } from '../../features/auth/services/auth.service';
-import { HttpService } from '../../services/http.service';
-import { ProfileService } from '../../features/profile/services/profile.service';
+import {
+  Component,
+  OnInit,
+  signal,
+  ViewChild,
+  computed,
+  effect,
+} from "@angular/core";
+import { MenuModule } from "primeng/menu";
+import { MenuItem } from "primeng/api";
+import { RouterModule } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { StyleClassModule } from "primeng/styleclass";
+import { AppConfigurator } from "./app.configurator";
+import { LayoutService } from "../service/layout.service";
+import { Tenant, User } from "../../features/auth/interfaces/user";
+import { UserConfigurator } from "./userConfigurator";
+import { Token } from "../../features/auth/interfaces/token";
+import { Popover, PopoverModule } from "primeng/popover";
+import { OverlayBadgeModule } from "primeng/overlaybadge";
+import { ScrollerModule, Scroller } from "primeng/scroller";
+import { Notificacion } from "../interfaces/Notificacion";
+import { NotificationService } from "../service/notification.service";
+import { DateAgoPipe } from "../pipes/date-ago.pipe";
+import { WebSocketService } from "../service/web-socket.service";
+import { ButtonModule } from "primeng/button";
+import { AvatarModule } from "primeng/avatar";
+import { AuthService } from "../../features/auth/services/auth.service";
+import { HttpService } from "../../services/http.service";
+import { ProfileService } from "../../features/profile/services/profile.service";
 @Component({
-  selector: 'app-topbar',
+  selector: "app-topbar",
   standalone: true,
-  imports: [UserConfigurator,
+  imports: [
+    UserConfigurator,
     MenuModule,
     RouterModule,
     CommonModule,
@@ -35,25 +43,28 @@ import { ProfileService } from '../../features/profile/services/profile.service'
     ScrollerModule,
     DateAgoPipe,
     ButtonModule,
-    AvatarModule
+    AvatarModule,
   ],
-  templateUrl: './app.topbar.html',
+  templateUrl: "./app.topbar.html",
   styles: ``,
 })
 export class AppTopbar implements OnInit {
-
   items!: MenuItem[];
   imgUrl = computed<string>(() => this.profileService.imgUrl());
 
   public allNotifications = signal<Notificacion[]>([]);
   public nonReadNotifications = computed<Notificacion[]>(() =>
-    this.allNotifications().filter(notification => !notification.notificaciones_leido)
+    this.allNotifications().filter(
+      (notification) => !notification.notificaciones_leido,
+    ),
   );
 
-  public user = computed<User | null>(() => this.authService.exposedUser())
-  public token = computed<Token | null>(() => this.authService.exposedToken())
+  public user = computed<User | null>(() => this.authService.exposedUser());
+  public token = computed<Token | null>(() => this.authService.exposedToken());
   public current_tenant = computed<Tenant | undefined>(() => {
-    const currentTenant: Tenant = JSON.parse(localStorage.getItem('current_tenant')!)
+    const currentTenant: Tenant = JSON.parse(
+      localStorage.getItem("current_tenant")!,
+    );
     if (currentTenant) {
       return currentTenant;
     } else {
@@ -63,61 +74,82 @@ export class AppTopbar implements OnInit {
 
   public notifications = signal<Notificacion[]>([]);
   public isAllNotificationMode = signal<boolean>(false);
-  public changeNotificationModeMsg = signal<string>('');
-  public scrollHeight = signal<string>('');
+  public changeNotificationModeMsg = signal<string>("");
+  public scrollHeight = signal<string>("");
 
-  @ViewChild('inboxscroller') scroller!: Scroller;
-  @ViewChild('inbox') inbox!: Popover;
+  @ViewChild("inboxscroller") scroller!: Scroller;
+  @ViewChild("inbox") inbox!: Popover;
 
-  constructor(public layoutService: LayoutService,
+  constructor(
+    public layoutService: LayoutService,
     private notificationService: NotificationService,
     private wsService: WebSocketService,
     private authService: AuthService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
   ) {
     effect(async () => {
-      await profileService.getUserPhoto();
       this.nonReadNotifications = computed(() =>
-        this.allNotifications().filter(notification => !notification.notificaciones_leido).sort((a, b) => a.tipoNotificaciones_id - b.tipoNotificaciones_id)
+        this.allNotifications()
+          .filter((notification) => !notification.notificaciones_leido)
+          .sort((a, b) => a.tipoNotificaciones_id - b.tipoNotificaciones_id),
       );
 
       if (this.isAllNotificationMode()) {
-        this.changeNotificationModeMsg.update(value => value = 'Ver notificaciones sin leer');
+        this.changeNotificationModeMsg.update(
+          (value) => (value = "Ver notificaciones sin leer"),
+        );
         this.notifications.set(this.allNotifications());
-
       } else {
-        this.changeNotificationModeMsg.update(value => value = 'Ver todas las notificaciones');
+        this.changeNotificationModeMsg.update(
+          (value) => (value = "Ver todas las notificaciones"),
+        );
         this.notifications.set(this.nonReadNotifications());
       }
 
       if (this.notifications().length > 0) {
-        this.scrollHeight.set('400px')
+        this.scrollHeight.set("400px");
       } else {
-        this.scrollHeight.set('0px')
+        this.scrollHeight.set("0px");
       }
 
-    })
+      await profileService.getUserPhoto();
+    });
   }
 
   async ngOnInit() {
-    this.profileService.getUserPhoto();
-
-    this.allNotifications.set((await this.notificationService.getNotifications()));
-    this.allNotifications.update(value => value = this.allNotifications().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()))
-
-    this.nonReadNotifications = computed(() =>
-      this.allNotifications().filter(notification => !notification.notificaciones_leido).sort((a, b) => a.tipoNotificaciones_id - b.tipoNotificaciones_id)
+    this.allNotifications.set(
+      await this.notificationService.getNotifications(),
+    );
+    this.allNotifications.update(
+      (value) =>
+        (value = this.allNotifications().sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        )),
     );
 
-    this.wsService.listenToUserNotifications(this.user()!.user_id, (notificacion) => {
-      this.allNotifications.update(value => [notificacion, ...value]);
-      this.notificationService.addWebSocketNotification(notificacion);
-    })
+    this.nonReadNotifications = computed(() =>
+      this.allNotifications()
+        .filter((notification) => !notification.notificaciones_leido)
+        .sort((a, b) => a.tipoNotificaciones_id - b.tipoNotificaciones_id),
+    );
 
-    this.items = [{
-      label: this.user()?.user_name,
-      icon: 'pi pi-user',
-    }]
+    this.wsService.listenToUserNotifications(
+      this.user()!.user_id,
+      (notificacion) => {
+        this.allNotifications.update((value) => [notificacion, ...value]);
+        this.notificationService.addWebSocketNotification(notificacion);
+      },
+    );
+
+    this.items = [
+      {
+        label: this.user()?.user_name,
+        icon: "pi pi-user",
+      },
+    ];
+
+    this.profileService.getUserPhoto();
   }
 
   onInboxHide() {
@@ -136,25 +168,32 @@ export class AppTopbar implements OnInit {
       if (item) {
         readedNotifications.push(item.notificaciones_id);
 
-        this.allNotifications.update(value => {
-          let updatedNotifications: Notificacion[] = value.map(notificacion => {
-            notificacion.notificaciones_id === item.notificaciones_id ? notificacion.notificaciones_leido = true : notificacion
+        this.allNotifications.update((value) => {
+          let updatedNotifications: Notificacion[] = value.map(
+            (notificacion) => {
+              notificacion.notificaciones_id === item.notificaciones_id
+                ? (notificacion.notificaciones_leido = true)
+                : notificacion;
 
-            return notificacion
-          })
+              return notificacion;
+            },
+          );
           return updatedNotifications;
-        })
+        });
       }
     }
 
-    await this.notificationService.readNotifications(readedNotifications)
+    await this.notificationService.readNotifications(readedNotifications);
   }
 
   toggleNotificationMode() {
-    this.isAllNotificationMode.update(value => value = !value);
+    this.isAllNotificationMode.update((value) => (value = !value));
   }
 
   toggleDarkMode() {
-    this.layoutService.layoutConfig.update((state) => ({ ...state, darkTheme: !state.darkTheme }));
+    this.layoutService.layoutConfig.update((state) => ({
+      ...state,
+      darkTheme: !state.darkTheme,
+    }));
   }
 }
