@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Token } from '../features/auth/interfaces/token';
 import { HttpHeaders } from '@angular/common/http';
-
+import { environment } from './.././../environments/environment.development'
 @Injectable({
   providedIn: 'root'
 })
 export class HttpService {
   constructor() { }
 
-  private _API_URL = 'http://api.portal-dev.apps.rancher.sg.local/api';
-  private _AUTH_URL = 'http://api.portal-dev.apps.rancher.sg.local/api/auth';
-  private _HOST = 'socket.portal-dev.apps.rancher.sg.local';
+  private _API_URL = environment._API_URL;
+  private _AUTH_URL = environment._AUTH_URL;
+  private _HOST = environment._HOST;
 
   get API_URL() {
     return this._API_URL;
