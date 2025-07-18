@@ -8,11 +8,9 @@ import { HttpHeaders } from '@angular/common/http';
 export class HttpService {
   constructor() { }
 
-  private _API_URL = 'http://api.portal-dev.apps.rancher.sg.local/api';
-  private _AUTH_URL = 'http://api.portal-dev.apps.rancher.sg.local/api/auth';
+  private _API_URL = 'https://api.portal.banisoft.dyndns.org/api';
+  private _AUTH_URL = 'https://api.portal.banisoft.dyndns.org/api/auth';
   private _HOST = 'api.portal.banisoft.dyndns.org';
-
-
 
   get API_URL() {
     return this._API_URL;

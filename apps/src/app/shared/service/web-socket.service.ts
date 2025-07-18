@@ -19,7 +19,7 @@ export class WebSocketService {
     const token: Token = JSON.parse(localStorage.getItem('token')!);
 
     this.echo = new Echo({
-      broadcaster: 'pusher',
+      broadcaster: 'reverb',
       key: 'oncqphaohqg4pkydsefa',
       cluster: 'mt1',
       wsHost: this.http.HOST,
