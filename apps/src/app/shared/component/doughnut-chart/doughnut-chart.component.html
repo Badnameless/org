@@ -1,5 +1,0 @@
-<div class="card">
-  <p-chart #pieChart *ngIf="pieData.labels.length > 1" type="doughnut" [data]="pieData" [options]="pieOptions" width="350"></p-chart>
-  <app-not-found-message *ngIf="pieData.labels.length < 1"></app-not-found-message>
-  <app-loader *ngIf="isLoading()"></app-loader>
-</div>
