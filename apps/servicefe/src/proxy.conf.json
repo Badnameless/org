@@ -1,8 +1,0 @@
-     {
-       "/api": {
-         "target": "http://laravel-backend-service.sg-dev.svc.cluster.local",
-         "secure": false,
-         "logLevel": "debug",
-         "changeOrigin": true
-       }
-     }
