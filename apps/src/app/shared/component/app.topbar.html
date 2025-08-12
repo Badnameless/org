@@ -1,0 +1,127 @@
+<div class="layout-topbar">
+  <div class="layout-topbar-logo-container">
+    <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
+      <i class="pi pi-bars"></i>
+    </button>
+    <a class="layout-topbar-logo" routerLink="/">
+      <img src="images/logo.svg" class="w-24 h-24">
+    </a>
+  </div>
+
+  <div class="layout-topbar-actions">
+    <div class="layout-config-menu">
+      <button type="button" class="layout-topbar-action" (click)="toggleDarkMode()">
+        <i
+          [ngClass]="{ 'pi ': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
+      </button>
+      <div class="relative">
+        <button class="layout-topbar-action layout-topbar-action-highlight" pStyleClass="@next" enterFromClass="hidden"
+          enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout"
+          [hideOnOutsideClick]="true">
+          <i class="pi pi-palette"></i>
+        </button>
+        <app-configurator />
+      </div>
+
+      <div class="relative">
+        <button class="layout-topbar-action" #btn (click)="inbox.toggle($event, btn);" #btnNotification>
+          <ng-container *ngIf="nonReadNotifications().length > 0; else noBadge">
+            <p-overlay-badge severity="danger" [value]="nonReadNotifications().length" badgeSize="small"
+              [badgeDisabled]="false">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+                </path>
+              </svg>
+            </p-overlay-badge>
+          </ng-container>
+
+          <ng-template #noBadge>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+              </path>
+            </svg>
+          </ng-template>
+        </button>
+
+        <p-popover #inbox (onHide)="onInboxHide()">
+          <div class="sticky flex flex-col justify-center">
+            <div class="flex justify-between px-6 py-4 items-center">
+              <span class="text-lg font-medium">Notificaciones</span>
+              <div class="flex gap-4 items-center">
+                <button (click)="readNotifications()"
+                  class="text-xs font-medium dark:text-blue-600 dark:hover:text-blue-800 text-indigo-600 hover:text-indigo-800 transition-colors">Marcar
+                  como
+                  leidos</button>
+                <p-button variant="text" severity="secondary" (onClick)="inbox.hide()" icon="pi pi-times"
+                  class="text-gray-400 hover:text-gray-600"></p-button>
+              </div>
+            </div>
+            <p-virtualscroller [items]="notifications()" [itemSize]="120" [scrollHeight]="scrollHeight()" #inboxscroller
+              [style]="{ width: '372px' }">
+              <ng-template pTemplate="item" let-notificacion>
+                <div [ngClass]="{'bg-blue-50/80' : !notificacion.notificaciones_leido}"
+                  class="flex gap-4 px-6 py-5 cursor-pointer border-t border-gray-200 dark:border-gray-50/10 bg-gray-100/50 dark:bg-blue-400/10">
+
+                  <div *ngIf="notificacion.tipoNotificaciones_id === 1"
+                    class="bg-red-100 rounded-full h-fit p-[0.6rem] flex items-center justify-center">
+                    <i class="pi pi-times text-red-600"></i>
+                  </div>
+
+                  <div *ngIf="notificacion.tipoNotificaciones_id === 2"
+                    class="bg-orange-100 rounded-full h-fit p-[0.6rem] flex items-center justify-center">
+                    <i class="pi pi-exclamation-triangle text-orange-600"></i>
+                  </div>
+
+                  <div *ngIf="notificacion.tipoNotificaciones_id === 3"
+                    class="bg-blue-100 rounded-full h-fit p-[0.6rem] flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 20 20"
+                      fill="currentColor">
+                      <path
+                        d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+                      </path>
+                    </svg>
+                  </div>
+
+                  <div class="flex items-start justify-between w-full">
+                    <div>
+                      <p class="text-[14px] font-medium">
+                        {{ notificacion.tipo_notificacion.tipoNotificaciones_name }}
+                      </p>
+                      <p class="text-[14px] mt-1.5">
+                        {{ notificacion.notificaciones_mensaje }}
+                      </p>
+                      <span class="text-[10px]">{{ notificacion.created_at | dateAgo }}</span>
+                    </div>
+                    <div *ngIf="!notificacion.notificaciones_leido" class="ml-4 flex-shrink-0">
+                      <span class="inline-block h-2 w-2 rounded-full bg-blue-600"></span>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </p-virtualscroller>
+            <div *ngIf="notifications().length < 1" class="flex p-5 justify-center items-center">
+              <span>No tiene notificaciones pendientes</span>
+            </div>
+
+            <div
+              class="px-6 py-4 bg-gray-50 dark:bg-blue-400/10 dark:border-blue-100/10 text-center rounded-[0.75rem] border-t border-gray-100">
+              <p-button severity="primary" variant="text" class="text-sm font-medium"
+                (onClick)="toggleNotificationMode()">
+                {{ changeNotificationModeMsg() }}
+              </p-button>
+            </div>
+          </div>
+        </p-popover>
+      </div>
+    </div>
+    <button class="layout-topbar-action" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein"
+      leaveToClass="hidden" leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">
+      <div>
+          <p-avatar size="normal" shape="circle" [image]="imgUrl()"></p-avatar>
+      </div>
+    </button>
+    <app-user-configurator></app-user-configurator>
+  </div>
+</div>

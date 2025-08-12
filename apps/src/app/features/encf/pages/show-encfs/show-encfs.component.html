@@ -1,0 +1,5 @@
+<div class="card">
+  <app-data-grid [columns]="columns" [data]="encfs" [exportable]="true"
+    fieldToSort="transncf_fechaemision" [filterFields]="filterFields" (onChangePage)="onChangePage($event)"
+    [totalRecords]="totalRecords" (onExport)="onExport($event)" [isLazy]="true"/>
+</div>
