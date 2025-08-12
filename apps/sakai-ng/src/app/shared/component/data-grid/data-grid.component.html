@@ -1,0 +1,115 @@
+<p-toast />
+<p-menu #exportMenu [model]="exportItems" [popup]="true" />
+<p-confirmDialog [breakpoints]="{ '575px': '85vw' }" header="Confirmation" icon="pi pi-exclamation-triangle">
+</p-confirmDialog>
+
+<div>
+  <p-table *ngIf="data" #dt1 [value]="data()!" [(selection)]="selectedRows" [dataKey]="dataKey" [rowHover]="true"
+    [paginator]="true" [columns]="columns" [globalFilterFields]="filterFields" responsiveLayout="scroll"
+    [sortField]="fieldToSort" [sortOrder]="-1" class="min-h-[calc(100vh-8rem)] h-[calc(100vh-8rem)]"
+    selectionMode="multiple" [rows]="10" [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [lazy]="isLazy()"
+    (onLazyLoad)="onPage($event)" [totalRecords]="this.totalRecords">
+    <ng-template #caption>
+      <div class="table-actions-container">
+        <div class="table-buttons-container">
+          <div class="table-buttonsAndFilterTags">
+            <div class="flex items-center gap-2">
+              <button *ngIf="!isBasicTable" pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash"
+                (click)="clear(dt1)"></button>
+              <p-button *ngIf="exportable" (onClick)="exportMenu.toggle($event)" severity="secondary"
+                icon="pi pi-upload" iconPos="right" label="Exportar" />
+            </div>
+            <div class="filters-display">
+              @for (fieldfilters of activeFilters(); track $index) {
+              @for (filter of fieldfilters.filters; track $index) {
+              <p-tag
+                [style]="{ height: '30px', border: '1px solid #d5d8dc',  background: 'transparent', color: 'black'}">
+                <div class="flex items-center gap-2 px-1">
+                  <span class="text-base text-nowrap">
+                    {{ fieldfilters.name }} | <span class="text-blue-500">{{ filter.matchMode }}</span> | {{
+                    filter.value
+                    | dynamicDataFilter:filter.type! }}
+                  </span>
+                </div>
+              </p-tag>
+              }
+              }
+            </div>
+          </div>
+          <div *ngIf="isCrud" class="flex items-center gap-2">
+            <p-button severity="success" (onClick)="showAddForm()">Agregar</p-button>
+            <p-button severity="danger" (onClick)="confirmDelete()">Eliminar</p-button>
+          </div>
+
+        </div>
+        <div class="table-search-container">
+          <p-fluid>
+            <p-iconfield *ngIf="!isBasicTable" iconPosition="left" class="ml-auto">
+              <p-inputicon>
+                <i class="pi pi-search"></i>
+              </p-inputicon>
+              <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+            </p-iconfield>
+          </p-fluid>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th *ngIf="isCrud"><p-tableHeaderCheckbox /></th>
+        <th [ngClass]="{'hidden': column.type === 'hidden'}" *ngFor="let column of columns" style="min-width: 12rem">
+          <div class="flex justify-between items-center">
+            {{ column.name }}
+            <p-columnFilter #ColumnFilter [type]="column.type" [field]="column.field" display="menu"
+              placeholder="Buscar por">
+            </p-columnFilter>
+          </div>
+        </th>
+        <th *ngIf="isCrud">Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+      <tr>
+        <td *ngIf="isCrud"><p-tableCheckbox [value]="rowData" /></td>
+
+        <td *ngFor="let col of columns" [ngClass]="{'hidden': col.type === 'hidden'}">
+
+          <span *ngIf="col.type === 'numeric'">{{ rowData[col.field] | currency:'DOP':'symbol':'1.2-2' }}</span>
+          <span *ngIf="col.type === 'date'">{{ rowData[col.field] | date: 'dd/MM/yyyy' }}</span>
+
+          <span *ngIf="col.type === 'text'
+                      && col.field != 'transncf_encf'
+                      && col.field != 'transncf_status'">{{ rowData[col.field] }}</span>
+
+          <span [title]="rowData.tipoNcf_name" *ngIf="col.type === 'text' && col.field === 'transncf_encf'">{{
+            rowData[col.field] }}</span>
+
+          <span class="flex justify-center" *ngIf="col.type === 'text' && col.field === 'transncf_status'">
+            <p-tag [severity]="getSeverity(rowData.transncf_status)">{{ getStatus(rowData.transncf_status) }}</p-tag>
+          </span>
+        </td>
+
+        <td *ngIf="isCrud" class="flex justify-center">
+          <div class="flex gap-3">
+            <p-button icon="pi pi-ellipsis-h" text="true" (onClick)="actions.toggle($event)"></p-button>
+            <p-popover #actions>
+              <div class="flex flex-col gap-2">
+                <p-button size="small" severity="contrast" icon="pi pi-trash" text="true" label="Eliminar"
+                  (onClick)="confirmDelete(rowData[dataKey])"></p-button>
+                <p-button size="small" severity="contrast" icon="pi pi-pencil" text="true" label="Modificar"
+                  (onClick)="showAddForm(rowData)"></p-button>
+              </div>
+            </p-popover>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td [attr.colspan]="columns.length + (isCrud ? 2 : 0)">
+          <app-not-found-message></app-not-found-message>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
