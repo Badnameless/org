@@ -1,0 +1,228 @@
+<p-toast></p-toast>
+<p-confirmdialog #changePasswordModal>
+  <ng-template #headless>
+    <div class="flex w-72 flex-col items-center gap-4 p-6">
+      <div>
+        <i style="font-size: 1.5rem;" class="pi pi-exclamation-triangle p-3 text-red-600 bg-red-200 rounded-full"></i>
+      </div>
+      <div>
+        <span class="text-lg font-bold">¿Está seguro?</span>
+      </div>
+      <div>
+        <span class="text-muted-color">Se enviará un correo a su E-mail.</span>
+      </div>
+      <div class="w-full flex flex-col gap-2">
+        <p-button (onClick)="onChangePassword(); changePasswordModal.visible = false" [style]="{width: '100%'}"
+          severity="primary" label="Aceptar"></p-button>
+        <p-button (onClick)="changePasswordModal.visible = false" [style]="{width: '100%'}" severity="contrast"
+          variant="outlined" label="Cancelar"></p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-confirmdialog>
+
+<!-- Modal de cambio de email -->
+<p-dialog [breakpoints]="{ '575px': '85vw' }" [style]="{ width: '25rem', height: 'fit-content' }" [modal]="true"
+  [(visible)]="emailDialogVisible">
+  <ng-template #header>
+    <app-modal-title title="Cambiar E-mail" subtitle="Ingrese y confirme el nuevo E-mail."></app-modal-title>
+  </ng-template>
+  <form [formGroup]="emailFormGroup" (ngSubmit)="onChangeEmail()">
+    <p-fluid class="flex flex-col gap-2 p-2">
+      <p-float-label variant="on">
+        <input pInputText name="new_email" formControlName="new_email">
+        <label for="new_email">Nuevo E-mail</label>
+      </p-float-label>
+      <p-float-label variant="on">
+        <input pInputText name="confirm_email" formControlName="confirm_email">
+        <label for="confirm_email">Confirmar E-mail</label>
+      </p-float-label>
+      <div>
+        <p-button size="small" type="submit" [loading]="changeEmailLoading()">Enviar</p-button>
+      </div>
+    </p-fluid>
+  </form>
+</p-dialog>
+
+<!-- Modal de cambio de perfil -->
+<p-dialog [breakpoints]="{ '575px': '85vw' }" [style]="{width: '30rem', height: 'fit-content'}" [modal]="true"
+  [(visible)]="editProfileVisible">
+  <ng-template #header>
+    <app-modal-title title="Editar perfil" subtitle="Cambie la información publica de su perfil."></app-modal-title>
+  </ng-template>
+  <p-fluid>
+    <div class="flex flex-col gap-4 p-2">
+      <form [formGroup]="userFormGroup" (ngSubmit)="onChangeUserData()">
+        <p-fluid class="flex flex-col gap-3">
+          <p-float-label variant="on">
+            <input pInputText name="user_name" formControlName="user_name">
+            <label for="user_name">Nombre</label>
+          </p-float-label>
+          <p-float-label variant="on">
+            <p-select [options]="user()?.tenants" formControlName="tenant" appendTo="body" optionLabel="tenant_name">
+            </p-select>
+            <label for="tenant_name">Compañia Predeterminada</label>
+          </p-float-label>
+          <p-button [style]="{width: '100%'}" severity="primary" size="small" [loading]="saveUserLoading()"
+            type="submit">Guardar</p-button>
+        </p-fluid>
+      </form>
+    </div>
+  </p-fluid>
+</p-dialog>
+
+
+<!-- Modal de cambio de foto de perfil -->
+<p-dialog header="Actualizar foto de perfil" [style]="{ width: '25rem', height: 'fit-content' }" [modal]="true"
+  [(visible)]="photoDialogVisible">
+  <p-fileupload name="demo[]" [multiple]="false" accept="image/*" maxFileSize="1000000" mode="advanced"
+    (uploadHandler)="onChangeAvatar($event)" [customUpload]="true">
+    <ng-template #empty>
+      <div>Arrastra y suelta archivos aqui para subirlos.</div>
+    </ng-template>
+  </p-fileupload>
+</p-dialog>
+
+
+<div class="flex h-full gap-8">
+  <div class="card h-full w-full flex flex-col gap-5">
+
+    <div class="border-b lg:border-none border-gray-200 dark:border-gray-50/10 pb-5 profile-avatar-container">
+      <div class="profile-edit-button">
+        <p-button icon="pi pi-pencil" severity="secondary" [raised]="true"
+          (onClick)="editProfileVisible = true"></p-button>
+      </div>
+      <div class="profile-avatar">
+        <div (click)="this.photoDialogVisible = true" (mouseover)="this.mouseOverAvatar = true"
+          (mouseleave)="mouseOverAvatar = false"
+          class="cursor-pointer border-4 rounded-full border-gray-50 dark:border-gray-50/10">
+            <p-avatar *ngIf="!mouseOverAvatar"
+              class="border-4 border-white dark:border-gray-50/10 object-contain aspect-square"
+              [style]="{ width: '70px', height: '70px' }" [image]="imgUrl()" shape="circle" size="xlarge"></p-avatar>
+          <div class="w-[70px] h-[70px] flex justify-center items-center bg-slate-200 dark:bg-blue-400/10 rounded-full"
+            *ngIf="mouseOverAvatar">
+            <i class="pi pi-pencil" style="font-size: 18px;"></i>
+          </div>
+        </div>
+        <div class="profile-info-container">
+          <div class="profile-info">
+            <div>
+              <span class="text-xl font-bold">{{ user()?.user_name}}</span>
+            </div>
+            <div>
+              <span class="text-slate-500">{{ user()!.roles[0].name| titlecase }}</span>
+            </div>
+            <div class="user-state">
+              <i class="pi pi-check text-green-600 border-2 border-green-600 p-[2px] rounded-full"
+                style="font-size: 0.5rem; font-weight:bold;"></i>
+              <span class="text-green-600 text-sm">Activo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-4 overflow-x-auto pb-4">
+      <div *ngFor="let user of user()?.tenants">
+        <p-tag [rounded]="true" severity="secondary" icon="pi pi-building" [value]="user.tenant_name"></p-tag>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex gap-2 items-center">
+        <i class="pi pi-calendar text-slate-500" style="font-size: 1.25rem;"></i>
+        <span>Se unió el {{ user()?.created_at | date:'longDate' }}</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 border-b dark:border-gray-50/10 pb-6">
+      <div class="flex gap-3 items-center border border-gray-200 dark:border-gray-50/10 rounded-xl w-fit px-8 py-2">
+        <i class="pi pi-envelope text-slate-500"></i>
+        <span class="text-slate-500"> {{ user()?.user_email }} </span>
+      </div>
+      <p-button severity="contrast" variant="outlined" (onClick)="emailDialogVisible = true"><i
+          class="pi pi-pencil"></i></p-button>
+    </div>
+
+    <div>
+      <p-tabs value="Activity" scrollable>
+        <p-tablist>
+          <p-tab value="Activity">Actividad</p-tab>
+          <p-tab value="Payment">Pagos</p-tab>
+          <p-tab value="Preferences">Preferencias</p-tab>
+          <p-tab value="Security">Seguridad</p-tab>
+        </p-tablist>
+
+        <p-tabpanels>
+          <p-tabpanel [value]="'Activity'">
+            <ng-container *ngIf="notificationLoading()" [ngTemplateOutlet]="loader"></ng-container>
+            <div *ngIf="!notificationLoading()" class="flex flex-col gap-4">
+              @for (notificacion of notifications(); track $index) {
+              <div
+                class="flex items-center gap-5 p-5 bg-gray-100 dark:bg-blue-400/10 dark:border-gray-50/10 rounded-lg">
+                <div>
+                  <i *ngIf="notificacion.tipo_notificacion.tipoNotificaciones_code != 3"
+                    [ngClass]="['p-3 rounded-full',
+                                notificacion.tipo_notificacion.tipoNotificaciones_code == 1 ? 'pi pi-times bg-red-100 text-red-600' : '',
+                                notificacion.tipo_notificacion.tipoNotificaciones_code == 2 ? 'pi pi-exclamation-triangle bg-orange-100 text-orange-600' : '',]" class=""></i>
+
+                  <div *ngIf="notificacion.tipo_notificacion.tipoNotificaciones_code == 3"
+                    class="bg-blue-100 rounded-full h-fit p-[0.6rem] flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 20 20"
+                      fill="currentColor">
+                      <path
+                        d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+                      </path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-slate-400">{{ notificacion.created_at | dateAgo }}</span>
+                  <span> {{ notificacion.notificaciones_mensaje }}</span>
+                </div>
+              </div>
+              }
+            </div>
+          </p-tabpanel>
+
+          <p-tabpanel [value]="'Payment'">
+            <app-payment-record></app-payment-record>
+          </p-tabpanel>
+
+          <p-tabpanel value="Preferences">
+            <div class="card">
+              <div class="flex flex-col mb-6">
+                <span class="text-lg font-medium">Preferencias de usuario</span>
+                <span class="text-sm text-muted-color">Personaliza tu experiencia de usuario y mucho más.</span>
+              </div>
+            </div>
+          </p-tabpanel>
+
+          <p-tabpanel value="Security">
+            <p-toast></p-toast>
+            <div class="flex flex-col mb-6">
+              <span class="text-lg font-medium">Configuración de seguridad</span>
+              <span class="text-sm text-muted-color">Administra la seguridad de tu cuenta y tus metodos de
+                autenticación.</span>
+            </div>
+
+            <div class="flex flex-col gap-6 items-start border dark:border-gray-50/10 p-5 rounded-md">
+              <div class="flex flex-col gap-2">
+                <span class="text-2xl font-black leading-none">Contraseña y recuperación</span>
+                <span class="text-sm text-muted-color">Administra tu contraseña y opciones de recuperación.</span>
+              </div>
+              <div class="w-full">
+                <p-button [loading]="loading()" [style]="{width: '100%'}" severity="contrast" variant="outlined"
+                  (onClick)="confirmChangePassword()">Cambiar contraseña</p-button>
+              </div>
+            </div>
+          </p-tabpanel>
+
+        </p-tabpanels>
+
+      </p-tabs>
+    </div>
+  </div>
+</div>
+
+<ng-template #loader>
+  <app-loader></app-loader>
+</ng-template>

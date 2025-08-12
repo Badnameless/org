@@ -1,0 +1,6 @@
+<div class="w-full mt-2">
+  <p-float-label variant="on">
+    <p-select (onChange)="onSelectTenant()" [options]="user()!.tenants" optionLabel="tenant_name" [formControl]="selectTenant" class="w-full"></p-select>
+    <label>Compañia actual</label>
+  </p-float-label>
+</div>

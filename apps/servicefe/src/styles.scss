@@ -1,0 +1,12 @@
+/* You can add global styles to this file, and also import other style files */
+@use './tailwind.css';
+@use './assets/layout/layout.scss';
+@use 'primeicons/primeicons.css';
+@use './assets/demo/demo.scss';
+
+.p-popover{
+  --p-popover-gutter: 0px;
+  margin-top: 0.6% !important;
+  --p-popover-border-radius: 0.75rem;
+  --p-popover-content-padding: 0px;
+}
