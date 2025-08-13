@@ -4,8 +4,8 @@ import { HttpService } from '../../../../../services/http.service';
 import { Observable, tap, lastValueFrom, switchMap } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { Plan } from '../interfaces/plan';
-import { Token } from '../../../../auth/interfaces/token';
-import { CacheService } from '../../../../../services/cache.service';
+import { Token } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
+import { CacheService } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/cache.service';
 
 @Injectable({
   providedIn: 'root'

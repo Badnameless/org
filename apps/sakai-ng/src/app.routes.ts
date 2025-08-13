@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { AppLayout } from './app/shared/component/app.layout';
+import { AppLayout } from '@org/shared-template';
 import { Dashboard } from './app/features/dashboard/dashboard';
 import { Landing } from './app/features/landing/landing';
 import { Notfound } from './app/features/notfound/notfound';

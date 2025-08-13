@@ -15,7 +15,7 @@ import { Company } from '../companies/interfaces/company';
 import { lastValueFrom } from 'rxjs';
 import { EmailValidatorService } from './validators/email-validator.service';
 import { EmailTakenResponse } from './interfaces/email-taken-response';
-import { Tenant, User } from '../../../auth/interfaces/user';
+import { Tenant, User } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/user';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({

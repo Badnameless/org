@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Token } from '../features/auth/interfaces/token';
+import { Token } from '../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
 import { HttpHeaders } from '@angular/common/http';
 import { environment } from './.././../environments/environment.development'
 @Injectable({

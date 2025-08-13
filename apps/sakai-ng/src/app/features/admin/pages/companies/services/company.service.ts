@@ -4,9 +4,9 @@ import { Injectable, signal } from '@angular/core';
 import { HttpService } from '../../../../../services/http.service';
 import { FormGroup } from '@angular/forms';
 import { lastValueFrom, Observable, switchMap } from 'rxjs';
-import { Token } from '../../../../auth/interfaces/token';
+import { Token } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
 import { RnccedTakenResponse } from '../interfaces/rncced-taken-response';
-import { CacheService } from '../../../../../services/cache.service';
+import { CacheService } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/cache.service';
 
 @Injectable({
   providedIn: 'root'

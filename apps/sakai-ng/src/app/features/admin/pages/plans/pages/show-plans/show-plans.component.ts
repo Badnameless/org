@@ -1,6 +1,6 @@
 import { Component, computed } from '@angular/core';
-import { DataGridComponent } from '../../../../../../shared/component/data-grid/data-grid.component';
-import { Column } from '../../../../../../shared/component/data-grid/interfaces/column';
+import { DataGridComponent } from '../../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/data-grid.component';
+import { Column } from '../../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/interfaces/column';
 import { lastValueFrom } from 'rxjs';
 import { PlanService } from '../../services/plan.service';
 import { Plan } from '../../interfaces/plan';

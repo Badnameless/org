@@ -1,9 +1,9 @@
 import { Component, effect, input, OnInit } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { NotFoundMessageComponent } from '../not-found-message/not-found-message.component';
+import { NotFoundMessageComponent } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/not-found-message/not-found-message.component';
 import { DoughnutColorMap } from '../../utils/DoughnutColorMap';
-import { LoaderComponent } from '../loader/loader.component';
+import { LoaderComponent } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/loader/loader.component';
 import { DoughnutMetric } from '../../interfaces/metrics';
 
 @Component({

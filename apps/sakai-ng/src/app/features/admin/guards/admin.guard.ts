@@ -1,5 +1,5 @@
 import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, Router, RouterStateSnapshot } from '@angular/router';
-import { User } from '../../auth/interfaces/user';
+import { User } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/user';
 import { Injectable } from '@angular/core';
 
 @Injectable({

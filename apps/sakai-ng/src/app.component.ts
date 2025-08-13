@@ -1,7 +1,7 @@
 import { Component, effect, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Token } from './app/features/auth/interfaces/token';
-import { AuthService } from './app/features/auth/services/auth.service';
+import { Token } from '../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
+import { AuthService } from '../../../libs/shared-template/src/lib/shared-template/shared/services/auth.service';
 import { lastValueFrom } from 'rxjs';
 import { LayoutService } from '../../../libs/shared-template/src/lib/shared-template/shared/services/layout.service';
 

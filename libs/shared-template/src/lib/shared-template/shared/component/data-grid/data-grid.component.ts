@@ -27,8 +27,8 @@ import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PopoverModule } from 'primeng/popover';
 import { LoaderComponent } from '@org/shared-template';
-import { NotFoundMessageComponent } from '../../../../../../../../apps/sakai-ng/src/app/shared/component/not-found-message/not-found-message.component';
-import { filterNameMap } from '../../../../../../../../apps/sakai-ng/src/app/shared/utils/FilterNameMap';
+import { NotFoundMessageComponent } from '@org/shared-template';
+import { FilterNameMap } from '@org/shared-template';
 import { FluidModule } from 'primeng/fluid';
 import { OnExportEmit } from '../../../../../../../../apps/sakai-ng/src/app/shared/interfaces/on-export-emit';
 import { Filter } from './interfaces/filters';
@@ -203,7 +203,7 @@ export class DataGridComponent implements OnInit {
           const filter = {
             filters: filterArray.map(filter => ({
               ...filter,
-              matchMode: filterNameMap.get(filter.matchMode!),
+              matchMode: FilterNameMap.get(filter.matchMode!),
               type: this.columns.find(column => column.field === key)?.type
 
             })),

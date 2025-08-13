@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { DataGridComponent } from '../../../../shared/component/data-grid/data-grid.component';
-import { Column } from '../../../../shared/component/data-grid/interfaces/column';
+import { DataGridComponent } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/data-grid.component';
+import { Column } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/interfaces/column';
 import { ServiceStatus } from '../../interfaces/interface';
 import { StatusServicesService } from '../../services/status-services.service';
-import { WebSocketService } from '../../../../shared/service/web-socket.service';
+import { WebSocketService } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/web-socket.service';
 
 @Component({
   selector: 'app-status',

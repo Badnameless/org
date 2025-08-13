@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { CompanyService } from '../features/admin/pages/companies/services/company.service';
-import { EncfService } from '../features/encf/services/encf-service.service';
+import { EncfService } from '../../../../../libs/shared-template/src/lib/shared-template/shared/services/encf-service.service';
 import { PlanService } from '../features/admin/pages/plans/services/plan.service';
 import { UserService } from '../features/admin/pages/users/services/user.service';
 import { forkJoin, from } from 'rxjs';
-import { NotificationService } from '../shared/service/notification.service';
-import { MetricsService } from '../shared/service/metrics.service';
-import { LocalStorageService } from '../shared/service/local-storage-service.service';
+import { NotificationService } from '../../../../../libs/shared-template/src/lib/shared-template/shared/services/notification.service';
+import { MetricsService } from '../services/metrics.service';
+import { LocalStorageService } from './local-storage-service.service';
 
 @Injectable({
   providedIn: 'root'

@@ -1,7 +1,7 @@
 import { Component, computed } from '@angular/core';
 import { CompanyService } from '../../services/company.service';
-import { DataGridComponent } from '../../../../../../shared/component/data-grid/data-grid.component';
-import { Column } from '../../../../../../shared/component/data-grid/interfaces/column';
+import { DataGridComponent } from '../../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/data-grid.component';
+import { Column } from '../../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/interfaces/column';
 import { Company } from '../../interfaces/company';
 import { UpdateAddCompanyComponent } from '../../UpdateAddcompany.component';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';

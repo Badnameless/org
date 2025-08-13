@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AppFloatingConfigurator } from '../../../../../shared/component/app.floatingconfigurator';
+import { AppFloatingConfigurator } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/app.floatingconfigurator';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ValidatorService } from '../../../../../services/validator.service';
 import { MessageModule } from 'primeng/message';

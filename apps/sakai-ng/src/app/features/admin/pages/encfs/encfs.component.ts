@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Column } from '../../../../shared/component/data-grid/interfaces/column';
-import { DataGridComponent } from '../../../../shared/component/data-grid/data-grid.component';
+import { Column } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/interfaces/column';
+import { DataGridComponent } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/data-grid.component';
 import { Datum, Ncf } from '../../../encf/interfaces/encf';
 import { lastValueFrom } from 'rxjs';
-import { EncfService } from '../../../encf/services/encf-service.service';
+import { EncfService } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/encf-service.service';
 import { TableLazyLoadEvent } from 'primeng/table';
 
 @Component({

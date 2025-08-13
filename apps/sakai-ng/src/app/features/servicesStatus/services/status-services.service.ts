@@ -1,9 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { CacheService } from '../../../services/cache.service';
+import { CacheService } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/cache.service';
 import { HttpService } from '../../../services/http.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ServiceStatus } from '../interfaces/interface';
-import { Token } from '../../auth/interfaces/token';
+import { Token } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable({

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AppFloatingConfigurator } from '../../../../shared/component/app.floatingconfigurator';
+import { AppFloatingConfigurator } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/app.floatingconfigurator';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -13,7 +13,7 @@ import { MessageService } from 'primeng/api';
 import { HttpErrorResponse} from '@angular/common/http';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { Router } from '@angular/router';
-import { User } from '../../interfaces/user';
+import { User } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/user';
 
 @Component({
   selector: 'app-forgot-password',

@@ -8,14 +8,14 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { RippleModule } from 'primeng/ripple';
-import { AppFloatingConfigurator } from '../../../../shared/component/app.floatingconfigurator';
+import { AppFloatingConfigurator } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/app.floatingconfigurator';
 import { ValidatorService } from '../../../../services/validator.service';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/auth.service';
 import { lastValueFrom } from 'rxjs';
-import { Token } from '../../interfaces/token';
+import { Token } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { Tenant, User } from '../../interfaces/user';
+import { Tenant, User } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/user';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({

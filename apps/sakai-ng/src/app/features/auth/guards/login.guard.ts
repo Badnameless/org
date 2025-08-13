@@ -1,5 +1,5 @@
 import { CanMatch, GuardResult, MaybeAsync, Route, Router, UrlSegment} from '@angular/router';
-import { User } from '../interfaces/user';
+import { User } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/user';
 import { Injectable } from '@angular/core';
 
 @Injectable({

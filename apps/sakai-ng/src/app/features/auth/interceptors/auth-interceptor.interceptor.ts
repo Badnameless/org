@@ -1,10 +1,10 @@
 import { inject } from "@angular/core";
-import { AuthService } from "../services/auth.service";
+import { AuthService } from "../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/auth.service";
 import { Router } from "@angular/router";
 import { HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpEvent } from "@angular/common/http";
 import { catchError, throwError, from, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Token } from "../interfaces/token";
+import { Token } from "../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token";
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);

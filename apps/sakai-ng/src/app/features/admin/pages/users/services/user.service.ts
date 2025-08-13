@@ -3,18 +3,17 @@ import { Injectable, signal } from '@angular/core';
 import { HttpService } from '../../../../../services/http.service';
 import { FormGroup } from '@angular/forms';
 import { lastValueFrom, Observable } from 'rxjs';
-import { Token } from '../../../../auth/interfaces/token';
-import { User } from '../../../../auth/interfaces/user';
+import { Token } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
+import { User } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/user';
 import { EmailTakenResponse } from '../interfaces/email-taken-response';
-import { CacheService } from '../../../../../services/cache.service';
-import { AuthService } from '../../../../auth/services/auth.service';
-import { LocalStorageService } from '../../../../../shared/service/local-storage-service.service';
+import { CacheService } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/cache.service';
+import { AuthService } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/auth.service';
+import { LocalStorageService } from '../../../../../services/local-storage-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-
   private ttl: number = 1000 * 60 * 10;
   private cacheKey: string = 'api/users/all';
   users = signal<User[]>([]);

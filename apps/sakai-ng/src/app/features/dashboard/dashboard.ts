@@ -4,8 +4,8 @@ import { RevenueStreamWidget } from '../../shared/component/revenuestreamwidget/
 import { DateOption } from '../../shared/component/revenuestreamwidget/interfaces/DateOptions';
 import { DoughnutChartComponent } from '../../shared/component/doughnut-chart/doughnut-chart.component';
 import { CommonModule } from '@angular/common';
-import { MetricsService } from '../../shared/service/metrics.service';
-import { LocalStorageService } from '../../shared/service/local-storage-service.service';
+import { MetricsService } from '../../services/metrics.service';
+import { LocalStorageService } from '../../services/local-storage-service.service';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
