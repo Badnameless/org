@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SvgIconComponent } from 'angular-svg-icon';
-import { LoadDataService } from '../../services/load-data.service';
+import { LoadDataService } from '@org/shared-template';
 import { User } from '../auth/interfaces/user';
 import { Router } from '@angular/router';
 

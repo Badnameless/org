@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import { Token } from './app/features/auth/interfaces/token';
 import { AuthService } from './app/features/auth/services/auth.service';
 import { lastValueFrom } from 'rxjs';
-import { LayoutService } from './app/shared/service/layout.service';
+import { LayoutService } from '../../../libs/shared-template/src/lib/shared-template/shared/services/layout.service';
 
 @Component({
   selector: 'app-root',

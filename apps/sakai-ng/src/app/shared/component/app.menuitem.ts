@@ -5,8 +5,8 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { RippleModule } from 'primeng/ripple';
-import { MenuItem } from 'primeng/api';
-import { LayoutService } from '../service/layout.service';
+import type { MenuItem } from 'primeng/api';
+import { LayoutService } from '@org/shared-template';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

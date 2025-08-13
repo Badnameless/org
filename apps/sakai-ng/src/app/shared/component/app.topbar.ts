@@ -12,7 +12,7 @@ import { RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { StyleClassModule } from "primeng/styleclass";
 import { AppConfigurator } from "./app.configurator";
-import { LayoutService } from "../service/layout.service";
+import { LayoutService } from "../../../../../../libs/shared-template/src/lib/shared-template/shared/services/layout.service";
 import { Tenant, User } from "../../features/auth/interfaces/user";
 import { UserConfigurator } from "./userConfigurator";
 import { Token } from "../../features/auth/interfaces/token";

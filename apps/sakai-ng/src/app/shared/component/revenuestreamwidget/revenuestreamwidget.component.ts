@@ -1,7 +1,7 @@
 import { Component, effect, input, OnInit} from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { debounceTime, Subscription } from 'rxjs';
-import { LayoutService } from '../../service/layout.service';
+import { LayoutService } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/layout.service';
 import { BarMetric } from '../../interfaces/metrics';
 
 @Component({
