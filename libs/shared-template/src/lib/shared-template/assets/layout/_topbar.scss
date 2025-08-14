@@ -81,9 +81,11 @@
     }
 
     .layout-topbar-actions {
-        margin-left: auto;
-        display: flex;
+        margin-left: auto !important;
+        display: flex !important;
         gap: 2rem;
+        align-items: center;
+        flex-shrink: 0;
     }
 
     .user-action{

@@ -1,12 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { DataGridComponent } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/data-grid.component';
 import { Column } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/interfaces/column';
-import { EncfService } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/encf-service.service';
+import { EncfService } from '@org/shared-template';
 import { Datum, Ncf } from '../../interfaces/encf';
 import { TableLazyLoadEvent, TablePageEvent } from 'primeng/table';
-import { OnExportEmit } from '../../../../shared/interfaces/on-export-emit';
+import { OnExportEmit } from '@org/shared-template';
 import { LocalStorageService } from '../../../../services/local-storage-service.service';
-import { PdfExportService } from '../../../../services/pdf-export.service';
+import { PdfExportService } from '@org/shared-template';
 
 @Component({
   selector: 'app-show-encfs',

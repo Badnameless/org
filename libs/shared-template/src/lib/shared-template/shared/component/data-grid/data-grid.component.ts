@@ -18,11 +18,9 @@ import { RippleModule } from 'primeng/ripple';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { TagModule } from 'primeng/tag';
-import { CustomerService } from '../../../../../../../../apps/sakai-ng/src/app/features/service/customer.service';
-import { ProductService } from '../../../../../../../../apps/sakai-ng/src/app/features/crud/services/product.service';
 import { Column } from './interfaces/column';
 import { MessageModule } from 'primeng/message';
-import { PdfExportService } from '../../../../../../../../apps/sakai-ng/src/app/services/pdf-export.service';
+import { PdfExportService } from '../../services/pdf-export.service';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PopoverModule } from 'primeng/popover';
@@ -30,7 +28,7 @@ import { LoaderComponent } from '@org/shared-template';
 import { NotFoundMessageComponent } from '@org/shared-template';
 import { FilterNameMap } from '@org/shared-template';
 import { FluidModule } from 'primeng/fluid';
-import { OnExportEmit } from '../../../../../../../../apps/sakai-ng/src/app/shared/interfaces/on-export-emit';
+import { OnExportEmit } from '../../interfaces/on-export-emit';
 import { Filter } from './interfaces/filters';
 import { DynamicDataFilterPipe } from '@org/shared-template';
 
@@ -76,7 +74,7 @@ import { DynamicDataFilterPipe } from '@org/shared-template';
         }
     `,
   styleUrl: 'data-grid.component.css',
-  providers: [ConfirmationService, MessageService, CustomerService, ProductService, DialogService]
+  providers: [ConfirmationService, MessageService, DialogService]
 })
 export class DataGridComponent implements OnInit {
 

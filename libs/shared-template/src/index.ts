@@ -13,4 +13,8 @@ export { PaymentRecordComponent } from './lib/shared-template/shared/component/p
 export { DataGridComponent } from './lib/shared-template/shared/component/data-grid/data-grid.component';
 export { NotFoundMessageComponent } from './lib/shared-template/shared/component/not-found-message/not-found-message.component';
 export { FilterNameMap } from './lib/shared-template/shared/utils/FilterNameMap';
+export type { OnExportEmit } from './lib/shared-template/shared/interfaces/on-export-emit';
+export { PdfExportService } from './lib/shared-template/shared/services/pdf-export.service';
+export { EncfService } from './lib/shared-template/shared/services/encf-service.service';
+export type { Column } from './lib/shared-template/shared/component/data-grid/interfaces/column';
 

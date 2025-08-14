@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Column } from '../../../../../libs/shared-template/src/lib/shared-template/shared/component/data-grid/interfaces/column';
+import { Column } from '../component/data-grid/interfaces/column';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
