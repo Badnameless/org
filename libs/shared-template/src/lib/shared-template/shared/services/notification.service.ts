@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
-import { HttpService } from '../../../../../../../apps/sakai-ng/src/app/services/http.service';
+import { HttpService } from './http.service';
 import { Token } from '../interfaces/token';
-import { Notificacion } from '../../../../../../../apps/sakai-ng/src/app/shared/interfaces/Notificacion';
+import { Notificacion } from '../interfaces/Notificacion';
 import { lastValueFrom, map } from 'rxjs';
 import { CacheService } from './cache.service';
 import { WebSocketService } from './web-socket.service';

@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { HttpService } from '../../../../../services/http.service';
+import { HttpService } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/http.service';
 import { FormGroup } from '@angular/forms';
 import { lastValueFrom, Observable } from 'rxjs';
 import { Token } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';

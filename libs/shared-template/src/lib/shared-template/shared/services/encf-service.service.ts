@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from '../../../../../../../apps/sakai-ng/src/app/services/http.service';
+import { HttpService } from './http.service';
 import { Token } from '../interfaces/token';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Tenant } from '../interfaces/user';

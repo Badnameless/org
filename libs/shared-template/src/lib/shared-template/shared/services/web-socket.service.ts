@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 import { Token } from '../interfaces/token';
-import { Notificacion } from '../../../../../../../apps/sakai-ng/src/app/shared/interfaces/Notificacion';
-import { HttpService } from '../../../../../../../apps/sakai-ng/src/app/services/http.service';
+import { Notificacion } from '../interfaces/Notificacion';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root'

@@ -19,15 +19,15 @@ import { Token } from "../../interfaces/token";
 import { Popover, PopoverModule } from "primeng/popover";
 import { OverlayBadgeModule } from "primeng/overlaybadge";
 import { ScrollerModule, Scroller } from "primeng/scroller";
-import { Notificacion } from "../../../../../../../../apps/sakai-ng/src/app/shared/interfaces/Notificacion";
+import { Notificacion } from "../../interfaces/Notificacion";
 import { NotificationService } from "@org/shared-template";
 import { DateAgoPipe } from "../../pipes/date-ago.pipe";
 import { WebSocketService } from "../../services/web-socket.service";
 import { ButtonModule } from "primeng/button";
 import { AvatarModule } from "primeng/avatar";
 import { AuthService } from "../../services/auth.service";
-import { HttpService } from "../../../../../../../../apps/sakai-ng/src/app/services/http.service";
-import { ProfileService } from "../../../../../../../../apps/sakai-ng/src/app/features/profile/services/profile.service";
+import { HttpService } from "../../services/http.service";
+import { ProfileService } from "../profile/services/profile.service";
 @Component({
   selector: "app-topbar",
   standalone: true,

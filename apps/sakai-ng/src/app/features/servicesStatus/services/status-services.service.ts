@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { CacheService } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/cache.service';
-import { HttpService } from '../../../services/http.service';
+import { HttpService } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/http.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ServiceStatus } from '../interfaces/interface';
 import { Token } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
@@ -18,7 +18,7 @@ export class StatusServicesService {
   httpService = inject(HttpService);
   cache = inject(CacheService);
 
- 
+
 
   constructor() { }
 

@@ -1,11 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
-import { Token } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
+import { Token } from '../../../interfaces/token';
 import { FormGroup } from '@angular/forms';
 import { lastValueFrom, Observable, of, tap } from 'rxjs';
-import { User } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/user';
-import { AuthService } from '../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/auth.service';
+import { User } from '../../../interfaces/user';
+import { AuthService } from '../../../services/auth.service';
 
 @Injectable({
   providedIn: 'root'

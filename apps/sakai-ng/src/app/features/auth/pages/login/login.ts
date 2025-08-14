@@ -9,7 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { RippleModule } from 'primeng/ripple';
 import { AppFloatingConfigurator } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/component/app.floatingconfigurator';
-import { ValidatorService } from '../../../../services/validator.service';
+import { ValidatorService } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/validator.service';
 import { AuthService } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/auth.service';
 import { lastValueFrom } from 'rxjs';
 import { Token } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';

@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
 import { User } from '../interfaces/user';
 import { lastValueFrom, map, Observable, of, retry, Subscription, tap } from 'rxjs';
-import { HttpService } from '../../../../../../../apps/sakai-ng/src/app/services/http.service';
+import { HttpService } from './http.service';
 import { Token } from '../interfaces/token';
 @Injectable({
   providedIn: 'root'

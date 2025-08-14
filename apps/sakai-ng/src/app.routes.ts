@@ -5,7 +5,7 @@ import { Landing } from './app/features/landing/landing';
 import { Notfound } from './app/features/notfound/notfound';
 import { AdminGuard } from './app/features/admin/guards/admin.guard';
 import { DashboardGuard } from './app/features/auth/guards/dashboard.guard';
-import { ProfileComponent } from './app/features/profile/profile.component';
+import { ProfileComponent } from '@org/shared-template';
 import { LoadingPageComponent } from './app/features/loading-page/loading-page.component';
 import { BillingComponent } from './app/features/billing/billing.component';
 

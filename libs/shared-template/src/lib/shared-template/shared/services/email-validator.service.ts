@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidator, ValidationErrors } from '@angular/forms';
 import { delay, Observable } from 'rxjs';
-import { HttpService } from '../../../../../services/http.service';
-import { EmailTakenResponse } from '../interfaces/email-taken-response';
+import { HttpService } from './http.service';
+import { EmailTakenResponse } from '../../../../../../../apps/sakai-ng/src/app/features/admin/pages/users/interfaces/email-taken-response';
 
 @Injectable({
   providedIn: 'root'

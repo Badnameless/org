@@ -3,7 +3,7 @@ import { AbstractControl, AsyncValidator, ValidationErrors } from '@angular/form
 import { delay, Observable } from 'rxjs';
 import { RnccedTakenResponse } from '../interfaces/rncced-taken-response';
 import { HttpClient } from '@angular/common/http';
-import { HttpService } from '../../../../../services/http.service';
+import { HttpService } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/http.service';
 
 @Injectable({
   providedIn: 'root'

@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TextareaModule } from 'primeng/textarea';
-import { ValidatorService } from '../../../../services/validator.service';
+import { ValidatorService } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/validator.service';
 import { PlanService } from './services/plan.service';
 import { lastValueFrom } from 'rxjs';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';

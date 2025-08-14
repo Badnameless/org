@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpService } from './http.service';
+import { HttpService } from '../../../../../libs/shared-template/src/lib/shared-template/shared/services/http.service';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { CacheService } from '../../../../../libs/shared-template/src/lib/shared-template/shared/services/cache.service';

@@ -1,3 +1,4 @@
+import { ProfileComponent } from '@org/shared-template';
 
 export { LoadDataService } from '../../../apps/sakai-ng/src/app/services/load-data.service';
 export { LayoutService } from './lib/shared-template/shared/services/layout.service';
@@ -17,4 +18,5 @@ export type { OnExportEmit } from './lib/shared-template/shared/interfaces/on-ex
 export { PdfExportService } from './lib/shared-template/shared/services/pdf-export.service';
 export { EncfService } from './lib/shared-template/shared/services/encf-service.service';
 export type { Column } from './lib/shared-template/shared/component/data-grid/interfaces/column';
+export { ProfileComponent } from './lib/shared-template/shared/component/profile/profile.component';
 

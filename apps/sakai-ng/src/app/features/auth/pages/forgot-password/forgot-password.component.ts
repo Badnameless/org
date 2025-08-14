@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
-import { ValidatorService } from '../../../../services/validator.service';
+import { ValidatorService } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/validator.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { UserService } from '../../../admin/pages/users/services/user.service';
 import { lastValueFrom } from 'rxjs';

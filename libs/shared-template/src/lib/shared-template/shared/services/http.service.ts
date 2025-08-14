@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Token } from '../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
+import { Token } from '../interfaces/token';
 import { HttpHeaders } from '@angular/common/http';
-import { environment } from './.././../environments/environment.development'
+import { environment } from '../../../../../../../apps/sakai-ng/src/environments/environment.development'
 @Injectable({
   providedIn: 'root'
 })

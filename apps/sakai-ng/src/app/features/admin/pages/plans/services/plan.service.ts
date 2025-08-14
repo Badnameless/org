@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { HttpService } from '../../../../../services/http.service';
+import { HttpService } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/http.service';
 import { Observable, tap, lastValueFrom, switchMap } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { Plan } from '../interfaces/plan';

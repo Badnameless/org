@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TextareaModule } from 'primeng/textarea';
-import { ValidatorService } from '../../../../services/validator.service';
+import { ValidatorService } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/validator.service';
 import { PlanService } from '../plans/services/plan.service';
 import { Plan } from '../plans/interfaces/plan';
 import { lastValueFrom } from 'rxjs';
