@@ -20,7 +20,7 @@ import { Popover, PopoverModule } from "primeng/popover";
 import { OverlayBadgeModule } from "primeng/overlaybadge";
 import { ScrollerModule, Scroller } from "primeng/scroller";
 import { Notificacion } from "../../interfaces/Notificacion";
-import { NotificationService } from "@org/shared-template";
+import { NotificationService } from "../../services/notification.service";
 import { DateAgoPipe } from "../../pipes/date-ago.pipe";
 import { WebSocketService } from "../../services/web-socket.service";
 import { ButtonModule } from "primeng/button";

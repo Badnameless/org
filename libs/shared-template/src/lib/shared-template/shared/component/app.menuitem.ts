@@ -6,7 +6,7 @@ import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { RippleModule } from 'primeng/ripple';
 import type { MenuItem } from 'primeng/api';
-import { LayoutService } from '@org/shared-template';
+import { LayoutService } from '../services/layout.service';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

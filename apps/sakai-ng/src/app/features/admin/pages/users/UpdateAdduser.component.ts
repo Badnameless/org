@@ -14,7 +14,7 @@ import { CompanyService } from '../companies/services/company.service';
 import { Company } from '../companies/interfaces/company';
 import { lastValueFrom } from 'rxjs';
 import { EmailValidatorService } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/email-validator.service';
-import { EmailTakenResponse } from './interfaces/email-taken-response';
+import { EmailTakenResponse } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/email-taken-response';
 import { Tenant, User } from '../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/user';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 

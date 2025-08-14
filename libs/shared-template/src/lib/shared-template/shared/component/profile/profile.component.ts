@@ -32,6 +32,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-profile',
+  standalone: true,
   imports: [ImageModule,
     InputTextModule,
     ButtonModule,

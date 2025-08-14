@@ -5,7 +5,7 @@ import { FormGroup } from '@angular/forms';
 import { lastValueFrom, Observable } from 'rxjs';
 import { Token } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/token';
 import { User } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/user';
-import { EmailTakenResponse } from '../interfaces/email-taken-response';
+import { EmailTakenResponse } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/interfaces/email-taken-response';
 import { CacheService } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/cache.service';
 import { AuthService } from '../../../../../../../../../libs/shared-template/src/lib/shared-template/shared/services/auth.service';
 import { LocalStorageService } from '../../../../../services/local-storage-service.service';

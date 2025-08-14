@@ -24,13 +24,13 @@ import { PdfExportService } from '../../services/pdf-export.service';
 import { DialogModule } from 'primeng/dialog';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PopoverModule } from 'primeng/popover';
-import { LoaderComponent } from '@org/shared-template';
-import { NotFoundMessageComponent } from '@org/shared-template';
-import { FilterNameMap } from '@org/shared-template';
+import { LoaderComponent } from '../loader/loader.component';
+import { NotFoundMessageComponent } from '../not-found-message/not-found-message.component';
+import { FilterNameMap } from '../../utils/FilterNameMap';
 import { FluidModule } from 'primeng/fluid';
 import { OnExportEmit } from '../../interfaces/on-export-emit';
 import { Filter } from './interfaces/filters';
-import { DynamicDataFilterPipe } from '@org/shared-template';
+import { DynamicDataFilterPipe } from '../../pipes/dynamic-data-filter.pipe';
 
 
 @Component({
